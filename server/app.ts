@@ -1,17 +1,23 @@
-const express = require("express");
+import express from "express";
+import cors from "cors";
+import compression from "compression";
+import { json } from "body-parser";
+
+import questionRouter from "./routes/questionRoutes";
+import Urls from "./settings/staticUrls";
+
 const app = express();
-const questionRouter = require("./routes/questionRoutes");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const Urls = require("./settings/staticUrls");
 
 app.use(cors());
-app.listen(Urls.serverPort, () =>
-  console.log(
-    `YahalomTests server is running at ${Urls.serverDomain}:${Urls.serverPort}`
-  )
-);
-
-app.use(bodyParser.json());
+app.use(json());
+app.use(compression());
 
 app.use("/api/Questions", questionRouter);
+app.use("*", notFoundMiddleware);
+app.use(errorMiddleware);
+
+app.listen(Urls.serverPort, () =>
+	console.log(
+		`YahalomTests server is running at ${Urls.serverDomain}:${Urls.serverPort}`
+	)
+);
