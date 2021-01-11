@@ -1,12 +1,12 @@
 import "./App.scss";
 import Questions from "./components/questions";
 
-function App() {
+const App: React.FC = () => {
 	return (
 		<div className="App">
 			<Questions></Questions>
 		</div>
 	);
-}
+};
 
 export default App;
