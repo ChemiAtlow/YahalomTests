@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Question } from "../models";
-import QuestionService from "../services/questionService";
+import { questionService } from "../services";
 import QuestionsForm from "./questionsForm";
 import QuestionsTable from "./questionsTable";
 
@@ -11,12 +11,12 @@ const Questions: React.FC = () => {
 	});
 
 	const getQuestions = async () => {
-		const { data: questionsRes } = await QuestionService.getAllQuestions();
+		const { data: questionsRes } = await questionService.getAllQuestions();
 		setQuestions(questionsRes);
 	};
 
 	const addQuestion = async (question: { title: string }) => {
-		const { data: addedQuestion } = await QuestionService.addQuestion(
+		const { data: addedQuestion } = await questionService.addQuestion(
 			question
 		);
 		setQuestions([...questions, addedQuestion]);
