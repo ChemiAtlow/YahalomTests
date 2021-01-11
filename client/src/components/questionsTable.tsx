@@ -1,34 +1,34 @@
 import React from "react";
-import { Question } from "../services/questionService";
+import { Question } from "../models";
 
 // tsx (typescript) functional component
 export interface QuestionsTableProps {
-  questions: Question[];
+	questions: Question[];
 }
 
 const QuestionsTable: React.FC<QuestionsTableProps> = (
-  props: QuestionsTableProps
+	props: QuestionsTableProps
 ) => {
-  return (
-    <div>
-      <table className="table">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Title</th>
-          </tr>
-        </thead>
-        <tbody>
-          {props.questions.map((question) => (
-            <tr key={question.Id}>
-              <th scope="row">{question.Id}</th>
-              <td>{question.Title}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+	return (
+		<div>
+			<table className="table">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Title</th>
+					</tr>
+				</thead>
+				<tbody>
+					{props.questions.map(question => (
+						<tr key={question.id}>
+							<th scope="row">{question.id}</th>
+							<td>{question.title}</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
+		</div>
+	);
 };
 
 export default QuestionsTable;
