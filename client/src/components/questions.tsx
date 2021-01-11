@@ -1,41 +1,39 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
+import { Question } from "../models";
 import QuestionService from "../services/questionService";
 import QuestionsForm from "./questionsForm";
 import QuestionsTable from "./questionsTable";
 
-class Questions extends Component {
-  state = {
-    questions: [],
-  };
+const Questions: React.FC = () => {
+	const [questions, setQuestions] = useState<Question[]>([]);
+	useEffect(() => {
+		getQuestions();
+	});
 
-  async componentDidMount() {
-    this.getQuestions();
-  }
+	const getQuestions = async () => {
+		const { data: questionsRes } = await QuestionService.getAllQuestions();
+		setQuestions(questionsRes);
+	};
 
-  async getQuestions() {
-    const { data: questions } = await QuestionService.getAllQuestions();
-    this.setState({ questions });
-  }
+	const addQuestion = async (question: { title: string }) => {
+		const { data: addedQuestion } = await QuestionService.addQuestion(
+			question
+		);
+		setQuestions([...questions, addedQuestion]);
+	};
 
-  addQuestion = async (question) => {
-    const addedQuestion = await QuestionService.addQuestion(question);
-    this.setState({ questions: [...this.state.questions, addedQuestion.data] });
-  };
-
-  render() {
-    return (
-      <div className="container questions">
-        <div className="side">
-          <h1>Questions List</h1>
-          <QuestionsTable questions={this.state.questions} />
-        </div>
-        <div className="side">
-          <h1>Add a new question</h1>
-          <QuestionsForm onAddQuestion={this.addQuestion} />
-        </div>
-      </div>
-    );
-  }
-}
+	return (
+		<div className="container questions">
+			<div className="side">
+				<h1>Questions List</h1>
+				<QuestionsTable questions={questions} />
+			</div>
+			<div className="side">
+				<h1>Add a new question</h1>
+				<QuestionsForm onAddQuestion={addQuestion} />
+			</div>
+		</div>
+	);
+};
 
 export default Questions;

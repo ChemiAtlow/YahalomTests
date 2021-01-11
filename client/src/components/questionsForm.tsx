@@ -1,55 +1,58 @@
-import { Component } from "react";
+import React, { useState } from "react";
+import { Question } from "../models";
 
-// jsx class component
-class QuestionsForm extends Component {
-  state = { title: "", errors: {} };
+const QuestionsForm: React.FC<{
+	onAddQuestion: (question: { title: string }) => Promise<void>;
+}> = ({ onAddQuestion }) => {
+	const [title, setTitle] = useState("");
+	const [errors, setErrors] = useState<
+		Partial<Record<keyof Question, string>>
+	>({});
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setTitle(e.currentTarget.value);
+		setErrors({});
+	};
 
-  handleChange = (e) => {
-    this.setState({ title: e.currentTarget.value, errors: {} });
-  };
+	const validate = () => {
+		const errors: Partial<Record<keyof Question, string>> = {};
+		if (!title.trim().length) errors.title = "Title is required.";
 
-  handleSubmit = (e) => {
-    e.preventDefault();
+		return Object.keys(errors).length === 0 ? null : errors;
+	};
 
-    const errors = this.validate();
-    this.setState({ errors: errors || {} });
-    if (errors) return;
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
 
-    const questionToAdd = { Title: this.state.title };
-    this.props.onAddQuestion(questionToAdd);
-    this.setState({ title: "" });
-  };
+		const errors = validate();
+		setErrors(errors ?? {});
+		if (errors) return;
 
-  validate = () => {
-    const errors = {};
-    if (this.state.title.trim() === "") errors.title = "Title is required.";
+		const questionToAdd = { title: title };
+		onAddQuestion(questionToAdd);
+		setTitle("");
+	};
 
-    return Object.keys(errors).length === 0 ? null : errors;
-  };
+	return (
+		<div>
+			<form onSubmit={handleSubmit}>
+				<div className="form-group space">
+					<label htmlFor="title">Title: </label>
+					<input
+						value={title}
+						onChange={handleChange}
+						id="title"
+						type="text"
+						className="input form-control"
+					/>
+					{errors.title && (
+						<div className="alert alert-danger">{errors.title}</div>
+					)}
+				</div>
+				<button className="btn btn-primary btn-sm">Add question</button>
+			</form>
+		</div>
+	);
+};
 
-  render() {
-    const { title, errors } = this.state;
-    return (
-      <div>
-        <form onSubmit={this.handleSubmit}>
-          <div className="form-group space">
-            <label htmlFor="title">Title: </label>
-            <input
-              value={title}
-              onChange={this.handleChange}
-              id="title"
-              type="text"
-              className="input form-control"
-            />
-            {errors.title && (
-              <div className="alert alert-danger">{errors.title}</div>
-            )}
-          </div>
-          <button className="btn btn-primary btn-sm">Add question</button>
-        </form>
-      </div>
-    );
-  }
-}
 
 export default QuestionsForm;
