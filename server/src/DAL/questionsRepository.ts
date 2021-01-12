@@ -11,7 +11,7 @@ class DBQuestionsRepository {
 
 	async addQuestion(question: models.Question) {
 		let data = await this.getAllQuestions();
-		const biggestId = Math.max(...data.map(q => q.id));
+		const biggestId = Math.max(...data.map(q => q.id ?? 0));
 		question = { ...question, id: biggestId + 1 };
 		data.push(question);
 		await fsPromises.writeFile(jsonFileName, JSON.stringify(data));
