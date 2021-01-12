@@ -1,9 +1,9 @@
 import React from "react";
-import { Question } from "../models";
+import { models } from "../../../common";
 
 // tsx (typescript) functional component
 export interface QuestionsTableProps {
-	questions: Question[];
+	questions: models.Question[];
 }
 
 const QuestionsTable: React.FC<QuestionsTableProps> = (
