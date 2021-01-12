@@ -1,2 +1,2 @@
-# YahalomTests - MonoRepo
-#עוד יום..
+# YahalomTests - MonoRepo.
+# Od Yom
