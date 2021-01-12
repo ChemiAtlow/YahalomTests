@@ -14,4 +14,4 @@ class QuestionsController {
 	}
 }
 
-module.exports = new QuestionsController();
+export const questionsController = new QuestionsController();
