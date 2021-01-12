@@ -1,6 +1,6 @@
 import type { models } from "../../../common";
 import { questionsRepository } from "../DAL";
-import { BadRequestError } from "../errors/BadRequestError";
+import { BadRequestError } from "../errors";
 
 class QuestionsController {
 	// Get Questions
