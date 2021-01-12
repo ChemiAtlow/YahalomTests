@@ -1,26 +1,22 @@
-const fs = require("fs");
-const util = require("util");
-const writeFile = util.promisify(fs.writeFile);
-const readFile = util.promisify(fs.readFile);
+import { promises as fsPromises } from "fs";
+import { models } from "../../common";
 const jsonFileName = "./data/jsonAsDb.json";
 
 class DBQuestionsRepository {
-  async getAllQuestions() {
-    const data = JSON.parse(await readFile(jsonFileName));
-    return data;
-  }
+	async getAllQuestions(): Promise<models.Question[]> {
+		const questions = await fsPromises.readFile(jsonFileName, "utf8");
+		const data = JSON.parse(questions);
+		return data;
+	}
 
-  async addQuestion(question) {
-    let data = JSON.parse(await readFile(jsonFileName));
-    const biggestId = Math.max.apply(
-      Math,
-      data.map((question) => question.Id)
-    );
-    const newQuestion = { Id: biggestId + 1, Title: question.Title };
-    data.push(newQuestion);
-    await writeFile(jsonFileName, JSON.stringify(data));
-    return newQuestion;
-  }
+	async addQuestion(question: models.Question) {
+		let data = await this.getAllQuestions();
+		const biggestId = Math.max(...data.map(q => q.id));
+		question = { ...question, id: biggestId + 1 };
+		data.push(question);
+		await fsPromises.writeFile(jsonFileName, JSON.stringify(data));
+		return question;
+	}
 }
 
-module.exports = new DBQuestionsRepository();
+export const QuestionsRepository = new DBQuestionsRepository();
