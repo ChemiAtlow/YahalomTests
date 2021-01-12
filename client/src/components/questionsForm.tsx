@@ -1,20 +1,21 @@
 import React, { useState } from "react";
-import { models } from "../../../common";
+import type { models } from "../../../common";
 
-const QuestionsForm: React.FC<{
-	onAddQuestion: (question: { title: string }) => Promise<void>;
-}> = ({ onAddQuestion }) => {
+interface QuestionsFromProps {
+	onAddQuestion: (question: models.Question) => Promise<void>;
+}
+type ErrorValues = Partial<Record<keyof models.Question, string>>;
+
+const QuestionsForm: React.FC<QuestionsFromProps> = ({ onAddQuestion }) => {
 	const [title, setTitle] = useState("");
-	const [errors, setErrors] = useState<
-		Partial<Record<keyof models.Question, string>>
-	>({});
+	const [errors, setErrors] = useState<ErrorValues>({});
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setTitle(e.currentTarget.value);
 		setErrors({});
 	};
 
 	const validate = () => {
-		const errors: Partial<Record<keyof models.Question, string>> = {};
+		const errors: ErrorValues = {};
 		if (!title.trim().length) errors.title = "Title is required.";
 
 		return Object.keys(errors).length === 0 ? null : errors;
