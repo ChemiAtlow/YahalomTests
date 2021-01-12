@@ -1,2 +1,1 @@
-# YahalomTests - MonoRepo.
-# Od Yom
+# YahalomTests - MonoRepo
