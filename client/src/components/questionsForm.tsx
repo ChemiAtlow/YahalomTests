@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { models } from "../../../common";
+import { Question } from "../models";
 
 const QuestionsForm: React.FC<{
 	onAddQuestion: (question: { title: string }) => Promise<void>;
 }> = ({ onAddQuestion }) => {
 	const [title, setTitle] = useState("");
 	const [errors, setErrors] = useState<
-		Partial<Record<keyof models.Question, string>>
+		Partial<Record<keyof Question, string>>
 	>({});
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setTitle(e.currentTarget.value);
@@ -14,7 +14,7 @@ const QuestionsForm: React.FC<{
 	};
 
 	const validate = () => {
-		const errors: Partial<Record<keyof models.Question, string>> = {};
+		const errors: Partial<Record<keyof Question, string>> = {};
 		if (!title.trim().length) errors.title = "Title is required.";
 
 		return Object.keys(errors).length === 0 ? null : errors;

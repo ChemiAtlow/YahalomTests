@@ -8,8 +8,8 @@
 		"start": "nodemon --watch src/ -e ts --exec \"npm run compile.debug\"",
 		"lint": "eslint src --ext ts",
 		"build": "npm run lint && tsc",
-		"compile": "npm run lint && tsc && node ./out/index.js",
-		"compile.debug": "npm run lint && tsc && node --inspect ./out/index.js"
+		"compile": "npm run lint && tsc && node ./out/app.js",
+		"compile.debug": "npm run lint && tsc && node --inspect ./out/app.js"
 	},
 	"keywords": [],
 	"author": "",

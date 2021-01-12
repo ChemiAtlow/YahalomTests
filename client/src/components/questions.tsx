@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { models } from "../../../common";
+import { Question } from "../models";
 import { questionService } from "../services";
 import QuestionsForm from "./questionsForm";
 import QuestionsTable from "./questionsTable";
 
 const Questions: React.FC = () => {
-	const [questions, setQuestions] = useState<models.Question[]>([]);
+	const [questions, setQuestions] = useState<Question[]>([]);
 	useEffect(() => {
 		getQuestions();
 	});
