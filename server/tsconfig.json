@@ -5,7 +5,7 @@
 		"lib": ["ES6"],
 		"sourceMap": true,
 		"outDir": "./out",
-		"rootDir": "./src",
+		"rootDirs": ["../common", "./src"],
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,

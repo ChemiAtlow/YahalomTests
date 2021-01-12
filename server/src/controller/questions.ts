@@ -1,4 +1,4 @@
-import { interfaces } from "../models";
+import type { models } from "../../../common";
 import { questionsRepository } from "../DAL";
 
 class QuestionsController {
@@ -8,7 +8,7 @@ class QuestionsController {
 	}
 
 	// Add question to the list
-	addQuestion(question: interfaces.Question) {
+	addQuestion(question: models.Question) {
 		if (!question.title) {
 			throw new Error("question has no title");
 		}
