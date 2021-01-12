@@ -1,16 +1,16 @@
-import { models } from "../../common";
-import { QuestionsRepository } from "../DAL";
+import { interfaces } from "../models";
+import { questionsRepository } from "../DAL";
 
 class QuestionsController {
 	// Get Questions
 	getAllQuestions() {
-		return QuestionsRepository.getAllQuestions();
+		return questionsRepository.getAllQuestions();
 	}
 
 	// Add question to the list
-	addQuestion(question: models.Question) {
+	addQuestion(question: interfaces.Question) {
 		if (!question.title) throw "question has no title";
-		return QuestionsRepository.addQuestion(question);
+		return questionsRepository.addQuestion(question);
 	}
 }
 
