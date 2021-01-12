@@ -1,29 +1,26 @@
-const express = require("express");
-const router = express.Router();
-const controller = require("../controller/questions");
-const asyncHandler = require("../helpers/asyncHandler");
+import { routeBuilder } from "./route.builder";
+import controller from "../controller/questions";
 
-// Get questions from json
-router.get(
-  "/getQuestions",
-  asyncHandler(async (req, res) => {
-    const data = await controller.getAllQuestions();
+export const router = routeBuilder([
+	// Get questions from json
+	{
+		method: "get",
+		controller: async (req, res) => {
+			const data = await controller.getAllQuestions();
 
-    res.send(data);
-  })
-);
-
-// Add question to the list in json
-router.post(
-  "/addQuestion",
-  asyncHandler(async (req, res) => {
-    try {
-      const data = await controller.addQuestion(req.body);
-      res.status(200).send(data);
-    } catch (err) {
-      res.status(400).send(err);
-    }
-  })
-);
-
-module.exports = router;
+			res.send(data);
+		},
+	},
+	// Add question to the list in json
+	{
+		method: "post",
+		controller: async (req, res) => {
+			try {
+				const data = await controller.addQuestion(req.body);
+				res.status(200).send(data);
+			} catch (err) {
+				res.status(400).send(err);
+			}
+		},
+	},
+]);

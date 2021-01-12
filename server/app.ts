@@ -3,7 +3,7 @@ import cors from "cors";
 import compression from "compression";
 import { json } from "body-parser";
 
-import questionRouter from "./routes/questionRoutes";
+import { questionsRouter } from "./routes";
 import { URLS } from "./constants/";
 import { errorMiddleware, notFoundMiddleware } from "./middleware";
 
@@ -13,7 +13,7 @@ app.use(cors());
 app.use(json());
 app.use(compression());
 
-app.use("/api/Questions", questionRouter);
+app.use("/api/Questions", questionsRouter);
 app.use("*", notFoundMiddleware);
 app.use(errorMiddleware);
 
