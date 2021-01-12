@@ -1,29 +1,19 @@
-import {
-	NextFunction,
-	Request,
-	RequestHandler,
-	Response,
-	Router,
-} from "express";
-import { interfaces } from "../models";
+import { RequestHandler, Router } from "express";
+import { interfaces, types } from "../models";
 
-type AsyncEndpointWrapper = (
-	fn: RequestHandler<any>
-) => (req: Request, res: Response, next: NextFunction) => Promise<any>;
-
-const asyncWrapper: AsyncEndpointWrapper = fn => (req, res, next) =>
+const asyncWrapper: types.AsyncWrapperFunction = fn => (req, res, next) =>
 	Promise.resolve(fn(req, res, next)).catch(next);
 
-export const routeBuilder = (routes: interfaces.Endpoint[]) => {
+export const routerBuilder = (endpoints: interfaces.Endpoint[]) => {
 	const router = Router();
-	for (const { controller, method, path = "", middleware } of routes) {
+	for (const { controller, method, path = "", middleware } of endpoints) {
 		const handlers: RequestHandler[] = [];
-		if (middleware) {
+		if (Array.isArray(middleware) && middleware.length) {
 			handlers.push(...middleware);
 		}
 		const isAsync = controller.constructor.name === "AsyncFunction";
 		handlers.push(isAsync ? asyncWrapper(controller) : controller);
-		router[method]?.(path, ...handlers);
+		router[method]?.(path, handlers);
 	}
 	return router;
 };

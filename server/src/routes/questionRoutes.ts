@@ -1,11 +1,11 @@
-import { routeBuilder } from "./route.builder";
+import { routerBuilder } from "./route.builder";
 import { questionsController } from "../controller";
 
-export const router = routeBuilder([
+export const router = routerBuilder([
 	// Get questions from json
 	{
 		method: "get",
-		controller: async (req, res) => {
+		controller: async (_req, res) => {
 			const data = await questionsController.getAllQuestions();
 
 			res.send(data);
