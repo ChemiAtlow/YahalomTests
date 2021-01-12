@@ -1,12 +1,12 @@
-import { Question } from "../models";
+import { models } from "../../../common";
 import http from "./httpService";
 
-const serverRoute = "/api/Questions/";
+const questionRoute = "/Questions/";
 
 export async function getAllQuestions() {
-	return await http.get<Question[]>(serverRoute + "getQuestions");
+	return await http.get<models.Question[]>(questionRoute);
 }
 
 export async function addQuestion(question: { title: string }) {
-	return await http.post<Question>(serverRoute + "addQuestion", question);
+	return await http.post<models.Question>(questionRoute, question);
 }
