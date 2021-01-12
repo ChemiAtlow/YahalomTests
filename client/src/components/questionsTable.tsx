@@ -6,9 +6,7 @@ export interface QuestionsTableProps {
 	questions: models.Question[];
 }
 
-const QuestionsTable: React.FC<QuestionsTableProps> = (
-	props: QuestionsTableProps
-) => {
+const QuestionsTable: React.FC<QuestionsTableProps> = ({ questions }) => {
 	return (
 		<div>
 			<table className="table">
@@ -19,10 +17,10 @@ const QuestionsTable: React.FC<QuestionsTableProps> = (
 					</tr>
 				</thead>
 				<tbody>
-					{props.questions.map(question => (
-						<tr key={question.id}>
-							<th scope="row">{question.id}</th>
-							<td>{question.title}</td>
+					{questions.map(q => (
+						<tr key={q.id}>
+							<th scope="row">{q.id}</th>
+							<td>{q.title}</td>
 						</tr>
 					))}
 				</tbody>
