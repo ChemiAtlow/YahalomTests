@@ -1,4 +1,4 @@
-import { routerBuilder } from "./route.builder";
+import { routerBuilder } from "./router.builder";
 import { questionsController } from "../controller";
 import { HttpError } from "../errors";
 import { HTTPStatuses } from "../constants";
