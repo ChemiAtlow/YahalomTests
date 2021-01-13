@@ -502,7 +502,7 @@
         "affectsGlobalScope": false
       },
       "./src/dal/questionsrepository.ts": {
-        "version": "3efc9feedef00e62c23848ce3c82cf2bc5f8f1b7972e337c1200b2c9bd89fb66",
+        "version": "89cd6aa1dbcec14c91c0bbde8ad892f3e8596a9426f730f259d90adc29959403",
         "signature": "2b50f9c994fa5d7611d3d51f729162ad5fc63d5904fec9f42bd77c9e8912d817",
         "affectsGlobalScope": false
       },
@@ -1246,7 +1246,7 @@
         [
           {
             "file": "./src/dal/questionsrepository.ts",
-            "start": 120,
+            "start": 69,
             "length": 23,
             "messageText": "Cannot find module '@yahalom-tests/common' or its corresponding type declarations.",
             "category": 1,
