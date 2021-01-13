@@ -1,0 +1,26 @@
+{
+	"name": "yahalom-tests",
+	"version": "1.0.0",
+	"description": "The monorepo of the yahalom tests project",
+	"main": "index.js",
+	"workspaces": [
+		"common",
+		"server"
+	],
+	"scripts": {
+		"start": "node scripts/npm.start.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ChemiAtlow/YahalomTests.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/ChemiAtlow/YahalomTests/issues"
+	},
+	"homepage": "https://github.com/ChemiAtlow/YahalomTests#readme",
+	"devDependencies": {
+		"concurrently": "^5.3.0"
+	}
+}

@@ -4,6 +4,7 @@
 		"module": "commonjs",
 		"lib": ["ES6"],
 		"sourceMap": true,
+		"jsx": "react",
 		"strict": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,

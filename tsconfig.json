@@ -8,5 +8,6 @@
 			"@yahalom-tests/server": ["server/src"],
 			"@yahalom-tests/*": ["*/src"]
 		}
-	}
+	},
+	"exclude": ["client", "node_modules"]
 }
