@@ -1,1 +1,1 @@
-export * from "./Guid"
+export * from "./Guid";
