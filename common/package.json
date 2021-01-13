@@ -1,11 +1,11 @@
 {
 	"name": "@yahalom-tests/common",
 	"version": "1.0.0",
-	"description": "",
-	"main": "out/index",
-	"types": "out/index",
+	"description": "Common types for yahalom-tests project",
+	"main": "dist/index",
+	"types": "dist/index",
 	"files": [
-		"out"
+		"dist"
 	],
 	"keywords": [],
 	"author": "",
