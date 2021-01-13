@@ -4,12 +4,10 @@
 		"module": "commonjs",
 		"lib": ["ES6"],
 		"sourceMap": true,
-		"outDir": "./out",
 		"strict": true,
 		"esModuleInterop": true,
-		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
 		"experimentalDecorators": true
 	},
-	"exclude": ["node_modules", "out"]
+	"exclude": ["node_modules", "dist"]
 }

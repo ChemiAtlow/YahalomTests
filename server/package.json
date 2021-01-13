@@ -1,18 +1,20 @@
 {
 	"name": "@yahalom-tests/server",
 	"version": "1.0.0",
-	"description": "",
-	"main": "out/app",
-	"types": "out/app",
+	"description": "Server of the uahalom tests",
+	"main": "dist/app",
+	"types": "dist/app",
 	"files": [
-		"out"
+		"dist"
 	],
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "nodemon --watch src/ -e ts --exec \"npm run compile\"",
+		"start": "nodemon --watch src/ -e ts --exec \"npm run build && node --inspect ./dist/app\"",
 		"lint": "eslint src --ext ts",
-		"build": "npm run lint && tsc",
-		"compile": "npm run lint && tsc && node --inspect ./out/server/src/app.js"
+		"build": "npm run clean && npm run lint && npm run compile",
+		"clean": "del -rf \"./dist\" && del -rf \"tsconfig.build.tsbuildinfo\"",
+		"compile": "tsc -b tsconfig.build.json",
+		"prepublishOnly": "npm run build"
 	},
 	"keywords": [],
 	"author": "",
@@ -21,7 +23,8 @@
 		"body-parser": "^1.19.0",
 		"compression": "^1.7.4",
 		"cors": "^2.8.5",
-		"express": "^4.17.1"
+		"express": "^4.17.1",
+		"@yahalom-tests/common": "^1.0.0"
 	},
 	"devDependencies": {
 		"@types/compression": "^1.7.0",
