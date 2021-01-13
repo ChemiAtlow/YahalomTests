@@ -32,16 +32,21 @@ const questionValidation = (question: models.interfaces.Question) => {
 		if (!a.content?.trim()) {
 			throw new BadRequestError(`Answer in index ${i} has no content`);
 		}
-		if (a.correct) { correctAnswersCount++; }
+		if (a.correct) {
+			correctAnswersCount++;
+		}
 	});
 
 	if (!correctAnswersCount) {
-		throw new BadRequestError("Question must have at least one correct answer");
+		throw new BadRequestError(
+			"Question must have at least one correct answer"
+		);
 	}
 
 	question.alignment = question.alignment || "Vertical";
 
-	question.type = correctAnswersCount === 1 ?
-		models.enums.QuestionType.SingleChoice :
-		models.enums.QuestionType.MultiChoice;
+	question.type =
+		correctAnswersCount === 1
+			? models.enums.QuestionType.SingleChoice
+			: models.enums.QuestionType.MultiChoice;
 };

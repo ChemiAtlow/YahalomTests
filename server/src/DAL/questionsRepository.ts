@@ -17,7 +17,7 @@ class DBQuestionsRepository {
 
 	async addQuestion(question: models.interfaces.Question) {
 		try {
-			let data = await this.getAllQuestions();     //get all questions
+			let data = await this.getAllQuestions(); //get all questions
 			question.id = models.classes.Guid.newGuid(); //set id
 			data.push(question);
 
