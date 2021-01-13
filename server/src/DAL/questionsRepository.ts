@@ -17,16 +17,20 @@ class DBQuestionsRepository {
 
 	async addQuestion(question: models.interfaces.Question) {
 		try {
-			let data = await this.getAllQuestions();
-			const id = models.classes.Guid.newGuid();
-			question = { ...question, id };
+			let data = await this.getAllQuestions();     //get all questions
+			question.id = models.classes.Guid.newGuid(); //set id
 			data.push(question);
-			await fsPromises.writeFile(jsonFileName, JSON.stringify(data));
+
+			await this.writeToFile(data);
 			return question;
 		} catch (err) {
 			console.log("add item err", err);
 			throw new DbError("Couldn't add item");
 		}
+	}
+
+	private async writeToFile(data: models.interfaces.Question[]) {
+		await fsPromises.writeFile(jsonFileName, JSON.stringify(data));
 	}
 }
 
