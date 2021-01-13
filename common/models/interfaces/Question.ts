@@ -5,7 +5,7 @@ import { Answer } from "./Answer";
 export interface Question {
 	id?: guid;
 	title: string;
-	additionalContent: string;
+	additionalContent?: string;
 	type: QuestionType;
 	answers: Answer[];
 	label: string;
