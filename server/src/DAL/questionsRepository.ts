@@ -1,5 +1,5 @@
 import { promises as fsPromises } from "fs";
-import type { models } from "../../../common";
+import { models } from "../../../common";
 import { DbError } from "../errors";
 const jsonFileName = "./data/jsonAsDb.json";
 
@@ -18,8 +18,8 @@ class DBQuestionsRepository {
 	async addQuestion(question: models.Question) {
 		try {
 			let data = await this.getAllQuestions();
-			const biggestId = Math.max(...data.map(q => q.id ?? 0));
-			question = { ...question, id: biggestId + 1 };
+			const id = models.Guid.newGuid();
+			question = { ...question, id };
 			data.push(question);
 			await fsPromises.writeFile(jsonFileName, JSON.stringify(data));
 			return question;
