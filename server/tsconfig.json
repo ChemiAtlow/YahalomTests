@@ -1,17 +1,6 @@
 {
+	"extends": "../tsconfig.json",
 	"compilerOptions": {
-		"target": "ES2018",
-		"module": "commonjs",
-		"lib": ["ES6"],
-		"sourceMap": true,
-		"outDir": "./out",
-		"rootDirs": ["../common", "./src"],
-		"strict": true,
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"experimentalDecorators": true
-	},
-	"include": ["src/**/*", "common/**/*"],
-	"exclude": ["./tests/", "node_modules"]
+		// "rootDirs": ["./src"],
+	}
 }

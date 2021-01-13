@@ -1,8 +1,12 @@
 {
-	"name": "yahalom-tests-server",
+	"name": "@yahalom-tests/server",
 	"version": "1.0.0",
 	"description": "",
-	"main": "index.js",
+	"main": "out/app",
+	"types": "out/app",
+	"files": [
+		"out"
+	],
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "nodemon --watch src/ -e ts --exec \"npm run compile\"",
