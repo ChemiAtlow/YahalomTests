@@ -1,1 +1,1 @@
-export * as enums from "./QuestionType"
+export * from "./QuestionType"
