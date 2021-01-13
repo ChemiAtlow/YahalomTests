@@ -1,4 +1,4 @@
-import { guid } from "./Guid";
+import { guid } from "../classes";
 
 export interface Question {
 	id?: guid;
