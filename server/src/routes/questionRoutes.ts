@@ -1,11 +1,13 @@
-import { routeBuilder } from "./route.builder";
+import { routerBuilder } from "./route.builder";
 import { questionsController } from "../controller";
+import { HttpError } from "../errors";
+import { HTTPStatuses } from "../constants";
 
-export const router = routeBuilder([
+export const router = routerBuilder([
 	// Get questions from json
 	{
 		method: "get",
-		controller: async (req, res) => {
+		controller: async (_req, res) => {
 			const data = await questionsController.getAllQuestions();
 
 			res.send(data);
@@ -19,7 +21,13 @@ export const router = routeBuilder([
 				const data = await questionsController.addQuestion(req.body);
 				res.status(200).send(data);
 			} catch (err) {
-				res.status(400).send(err);
+				if (err instanceof HttpError) {
+					throw err;
+				}
+				throw new HttpError(
+					HTTPStatuses.internalServerError,
+					"Unknown issue when adding question"
+				);
 			}
 		},
 	},

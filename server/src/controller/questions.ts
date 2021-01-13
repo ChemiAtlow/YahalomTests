@@ -1,5 +1,6 @@
 import type { models } from "../../../common";
 import { questionsRepository } from "../DAL";
+import { BadRequestError } from "../errors";
 
 class QuestionsController {
 	// Get Questions
@@ -10,7 +11,7 @@ class QuestionsController {
 	// Add question to the list
 	addQuestion(question: models.Question) {
 		if (!question.title) {
-			throw new Error("question has no title");
+			throw new BadRequestError("Question has no title");
 		}
 		return questionsRepository.addQuestion(question);
 	}

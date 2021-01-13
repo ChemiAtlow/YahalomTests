@@ -5,11 +5,10 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "nodemon --watch src/ -e ts --exec \"npm run compile.debug\"",
+		"start": "nodemon --watch src/ -e ts --exec \"npm run compile\"",
 		"lint": "eslint src --ext ts",
 		"build": "npm run lint && tsc",
-		"compile": "npm run lint && tsc && node ./out/app.js",
-		"compile.debug": "npm run lint && tsc && node --inspect ./out/app.js"
+		"compile": "npm run lint && tsc && node --inspect ./out/server/src/app.js"
 	},
 	"keywords": [],
 	"author": "",

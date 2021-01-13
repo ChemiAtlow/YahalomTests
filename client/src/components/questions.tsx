@@ -1,15 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { models } from "../../../common";
+import React, { useEffect, useState } from "react";
+import type { models } from "../../../common";
 import { questionService } from "../services";
 import QuestionsForm from "./questionsForm";
 import QuestionsTable from "./questionsTable";
 
 const Questions: React.FC = () => {
 	const [questions, setQuestions] = useState<models.Question[]>([]);
-	const getQuestions = useCallback(async () => {
-		const { data: questionsRes } = await questionService.getAllQuestions();
-		setQuestions(questionsRes);
-	}, [setQuestions]);
 
 	const addQuestion = async (question: { title: string }) => {
 		const { data: addedQuestion } = await questionService.addQuestion(
@@ -19,8 +15,10 @@ const Questions: React.FC = () => {
 	};
 
 	useEffect(() => {
-		getQuestions();
-	}, [getQuestions]);
+		questionService
+			.getAllQuestions()
+			.then(({ data }) => setQuestions(data));
+	}, [setQuestions]);
 
 	return (
 		<div className="container questions">

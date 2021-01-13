@@ -12,6 +12,6 @@
 		"forceConsistentCasingInFileNames": true,
 		"experimentalDecorators": true
 	},
-	"include": ["src/**/*"],
+	"include": ["src/**/*", "common/**/*"],
 	"exclude": ["./tests/", "node_modules"]
 }
