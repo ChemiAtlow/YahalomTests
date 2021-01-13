@@ -4,7 +4,7 @@ import { DbError } from "../errors";
 const jsonFileName = "./data/jsonAsDb.json";
 
 class DBQuestionsRepository {
-	async getAllQuestions(): Promise<models.Question[]> {
+	async getAllQuestions(): Promise<models.interfaces.Question[]> {
 		try {
 			const questions = await fsPromises.readFile(jsonFileName, "utf8");
 			const data = JSON.parse(questions);
@@ -15,18 +15,22 @@ class DBQuestionsRepository {
 		}
 	}
 
-	async addQuestion(question: models.Question) {
+	async addQuestion(question: models.interfaces.Question) {
 		try {
-			let data = await this.getAllQuestions();
-			const biggestId = Math.max(...data.map(q => q.id ?? 0));
-			question = { ...question, id: biggestId + 1 };
+			let data = await this.getAllQuestions(); //get all questions
+			question.id = models.classes.Guid.newGuid(); //set id
 			data.push(question);
-			await fsPromises.writeFile(jsonFileName, JSON.stringify(data));
+
+			await this.writeToFile(data);
 			return question;
 		} catch (err) {
 			console.log("add item err", err);
 			throw new DbError("Couldn't add item");
 		}
+	}
+
+	private async writeToFile(data: models.interfaces.Question[]) {
+		await fsPromises.writeFile(jsonFileName, JSON.stringify(data));
 	}
 }
 
