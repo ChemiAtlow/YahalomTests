@@ -1,0 +1,21 @@
+{
+	"name": "@yahalom-tests/common",
+	"version": "1.0.0",
+	"description": "",
+	"main": "out/index",
+	"types": "out/index",
+	"files": [
+		"out"
+	],
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {},
+	"devDependencies": {
+		"@types/node": "^14.14.20",
+		"@typescript-eslint/eslint-plugin": "^4.1.1",
+		"@typescript-eslint/parser": "^4.4.1",
+		"eslint": "^7.9.0",
+		"typescript": "^4.0.2"
+	}
+}
