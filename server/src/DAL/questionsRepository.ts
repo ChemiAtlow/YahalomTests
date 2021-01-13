@@ -1,5 +1,4 @@
 import { promises as fsPromises } from "fs";
-// import type { models } from "../../../common";
 import { models } from "@yahalom-tests/common";
 import { DbError } from "../errors";
 const jsonFileName = "./data/jsonAsDb.json";
