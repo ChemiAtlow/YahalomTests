@@ -13,7 +13,7 @@ app.use(cors());
 app.use(json());
 app.use(compression());
 
-app.use("/api/Questions", questionsRouter);
+app.use("/api/questions", questionsRouter);
 app.use("*", notFoundMiddleware);
 app.use(errorMiddleware);
 
