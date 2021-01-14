@@ -1,4 +1,4 @@
-import { models } from "../../../common";
+import { models } from "@yahalom-tests/common";
 import { questionsRepository } from "../DAL";
 import { BadRequestError } from "../errors";
 

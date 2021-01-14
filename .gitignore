@@ -80,6 +80,8 @@ node_modules/
 # production
 /build
 out
+dist
+tsconfig.build.tsbuildinfo
 
 # misc
 .DS_Store

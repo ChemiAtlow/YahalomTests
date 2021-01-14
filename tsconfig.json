@@ -1,0 +1,13 @@
+{
+	"extends": "./tsconfig.build.json",
+
+	"compilerOptions": {
+		"baseUrl": "./",
+		"paths": {
+			"@yahalom-tests/common": ["common/src"],
+			"@yahalom-tests/server": ["server/src"],
+			"@yahalom-tests/*": ["*/src"]
+		}
+	},
+	"exclude": ["client", "node_modules"]
+}
