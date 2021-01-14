@@ -26,11 +26,12 @@ const NavBar: React.FC = () => {
 							to="/reports">
 							Reports
 						</Link>
-						<p
+						<div
 							className="main__header-links__item"
 							onClick={signout}>
-							Logout
-						</p>
+							<div className="logout-text">Logout</div>
+							<div className="logout-back" />
+						</div>
 					</>
 				) : (
 					<Link className="main__header-links__item" to="/login">
