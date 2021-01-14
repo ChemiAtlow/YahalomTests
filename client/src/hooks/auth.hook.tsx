@@ -1,7 +1,7 @@
 import { models } from "@yahalom-tests/common";
 import React, { useState, useContext, createContext } from "react";
 
-type userFn = (user: models.interfaces.User) => models.interfaces.User;
+type userFn = (user: models.interfaces.User) => models.interfaces.User | null;
 type providerFn = {
 	user: models.interfaces.User | undefined;
 	signin: userFn;
@@ -11,7 +11,14 @@ type providerFn = {
 	confirmPasswordReset: (code: string, password: string) => boolean;
 };
 
-const authContext = createContext<providerFn | undefined>(undefined);
+const authContext = createContext<providerFn>({
+	confirmPasswordReset: () => true,
+	sendPasswordResetEmail: () => false,
+	signin: () => null,
+	signout: () => {},
+	signup: () => null,
+	user: undefined,
+});
 
 export function ProvideAuth({ children }: React.PropsWithChildren<{}>) {
 	const auth = useProvideAuth();

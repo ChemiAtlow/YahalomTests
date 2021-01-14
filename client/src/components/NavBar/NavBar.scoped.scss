@@ -1,0 +1,32 @@
+.main__header {
+	background-color: $primary;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	&-title h1 {
+		font-size: 2.2rem;
+		margin: 0 0.5rem;
+		color: $light;
+	}
+	&-links {
+		height: 100%;
+		display: flex;
+		align-items: center;
+		&__item {
+			display: flex;
+			align-items: center;
+			height: 100%;
+			padding: 0 0.8rem;
+			color: $light;
+			font-size: 1.1rem;
+			text-decoration: none;
+			border-left: 2px $dark-blue solid;
+			transition: all 300ms ease-in-out;
+			cursor: pointer;
+			&:hover {
+				text-shadow: 0 0 6px $primary;
+				background-color: $secondary;
+			}
+		}
+	}
+}
