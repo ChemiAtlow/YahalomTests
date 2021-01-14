@@ -7,6 +7,10 @@ export const getAllQuestions = () => {
 	return questionsRepository.getAllQuestions();
 };
 
+export const getQuestionById = (id: models.classes.guid) => {
+	return questionsRepository.getQuestionById(id);
+};
+
 // Add question to the list
 export const addQuestion = (question: models.interfaces.Question) => {
 	questionValidation(question);
@@ -49,4 +53,17 @@ const questionValidation = (question: models.interfaces.Question) => {
 		correctAnswersCount === 1
 			? models.enums.QuestionType.SingleChoice
 			: models.enums.QuestionType.MultiChoice;
+};
+
+
+
+export const editQuestion = async (id: models.classes.guid, updatedQuestion: models.interfaces.Question) => {
+	try {
+		await questionsRepository.updateQuestion(id, updatedQuestion);
+	} catch (error) {
+
+	}
+
+	//update old question ==> handled by Repo
+	//push  edited question to db ==> handled by Repo
 };

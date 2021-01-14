@@ -31,4 +31,24 @@ export const router = routerBuilder([
 			}
 		},
 	},
+	//Edit question
+	{
+		method: "put",
+		path: "/:id",
+		controller: async (req, res) => {
+			try {
+				const data = await questionsController.editQuestion(req.params.id, req.body);
+				res.status(200).send(data);
+			} catch (err) {
+				if (err instanceof HttpError) {
+					throw err;
+				}
+				throw new HttpError(
+					HTTPStatuses.internalServerError,
+					"Unknown issue when adding question"
+				);
+			}
+		},
+
+	},
 ]);
