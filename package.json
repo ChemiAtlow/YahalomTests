@@ -3,14 +3,11 @@
 	"version": "1.0.0",
 	"description": "The monorepo of the yahalom tests project",
 	"main": "index.js",
-	"lockfileVersion": 1,
-	"private": true,
 	"workspaces": [
 		"common",
 		"server"
 	],
 	"scripts": {
-		"preinstall": "node scripts/npm.install.js",
 		"start": "node scripts/npm.start.js"
 	},
 	"repository": {
