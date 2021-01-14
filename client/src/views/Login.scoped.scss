@@ -1,0 +1,17 @@
+.login__dialog {
+	height: 90%;
+	width: 95%;
+	max-width: 45rem;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: $gray;
+	border-radius: 0.4rem;
+	border: 2px solid $primary;
+	&-title {
+		border-bottom: 2px solid $primary;
+		margin: 0;
+		padding: 0.7rem 0;
+	}
+}
