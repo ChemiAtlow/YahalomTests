@@ -8,9 +8,18 @@ export const router = routerBuilder([
 	{
 		method: "get",
 		controller: async (_req, res) => {
-			const data = await questionsController.getAllQuestions();
-
-			res.send(data);
+			try {
+				const data = await questionsController.getAllQuestions();
+				res.send(data);
+			} catch (err) {
+				if (err instanceof HttpError) {
+					throw err;
+				}
+				throw new HttpError(
+					HTTPStatuses.internalServerError,
+					"Unknown issue when getting question"
+				);
+			}
 		},
 	},
 	// Add question to the list in json
@@ -19,7 +28,7 @@ export const router = routerBuilder([
 		controller: async (req, res) => {
 			try {
 				const data = await questionsController.addQuestion(req.body);
-				res.status(200).send(data);
+				res.status(201).send(data);
 			} catch (err) {
 				if (err instanceof HttpError) {
 					throw err;
@@ -27,6 +36,27 @@ export const router = routerBuilder([
 				throw new HttpError(
 					HTTPStatuses.internalServerError,
 					"Unknown issue when adding question"
+				);
+			}
+		},
+	},
+	//Get question by id
+	{
+		method: "get",
+		path: "/:id",
+		controller: async (req, res) => {
+			try {
+				const data = await questionsController.getQuestionById(
+					req.params.id
+				);
+				res.status(200).send(data);
+			} catch (err) {
+				if (err instanceof HttpError) {
+					throw err;
+				}
+				throw new HttpError(
+					HTTPStatuses.internalServerError,
+					"Unknown issue when editing question"
 				);
 			}
 		},
@@ -37,7 +67,10 @@ export const router = routerBuilder([
 		path: "/:id",
 		controller: async (req, res) => {
 			try {
-				const data = await questionsController.editQuestion(req.params.id, req.body);
+				const data = await questionsController.editQuestion(
+					req.params.id,
+					req.body
+				);
 				res.status(200).send(data);
 			} catch (err) {
 				if (err instanceof HttpError) {
@@ -45,10 +78,30 @@ export const router = routerBuilder([
 				}
 				throw new HttpError(
 					HTTPStatuses.internalServerError,
-					"Unknown issue when adding question"
+					"Unknown issue when editing question"
 				);
 			}
 		},
-
+	},
+	//Delete question
+	{
+		method: "delete",
+		path: "/:id",
+		controller: async (req, res) => {
+			try {
+				const data = await questionsController.deleteQuestion(
+					req.params.id
+				);
+				res.status(200).send(data);
+			} catch (err) {
+				if (err instanceof HttpError) {
+					throw err;
+				}
+				throw new HttpError(
+					HTTPStatuses.internalServerError,
+					"Unknown issue when removing question"
+				);
+			}
+		},
 	},
 ]);
