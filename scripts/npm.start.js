@@ -15,7 +15,7 @@ const allowedAliases = {
 	server: server,
 	back: server,
 };
-const requestedProject = allowedAliases[process.argv[2]] ?? fullstack;
+const requestedProject = allowedAliases[process.argv[2]] || fullstack;
 
 if (requestedProject === fullstack) {
 	console.log("Starting Yahalom-tests E2E");
