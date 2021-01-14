@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import type { models } from "../../../common";
+import type { models } from "@yahalom-tests/common";
 import { questionService } from "../services";
 import QuestionsForm from "./questionsForm";
 import QuestionsTable from "./questionsTable";
 
 const Questions: React.FC = () => {
-	const [questions, setQuestions] = useState<models.Question[]>([]);
+	const [questions, setQuestions] = useState<models.interfaces.Question[]>(
+		[]
+	);
 
 	const addQuestion = async (question: { title: string }) => {
 		const { data: addedQuestion } = await questionService.addQuestion(

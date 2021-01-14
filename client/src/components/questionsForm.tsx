@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import type { models } from "../../../common";
+import { models } from "@yahalom-tests/common";
 
 interface QuestionsFromProps {
-	onAddQuestion: (question: models.Question) => Promise<void>;
+	onAddQuestion: (question: models.interfaces.Question) => Promise<void>;
 }
-type ErrorValues = Partial<Record<keyof models.Question, string>>;
+type ErrorValues = Partial<Record<keyof models.interfaces.Question, string>>;
 
 const QuestionsForm: React.FC<QuestionsFromProps> = ({ onAddQuestion }) => {
 	const [title, setTitle] = useState("");
@@ -28,7 +28,17 @@ const QuestionsForm: React.FC<QuestionsFromProps> = ({ onAddQuestion }) => {
 		setErrors(errors ?? {});
 		if (errors) return;
 
-		const questionToAdd = { title: title };
+		const questionToAdd: models.interfaces.Question = {
+			title,
+			type: models.enums.QuestionType.SingleChoice,
+			alignment: "Horizontal",
+			label: "test",
+			answers: [
+				{ content: "bla", correct: false },
+				{ content: "bla bla", correct: true },
+				{ content: "bla bla bla", correct: true },
+			],
+		};
 		onAddQuestion(questionToAdd);
 		setTitle("");
 	};

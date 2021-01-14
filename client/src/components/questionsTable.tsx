@@ -1,9 +1,9 @@
 import React from "react";
-import { models } from "../../../common";
+import { models } from "@yahalom-tests/common";
 
 // tsx (typescript) functional component
 export interface QuestionsTableProps {
-	questions: models.Question[];
+	questions: models.interfaces.Question[];
 }
 
 const QuestionsTable: React.FC<QuestionsTableProps> = ({ questions }) => {
@@ -17,9 +17,9 @@ const QuestionsTable: React.FC<QuestionsTableProps> = ({ questions }) => {
 					</tr>
 				</thead>
 				<tbody>
-					{questions.map(q => (
+					{questions.map((q, i) => (
 						<tr key={q.id}>
-							<th scope="row">{q.id}</th>
+							<th scope="row">{i + 1}</th>
 							<td>{q.title}</td>
 						</tr>
 					))}
