@@ -4,14 +4,14 @@ import { useAuth } from "../../hooks/auth.hook";
 import "./NavBar.scoped.scss";
 
 const NavBar: React.FC = () => {
-	const auth = useAuth();
+	const { user } = useAuth();
 	return (
 		<div className="main__header">
 			<div className="main__header-title">
 				<h1>Yahalom Tests</h1>
 			</div>
 			<div className="main__header-links">
-				{auth.user ? (
+				{user ? (
 					<>
 						<Link
 							className="main__header-links__item"
