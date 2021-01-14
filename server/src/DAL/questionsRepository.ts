@@ -50,12 +50,12 @@ class DBQuestionsRepository {
 
 	async updateQuestion(id: models.classes.guid, question: models.interfaces.Question) {
 		let index = this.data?.findIndex(q => q.id === id);
-		if (index === -1 || index === undefined) {
+		if (!this.data || !index || index < 0) {
 			throw new ItemNotInDbError(id, "Question");
 		}
-		if (this.data) {
-			this.data[index] = { ...this.data[index], ...question };
-		}
+		this.data[index] = { ...this.data[index], ...question, id };
+		this.writeToFile(this.data);
+		return this.data[index];
 	}
 
 	private async writeToFile(data: models.interfaces.Question[]) {
