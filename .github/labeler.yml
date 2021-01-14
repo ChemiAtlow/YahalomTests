@@ -1,0 +1,14 @@
+workflows:
+    - .github/**/*
+repo:
+    - ./*
+client:
+    - client/**/*
+common:
+    - common/**/*
+scripts:
+    - scripts/**/*
+server:
+    - server/**/*
+markdowns:
+    - "**/*.md"
