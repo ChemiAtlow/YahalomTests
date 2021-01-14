@@ -1,0 +1,24 @@
+.app-button {
+	background: $button-bg;
+	color: $light;
+	border-radius: 0.3rem;
+	border: none;
+	outline: none;
+	font-size: 1rem;
+	letter-spacing: 1.4px;
+	font-weight: bold;
+	text-transform: uppercase;
+	transition: all 0.3s linear;
+	cursor: pointer;
+	padding: 0.5rem 1rem;
+	margin: 0.3rem;
+	&:hover,
+	&:focus {
+		text-shadow: 0 0 3px $primary;
+	}
+	&:disabled {
+		cursor: default;
+		background-color: $dark-gray;
+		color: rgba($color: $light, $alpha: 0.6);
+	}
+}
