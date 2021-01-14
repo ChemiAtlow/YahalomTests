@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ProvideAuth } from "./hooks/auth.hook";
-import NavBar from "./components/navBar";
+import NavBar from "./components/NavBar/NavBar";
 import PrivateRoute from "./components/privateRoute";
 import Questions from "./views/Questions";
 import Tests from "./views/Tests";

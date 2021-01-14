@@ -3,5 +3,11 @@ module.exports = {
 		{
 			plugin: require("craco-plugin-scoped-css"),
 		},
+		{
+			plugin: require("craco-sass-resources-loader"),
+			options: {
+				resources: "./src/utils/_vars.scss",
+			},
+		},
 	],
 };
