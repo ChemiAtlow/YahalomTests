@@ -4,7 +4,7 @@ import { useAuth } from "../../hooks/auth.hook";
 import "./NavBar.scoped.scss";
 
 const NavBar: React.FC = () => {
-	const { user } = useAuth();
+	const { user, signout } = useAuth();
 	return (
 		<div className="main__header">
 			<div className="main__header-title">
@@ -26,7 +26,11 @@ const NavBar: React.FC = () => {
 							to="/reports">
 							Reports
 						</Link>
-						<p className="main__header-link__item">Logout</p>
+						<p
+							className="main__header-links__item"
+							onClick={signout}>
+							Logout
+						</p>
 					</>
 				) : (
 					<Link className="main__header-links__item" to="/login">

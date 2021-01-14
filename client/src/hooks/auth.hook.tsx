@@ -34,12 +34,16 @@ function useProvideAuth() {
 
 	// Wrap any Firebase methods we want to use making sure ...
 	// ... to save the user to state.
-	const signin: userFn = ({ email, password }) => {
-		return { email, password };
+	const signin: userFn = user => {
+		//DO async login
+		setUser(user);
+		return user;
 	};
 
-	const signup: userFn = ({ email, password }) => {
-		return { email, password };
+	const signup: userFn = user => {
+		//DO async signup
+		setUser(user);
+		return user;
 	};
 
 	const signout = () => {
