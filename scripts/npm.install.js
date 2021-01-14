@@ -31,7 +31,7 @@ async function main() {
 				colors.Reset,
 				"This package uses the npm workspaces feature, which is available starting npm v-7.\nthe installation might not work correctly.\nEither update your npm version, or use yarn."
 			);
-			process.exit(1);
+			// process.exit(1);
 		}
 	}
 	console.log(colors.BgGreen, "We're all set, let continue!", colors.Reset);
