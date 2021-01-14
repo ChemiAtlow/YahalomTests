@@ -2,11 +2,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ProvideAuth } from "./hooks/auth.hook";
 import NavBar from "./components/NavBar/NavBar";
 import PrivateRoute from "./components/privateRoute";
-import Questions from "./views/Questions";
-import Tests from "./views/Tests";
-import Reports from "./views/Reports";
-import Login from "./views/Login";
-import Home from "./views/Home";
+import { Home, Login, Questions, Reports, Tests } from "./views";
 
 const App: React.FC = () => {
 	return (
