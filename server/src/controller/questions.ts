@@ -17,6 +17,16 @@ export const addQuestion = (question: models.interfaces.Question) => {
 	return questionsRepository.addQuestion(question);
 };
 
+export const editQuestion = async (id: models.classes.guid, updatedQuestion: models.interfaces.Question) => {
+	await questionsRepository.updateQuestion(id, updatedQuestion);
+	//update old question ==> handled by Repo
+	//push  edited question to db ==> handled by Repo
+};
+
+export const deleteQuestion = async (id: models.classes.guid) => {
+	await questionsRepository.deleteQuestion(id);
+};
+
 // validation for question
 const questionValidation = (question: models.interfaces.Question) => {
 	if (!question.title?.trim()) {
@@ -53,17 +63,4 @@ const questionValidation = (question: models.interfaces.Question) => {
 		correctAnswersCount === 1
 			? models.enums.QuestionType.SingleChoice
 			: models.enums.QuestionType.MultiChoice;
-};
-
-
-
-export const editQuestion = async (id: models.classes.guid, updatedQuestion: models.interfaces.Question) => {
-	try {
-		await questionsRepository.updateQuestion(id, updatedQuestion);
-	} catch (error) {
-
-	}
-
-	//update old question ==> handled by Repo
-	//push  edited question to db ==> handled by Repo
 };

@@ -49,13 +49,23 @@ class DBQuestionsRepository {
 	}
 
 	async updateQuestion(id: models.classes.guid, question: models.interfaces.Question) {
-		let index = this.data?.findIndex(q => q.id === id);
-		if (!this.data || !index || index < 0) {
+		let index = (this.data || []).findIndex(q => q.id === id);
+		if (!this.data || index < 0) {
 			throw new ItemNotInDbError(id, "Question");
 		}
 		this.data[index] = { ...this.data[index], ...question, id };
-		this.writeToFile(this.data);
+		await this.writeToFile(this.data);
 		return this.data[index];
+	}
+
+	async deleteQuestion(id: models.classes.guid) {
+		let index = (this.data || []).findIndex(q => q.id === id);
+		if (!this.data || index < 0) {
+			throw new ItemNotInDbError(id, "Question");
+		}
+		const removed = this.data.splice(index, 1);
+		await this.writeToFile(this.data);
+		return removed;
 	}
 
 	private async writeToFile(data: models.interfaces.Question[]) {
