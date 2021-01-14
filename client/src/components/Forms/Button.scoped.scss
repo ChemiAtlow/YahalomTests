@@ -14,7 +14,7 @@
 	margin: 0.3rem;
 	&:hover,
 	&:focus {
-		text-shadow: 0 0 3px $primary;
+		filter: drop-shadow(0 0 4px $primary);
 	}
 	&:disabled {
 		cursor: default;
