@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ProvideAuth } from "./hooks/auth.hook";
-import "./App.scss";
 import NavBar from "./components/navBar";
 import PrivateRoute from "./components/privateRoute";
 import Questions from "./views/Questions";
