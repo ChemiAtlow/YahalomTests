@@ -5,5 +5,4 @@ export interface Organization {
 	name: string;
 	fields: guid[];
 	users: guid[];
-	questions: guid[];
 }
