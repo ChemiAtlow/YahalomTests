@@ -15,7 +15,7 @@ export function validationMiddleware<T extends {}>(
 			const message = errors
 				.map(error => Object.values(error.constraints || []))
 				.join(", ");
-			return next(new BadRequestError(message));
+			return next(new BadRequestError(message || "Validation failed!"));
 		}
 		return next();
 	};
