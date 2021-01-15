@@ -1,0 +1,64 @@
+input[type="radio"],
+input[type="checkbox"] {
+	-webkit-appearance: none;
+	background: no-repeat 0 0, 50%;
+	display: inline-block;
+	width: 1.5rem;
+	height: 1.5rem;
+	margin: 0 0.7rem 0 0;
+	border: 1px solid $grayish-blue;
+	cursor: pointer;
+	transition: background-color 0.4s ease;
+	outline: none;
+	position: relative;
+	&[type="radio"] {
+		border-radius: 50%;
+		&:checked {
+			border-color: $dark-blue;
+			&::before {
+				opacity: 1;
+			}
+		}
+		&::before {
+			position: absolute;
+			top: 3px;
+			bottom: 3px;
+			left: 3px;
+			right: 3px;
+			content: "";
+			opacity: 0;
+			border-radius: 50%;
+			transition: opacity 0.4ms ease;
+			background: 100% 100% / cover, $dark-blue $button-bg;
+		}
+	}
+	&[type="checkbox"] {
+		border-radius: 2.91px;
+		&:checked {
+			background: 100% 100% / cover, $dark-blue $button-bg;
+			border-color: $secondary;
+			&::before {
+				opacity: 1;
+				width: 15px;
+				height: 7px;
+				top: 5px;
+				left: 4px;
+			}
+		}
+		&::before {
+			opacity: 0;
+			content: " ";
+			top: 7px;
+			left: 0px;
+			width: 0;
+			height: 0;
+			border-left: 3px solid $light;
+			border-bottom: 3px solid $light;
+			position: absolute;
+			transform: rotate(-45deg);
+			transition: height 0.15s ease,
+				left 0.15s cubic-bezier(0, 0.55, 0, 1.17), width 0.15s 0.15s,
+				top 0.15s 0.15s;
+		}
+	}
+}

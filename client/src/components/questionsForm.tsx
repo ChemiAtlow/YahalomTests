@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { models } from "@yahalom-tests/common";
 
-interface QuestionsFromProps {
+interface QuestionsFormProps {
 	onAddQuestion: (question: models.interfaces.Question) => Promise<void>;
 }
 type ErrorValues = Partial<Record<keyof models.interfaces.Question, string>>;
 
-const QuestionsForm: React.FC<QuestionsFromProps> = ({ onAddQuestion }) => {
+const QuestionsForm: React.FC<QuestionsFormProps> = ({ onAddQuestion }) => {
 	const [title, setTitle] = useState("");
 	const [errors, setErrors] = useState<ErrorValues>({});
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

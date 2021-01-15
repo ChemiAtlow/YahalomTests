@@ -6,6 +6,7 @@
 	"lockfileVersion": 1,
 	"private": true,
 	"workspaces": [
+		"client",
 		"common",
 		"server"
 	],
