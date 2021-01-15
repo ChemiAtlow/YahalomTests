@@ -10,8 +10,7 @@
 	"scripts": {
 		"build": "npm run clean && npm run compile",
 		"clean": "rimraf \"./dist\"",
-		"compile": "tsc -p tsconfig.build.json",
-		"start": "npm run clean && tsc -w -p tsconfig.build.json"
+		"compile": "tsc -p tsconfig.build.json"
 	},
 	"keywords": [],
 	"author": "",
