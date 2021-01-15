@@ -3,6 +3,7 @@ const client = "client";
 const server = "server";
 const commands = {
 	back: "cd server && npm start",
+	common: "cd common && npm start",
 	front: "cd client && npm start",
 };
 const allowedAliases = {
@@ -19,7 +20,11 @@ const requestedProject = allowedAliases[process.argv[2]] || fullstack;
 
 if (requestedProject === fullstack) {
 	console.log("Starting Yahalom-tests E2E");
-	return execChild(`concurrently "(${commands.back})" "(${commands.front})"`);
+	return execChild(
+		`concurrently "(${commands.back})" "(${commands.front})" "${
+			commands.common
+		}"`
+	);
 }
 if (requestedProject === client) {
 	console.log("Starting Yahalom-tests Client");
@@ -27,7 +32,9 @@ if (requestedProject === client) {
 }
 if (requestedProject === server) {
 	console.log("Starting Yahalom-tests Server");
-	return execChild(commands.back);
+	return execChild(
+		`concurrently "(${commands.back})" "(${commands.common})"`
+	);
 }
 
 async function execChild(command) {
