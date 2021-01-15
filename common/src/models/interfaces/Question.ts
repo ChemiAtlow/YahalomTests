@@ -1,9 +1,8 @@
-import { guid } from "../classes";
 import { QuestionType } from "../enums";
 import { Answer } from "./Answer";
+import { HasId } from "./HasId";
 
-export interface Question {
-	id?: guid;
+export interface Question extends HasId {
 	title: string;
 	additionalContent?: string;
 	type: QuestionType;
