@@ -6,6 +6,7 @@ import { json } from "body-parser";
 import { questionsRouter } from "./routes";
 import { URLS } from "./constants/";
 import { errorMiddleware, notFoundMiddleware } from "./middleware";
+import "reflect-metadata";
 
 const app = express();
 

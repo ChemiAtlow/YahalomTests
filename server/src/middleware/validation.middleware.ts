@@ -3,9 +3,10 @@ import { validate } from "class-validator";
 import { RequestHandler } from "express";
 import { BadRequestError } from "../errors";
 
-export function validationMiddleware<
-	T extends { new (...constuctorArgs: any[]): T }
->(type: T, skipMissingProperties = false): RequestHandler {
+export function validationMiddleware<T extends {}>(
+	type: { new (): T },
+	skipMissingProperties = false
+): RequestHandler {
 	return async (req, _, next) => {
 		const errors = await validate(plainToClass(type, req.body), {
 			skipMissingProperties,

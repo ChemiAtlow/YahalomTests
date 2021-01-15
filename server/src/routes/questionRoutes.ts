@@ -2,6 +2,8 @@ import { routerBuilder } from "./router.builder";
 import { questionsController } from "../controller";
 import { HttpError } from "../errors";
 import { HTTPStatuses } from "../constants";
+import { validationMiddleware } from "../middleware/validation.middleware";
+import { models } from "@yahalom-tests/common";
 
 export const router = routerBuilder([
 	// Get questions from json
@@ -25,6 +27,7 @@ export const router = routerBuilder([
 	// Add question to the list in json
 	{
 		method: "post",
+		middleware: [validationMiddleware(models.dtos.QuestionDto)],
 		controller: async (req, res) => {
 			try {
 				const data = await questionsController.addQuestion(req.body);
