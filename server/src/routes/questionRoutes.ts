@@ -28,7 +28,7 @@ export const router = routerBuilder([
 		controller: async (req, res) => {
 			try {
 				const data = await questionsController.addQuestion(req.body);
-				res.status(201).send(data);
+				res.status(HTTPStatuses.created).send(data);
 			} catch (err) {
 				if (err instanceof HttpError) {
 					throw err;
@@ -49,7 +49,7 @@ export const router = routerBuilder([
 				const data = await questionsController.getQuestionById(
 					req.params.id
 				);
-				res.status(200).send(data);
+				res.status(HTTPStatuses.ok).send(data);
 			} catch (err) {
 				if (err instanceof HttpError) {
 					throw err;
@@ -71,7 +71,7 @@ export const router = routerBuilder([
 					req.params.id,
 					req.body
 				);
-				res.status(200).send(data);
+				res.status(HTTPStatuses.ok).send(data);
 			} catch (err) {
 				if (err instanceof HttpError) {
 					throw err;
@@ -92,7 +92,7 @@ export const router = routerBuilder([
 				const data = await questionsController.deleteQuestion(
 					req.params.id
 				);
-				res.status(200).send(data);
+				res.status(HTTPStatuses.ok).send(data);
 			} catch (err) {
 				if (err instanceof HttpError) {
 					throw err;
