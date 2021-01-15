@@ -1,19 +1,21 @@
 import { promises as fsPromises, constants as fsConstants } from "fs";
+import { resolve as pathResolve } from "path";
 import { models } from "@yahalom-tests/common";
 import { DbError, ItemNotInDbError } from "../errors";
 import { types } from "../models";
 
 export class Repository<EntityType extends models.interfaces.HasId> {
+	private fileName: string;
 	private data?: EntityType[];
 
-	constructor(
-		private fileName: string,
-		protected entityName: types.EntityTypes
-	) {
-		if (!this.isValidFile()) {
-			throw new DbError("Illegal file!");
-		}
-		this.getAll();
+	constructor(fileName: string, protected entityName: types.EntityTypes) {
+		this.fileName = pathResolve(__dirname, "..", "..", "data", fileName);
+		this.isValidFile().then(isValid => {
+			if (!isValid) {
+				throw new DbError("Illegal file!");
+			}
+			this.getAll();
+		});
 	}
 
 	async getAll(): Promise<EntityType[]> {
