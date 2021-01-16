@@ -1,31 +1,17 @@
+import { Router } from "express";
+import { models } from "@yahalom-tests/common";
 import { authController } from "../controllers";
 import { validationMiddleware } from "../middleware";
-import { models } from "@yahalom-tests/common";
-import { routerBuilder } from "./router.builder";
 
-export const router = routerBuilder([
-    {
-        path: "/login",
-        method: "post",
-        middleware: [validationMiddleware(models.dtos.UserDto)],
-        controller: async (req, res) => {
-            //send user to login.
-            const user = await authController.login(req.params.user);
-            res.send(user);
-        },
-    },
+export const router = Router();
 
-    {
-        path: "signup",
-        method: "post",
-        middleware: [validationMiddleware(models.dtos.UserDto)],
-        controller: async (req, res) => {
-            const user = await authController.signup(req.params.user);
-            res.send(user);
-        },
-    }
+router.post("/login", validationMiddleware(models.dtos.UserDto), async (req, res) => {
+    //send user to login.
+    const user = await authController.login(req.body);
+    res.send(user);
+});
 
-
-
-
-]);
+router.post("/signup", validationMiddleware(models.dtos.UserDto), async (req, res) => {
+    const user = await authController.signup(req.body);
+    res.send(user);
+});
