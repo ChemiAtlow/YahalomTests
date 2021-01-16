@@ -1,5 +1,6 @@
 import type { models } from "@yahalom-tests/common";
 import { Repository } from "./reporsitory";
+import { UserRepository } from "./userRepository";
 
 export const organizationRepository = new Repository<models.interfaces.Organization>(
 	"organizationDB.json",
@@ -9,10 +10,7 @@ export const studyFieldRepository = new Repository<models.interfaces.StudyField>
 	"studyFieldDB.json",
 	"StudyField"
 );
-export const userRepository = new Repository<models.interfaces.User>(
-	"userDB.json",
-	"User"
-);
+export const userRepository = new UserRepository("userDB.json");
 export const questionsRepository = new Repository<models.interfaces.Question>(
 	"questionDB.json",
 	"Question"
