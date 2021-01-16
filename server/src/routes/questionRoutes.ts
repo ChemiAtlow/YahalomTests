@@ -2,7 +2,7 @@ import { routerBuilder } from "./router.builder";
 import { questionsController } from "../controller";
 import { HttpError } from "../errors";
 import { HTTPStatuses } from "../constants";
-import { validationMiddleware } from "../middleware/validation.middleware";
+import { validationMiddleware } from "../middleware";
 import { models } from "@yahalom-tests/common";
 
 export const router = routerBuilder([
