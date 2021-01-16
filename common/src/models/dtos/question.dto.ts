@@ -7,6 +7,7 @@ import {
 	IsOptional,
 	IsString,
 	IsUUID,
+	Matches,
 	ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
@@ -34,7 +35,7 @@ export class QuestionDto {
 	@ValidateNested({ each: true, message: "Answers are invalid" })
 	@IsWithAtLeastOneCorrectAnswer()
 	answers!: AnswerDto[];
-	@IsString()
+	@Matches(/(\d+)(,\s*\d+)*/)
 	label!: string;
 	@IsString()
 	@IsIn(["Horizontal", "Vertical"])
