@@ -12,7 +12,7 @@ type providerFn = {
 };
 
 const authContext = createContext<providerFn>({
-	confirmPasswordReset: () => true,
+	confirmPasswordReset: () => false,
 	sendPasswordResetEmail: () => false,
 	signin: () => null,
 	signout: () => {},

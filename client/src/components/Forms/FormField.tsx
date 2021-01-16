@@ -9,15 +9,13 @@ interface FormFieldProps {
 }
 const FormField: React.FC<FormFieldProps> = ({
 	label,
-	type,
-	value,
-	onChange,
+	...rest
 }) => {
 	return (
 		<div className="form-field">
 			<label>
 				{label}
-				<input type={type} value={value} onChange={onChange} />
+				<input {...rest} />
 			</label>
 		</div>
 	);

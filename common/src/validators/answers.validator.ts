@@ -1,9 +1,6 @@
 import {
 	registerDecorator,
 	ValidationOptions,
-	ValidationArguments,
-	isArray,
-	arrayNotEmpty,
 } from "class-validator";
 
 export function IsWithAtLeastOneCorrectAnswer(
