@@ -2,12 +2,13 @@ import express from "express";
 import cors from "cors";
 import compression from "compression";
 import { json } from "body-parser";
-
+import { patchRouterParamForAsyncHandling } from "./utils";
 import { questionsRouter, authRoutes } from "./routes";
 import { URLS } from "./constants/";
 import { errorMiddleware, notFoundMiddleware } from "./middleware";
 import "reflect-metadata";
 
+patchRouterParamForAsyncHandling();
 const app = express();
 
 app.use(cors());
