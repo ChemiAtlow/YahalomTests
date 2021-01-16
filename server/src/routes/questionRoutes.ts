@@ -1,5 +1,5 @@
 import { routerBuilder } from "./router.builder";
-import { questionsController } from "../controller";
+import { questionsController } from "../controllers";
 import { HttpError } from "../errors";
 import { HTTPStatuses } from "../constants";
 import { validationMiddleware } from "../middleware";
