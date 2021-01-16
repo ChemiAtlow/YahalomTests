@@ -35,7 +35,9 @@ export class QuestionDto {
 	@ValidateNested({ each: true, message: "Answers are invalid" })
 	@IsWithAtLeastOneCorrectAnswer()
 	answers!: AnswerDto[];
-	@Matches(/(\d+)(,\s*\d+)*/)
+	@Matches(/(\w+)(,\s*\w+)*/, {
+		message: "Label must be a comma seperated string!",
+	})
 	label!: string;
 	@IsString()
 	@IsIn(["Horizontal", "Vertical"])
