@@ -5,9 +5,9 @@ export class UserRepository extends Repository<models.interfaces.User> {
 	constructor(fileName: string) {
 		super(fileName, "User");
 	}
-	async isEmailTaken(email: string) {
+	async getUserByEmail(email: string) {
 		const users = await this.getAll();
 		const user = users.find(u => u.email === email);
-		return Boolean(user);
+		return user;
 	}
 }
