@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { models } from "@yahalom-tests/common";
-import { routerBuilder } from "./router.builder";
 import { questionsController } from "../controllers";
 import { HttpError } from "../errors";
 import { HTTPStatuses } from "../constants";
@@ -83,6 +82,7 @@ router.put(
 	}
 );
 
+//Delete question
 router.delete("/:id", async (req, res) => {
 	try {
 		const data = await questionsController.deleteQuestion(req.params.id);
