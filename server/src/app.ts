@@ -3,7 +3,7 @@ import cors from "cors";
 import compression from "compression";
 import { json } from "body-parser";
 import { patchRouterParamForAsyncHandling } from "./utils";
-import { questionsRouter, authRoutes } from "./routes";
+import { questionsRouter, authRouter } from "./routes";
 import { URLS } from "./constants/";
 import { errorMiddleware, notFoundMiddleware } from "./middleware";
 import "reflect-metadata";
@@ -16,7 +16,7 @@ app.use(json());
 app.use(compression());
 
 app.use("/questions", questionsRouter);
-app.use("/auth", authRoutes);
+app.use("/auth", authRouter);
 app.use("*", notFoundMiddleware);
 app.use(errorMiddleware);
 
