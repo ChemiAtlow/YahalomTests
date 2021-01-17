@@ -59,10 +59,10 @@ export const requestPasswordReset = async ({
 	}
 };
 
-export const resetPassword = async ({
-	token,
-	password,
-}: models.dtos.ResetPasswordDto) => {
+export const resetPassword = async (
+	token: string,
+	{ password }: models.dtos.ResetPasswordDto
+) => {
 	//check if user exist
 	const userFromDb = await userRepository.getUserWithRestToken(token);
 	if (!userFromDb) {

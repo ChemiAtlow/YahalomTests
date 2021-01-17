@@ -38,7 +38,7 @@ router.post(
 	"/reset/:token",
 	validationMiddleware(models.dtos.ResetPasswordDto),
 	async (req, res) => {
-		await authController.resetPassword(req.body);
+		await authController.resetPassword(req.params.token, req.body);
 		res.send({ message: "password reset success" });
 	}
 );
