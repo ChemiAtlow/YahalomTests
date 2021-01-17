@@ -1,9 +1,10 @@
 import { constants } from "@yahalom-tests/common";
-import { IsEmail, IsString, Matches } from "class-validator";
+import { IsHexadecimal, IsString, Matches } from "class-validator";
 const { passwordDescription, passwordRegex } = constants.validations;
 
 export class ResetPasswordDto {
-	@IsEmail()
+	@IsString()
+	@IsHexadecimal()
 	public token!: string;
 	@IsString()
 	@Matches(passwordRegex, { message: passwordDescription })
