@@ -9,46 +9,42 @@
 		margin: 0 0.5rem;
 		color: $deep-blue;
 	}
-	&-links {
-		height: 100%;
-		display: flex;
+	&-more {
+		$more-transition: 500ms ease-in-out;
+		display: grid;
 		align-items: center;
-		&__item {
-			display: flex;
-			align-items: center;
-			height: 100%;
-			padding: 0 0.8rem;
-			color: $deep-blue;
-			font-size: 1.1rem;
-			text-decoration: none;
-			margin: 0;
-			border-left: 2px $deep-blue solid;
-			transition: all 300ms ease-in-out;
-			position: relative;
-			&-text {
-				z-index: 1;
+		justify-content: center;
+		width: $header-height;
+		height: 100%;
+		position: relative;
+		padding: 1rem 0;
+		cursor: pointer;
+		&__dot {
+			height: 0.3rem;
+			width: 0.3rem;
+			border-radius: 50%;
+			background-color: $deep-blue;
+			z-index: 3;
+			transition: all $more-transition;
+		}
+		&__back {
+			background: $button-bg;
+			border-radius: 50%;
+			position: absolute;
+			top: 0.3rem;
+			bottom: 0.3rem;
+			right: 0.3rem;
+			left: 0.3rem;
+			opacity: 0;
+			transition: opacity $more-transition;
+		}
+		&:hover {
+			.main__header-more__dot {
+				background-color: $light;
+				box-shadow: 0 0 6px $primary;
 			}
-			&-back {
-				opacity: 0;
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: $button-bg;
-				transition: all 300ms ease-in-out;
-				&.logout {
-					background: $warn-bg;
-				}
-			}
-			cursor: pointer;
-			&:hover {
-				text-shadow: 0 0 6px $primary;
-				color: $light;
-				// background: $button-bg;
-				.main__header-links__item-back {
-					opacity: 1;
-				}
+			.main__header-more__back {
+				opacity: 1;
 			}
 		}
 	}

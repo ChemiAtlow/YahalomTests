@@ -1,0 +1,45 @@
+.menu-container {
+	position: relative;
+	height: 100%;
+}
+.trigger-container {
+	height: 100%;
+}
+.menu {
+	background: $light;
+	border-radius: 8px;
+	overflow: hidden;
+	position: absolute;
+	top: 60px;
+	right: 20px;
+	width: 300px;
+	z-index: 20;
+	box-shadow: 0 1px 8px $primary;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(-20px);
+	transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+	&.active {
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
+	}
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		li {
+			border-bottom: 1px solid $grayish-blue;
+			cursor: pointer;
+			& > * {
+				text-decoration: none;
+				color: $primary;
+				padding: 15px 20px;
+				display: block;
+			}
+			&:hover {
+				background-color: $gray;
+			}
+		}
+	}
+}
