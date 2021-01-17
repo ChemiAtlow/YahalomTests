@@ -1,7 +1,7 @@
-import { models } from "../../../common";
+import { models } from "@yahalom-tests/common";
 import http from "./httpService";
 
-const questionRoute = "/Questions/";
+const questionRoute = "/questions/";
 
 export async function getAllQuestions() {
 	return await http.get<models.interfaces.Question[]>(questionRoute);
