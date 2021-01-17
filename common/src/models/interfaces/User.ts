@@ -5,4 +5,5 @@ export interface User extends HasId {
 	email: string;
 	password: string;
 	organization?: guid;
+	role: "CaptainAmerica" | "Admin" | "Teacher";
 }
