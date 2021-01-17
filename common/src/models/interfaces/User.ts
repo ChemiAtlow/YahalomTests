@@ -6,4 +6,5 @@ export interface User extends HasId {
 	password: string;
 	organization?: guid;
 	role: "CaptainAmerica" | "Admin" | "Teacher";
+	resetToken?: string;
 }
