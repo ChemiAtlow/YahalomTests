@@ -15,9 +15,9 @@ const authContext = createContext<providerFn>({
 	confirmPasswordReset: () => false,
 	sendPasswordResetEmail: () => false,
 	signin: async () => false,
-	signout: () => { },
+	signout: () => {},
 	signup: async () => false,
-	jwt: undefined
+	jwt: undefined,
 });
 
 export function ProvideAuth({ children }: React.PropsWithChildren<{}>) {
