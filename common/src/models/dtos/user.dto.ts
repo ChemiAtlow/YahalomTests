@@ -1,7 +1,7 @@
 import { IsEmail, IsEmpty, Matches } from "class-validator";
-import { constants } from "@yahalom-tests/common";
+import { validations } from "../../constants";
 import { User } from "../interfaces";
-const { passwordDescription, passwordRegex } = constants.validations;
+const { passwordDescription, passwordRegex } = validations;
 
 export class UserDto implements User {
 	@IsEmail()

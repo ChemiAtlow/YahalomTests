@@ -1,6 +1,6 @@
-import { constants } from "@yahalom-tests/common";
+import { validations } from "../../constants";
 import { IsHexadecimal, IsString, Matches } from "class-validator";
-const { passwordDescription, passwordRegex } = constants.validations;
+const { passwordDescription, passwordRegex } = validations;
 
 export class ResetPasswordDto {
 	@IsString()
