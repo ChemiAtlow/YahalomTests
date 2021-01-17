@@ -9,7 +9,7 @@ const App: React.FC = () => {
 		<ProvideAuth>
 			<BrowserRouter>
 				<NavBar />
-				<div className="app">
+				<main className="app">
 					<Switch>
 						<PrivateRoute path="/questions">
 							<Questions />
@@ -27,7 +27,7 @@ const App: React.FC = () => {
 							<Home />
 						</PrivateRoute>
 					</Switch>
-				</div>
+				</main>
 			</BrowserRouter>
 		</ProvideAuth>
 	);
