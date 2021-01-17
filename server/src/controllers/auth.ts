@@ -4,7 +4,7 @@ import { sign } from "jsonwebtoken";
 import { models } from "@yahalom-tests/common";
 import { userRepository } from "../DAL";
 import { EmailTakenError, AuthError, HttpError } from "../errors";
-import { HTTPStatuses, TIME } from "../constants";
+import { HTTPStatuses, TIME, general } from "../constants";
 
 export const signup = async ({ email, password }: models.dtos.UserDto) => {
 	if (await userRepository.getUserByEmail(email)) {
@@ -64,7 +64,7 @@ export const resetPassword = async (
 	{ password }: models.dtos.ResetPasswordDto
 ) => {
 	//check if user exist
-	const userFromDb = await userRepository.getUserWithRestToken(token);
+	const userFromDb = await userRepository.getUserWithResetToken(token);
 	if (!userFromDb) {
 		throw new AuthError();
 	}
@@ -80,4 +80,4 @@ export const resetPassword = async (
 //creats json web token
 //server knows how to read it as if it was a user
 const createUserJWT = (user: models.interfaces.User) =>
-	sign(user, "veryStrongPassword", { expiresIn: "30d" });
+	sign(user, general.jwtSecret, { expiresIn: "30d" });

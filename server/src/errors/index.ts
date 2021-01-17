@@ -4,3 +4,4 @@ export * from "./EmailTakenError";
 export * from "./BadRequestError";
 export * from "./ItemNotInDbError";
 export * from "./AuthError";
+export * from "./UnauthorizedError";
