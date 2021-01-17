@@ -1,3 +1,5 @@
+const concurrently = require("concurrently");
+
 const fullstack = "fullstack";
 const client = "client";
 const server = "server";
@@ -19,7 +21,21 @@ const requestedProject = allowedAliases[process.argv[2]] || fullstack;
 
 if (requestedProject === fullstack) {
 	console.log("Starting Yahalom-tests E2E");
-	return execChild(`concurrently "(${commands.back})" "(${commands.front})"`);
+	return concurrently(
+		[
+			{
+				command: commands.back,
+				name: "server",
+				prefixColor: "cyan.bold",
+			},
+			{
+				command: commands.front,
+				name: "client",
+				prefixColor: "yellow.bold",
+			},
+		],
+		{}
+	);
 }
 if (requestedProject === client) {
 	console.log("Starting Yahalom-tests Client");
