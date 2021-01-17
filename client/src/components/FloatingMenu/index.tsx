@@ -16,17 +16,17 @@ const FloatingMenu: React.FC<FloatingMenuProps> = ({ children, trigger }) => {
 			<div className="trigger-container" onClick={onClick}>
 				{trigger}
 			</div>
-			<nav
-				ref={dropdownRef}
-				className={`menu ${isActive ? "active" : "inactive"}`}>
-				<ul>
-					{children.map((el, i) => (
-						<li key={i} onClick={onClick}>
-							{el}
-						</li>
-					))}
-				</ul>
-			</nav>
+			<div className={`arrow ${isActive ? "active" : "inactive"}`}>
+				<nav ref={dropdownRef} className="menu">
+					<ul>
+						{children.map((el, i) => (
+							<li key={i} onClick={onClick}>
+								{el}
+							</li>
+						))}
+					</ul>
+				</nav>
+			</div>
 		</div>
 	);
 };
