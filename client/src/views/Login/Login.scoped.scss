@@ -6,9 +6,6 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	background-color: $dialog-gray;
-	border-radius: 0.4rem;
-	border: 2px solid $primary;
 	&-title {
 		border-bottom: 2px solid $primary;
 		margin: 0;
