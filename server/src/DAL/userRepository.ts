@@ -10,4 +10,12 @@ export class UserRepository extends Repository<models.interfaces.User> {
 		const user = users.find(u => u.email === email);
 		return user;
 	}
+	async getUserWithRestToken(token: string) {
+		const users = await this.getAll();
+		const user = users.find(u => u.resetToken === token);
+		if (user?.resetTokenExpiration || 0 > Date.now()) {
+			return undefined;
+		}
+		return user;
+	}
 }
