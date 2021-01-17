@@ -51,7 +51,7 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 		return entity;
 	}
 
-	async updateItem(id: models.classes.guid, entity: EntityType) {
+	async updateItem(id: models.classes.guid, entity: Partial<EntityType>) {
 		let index = this.findIndexById(id);
 		this.data![index] = { ...this.data![index], ...entity, id };
 		await this.writeToFile();
