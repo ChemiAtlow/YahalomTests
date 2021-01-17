@@ -1,12 +1,13 @@
 .main__header {
-	background-color: $primary;
+	background-color: $light;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	box-shadow: 0 1px 5px $deep-blue;
 	&-title h1 {
 		font-size: 2.2rem;
 		margin: 0 0.5rem;
-		color: $light;
+		color: $deep-blue;
 	}
 	&-links {
 		height: 100%;
@@ -17,33 +18,35 @@
 			align-items: center;
 			height: 100%;
 			padding: 0 0.8rem;
-			color: $light;
+			color: $deep-blue;
 			font-size: 1.1rem;
 			text-decoration: none;
 			margin: 0;
-			border-left: 2px $dark-blue solid;
+			border-left: 2px $deep-blue solid;
 			transition: all 300ms ease-in-out;
 			position: relative;
-			.logout {
-				&-text {
-					z-index: 1;
-				}
-				&-back {
-					opacity: 0;
-					position: absolute;
-					top: 0;
-					left: 0;
-					width: 100%;
-					height: 100%;
+			&-text {
+				z-index: 1;
+			}
+			&-back {
+				opacity: 0;
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: $button-bg;
+				transition: all 300ms ease-in-out;
+				&.logout {
 					background: $warn-bg;
-					transition: all 300ms ease-in-out;
 				}
 			}
 			cursor: pointer;
 			&:hover {
 				text-shadow: 0 0 6px $primary;
-				background-color: $secondary;
-				.logout-back {
+				color: $light;
+				// background: $button-bg;
+				.main__header-links__item-back {
 					opacity: 1;
 				}
 			}
