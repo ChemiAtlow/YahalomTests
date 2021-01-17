@@ -3,21 +3,21 @@ import { Redirect, Route, RouteProps } from "react-router-dom";
 import { useAuth } from "../hooks/auth.hook";
 
 const PrivateRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
-	const { user } = useAuth();
+	const { jwt } = useAuth();
 	return (
 		<Route
 			{...rest}
 			render={({ location }) =>
-				user ? (
+				jwt ? (
 					children
 				) : (
-					<Redirect
-						to={{
-							pathname: "/login",
-							state: { from: location },
-						}}
-					/>
-				)
+						<Redirect
+							to={{
+								pathname: "/login",
+								state: { from: location },
+							}}
+						/>
+					)
 			}
 		/>
 	);
