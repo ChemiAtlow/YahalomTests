@@ -8,16 +8,13 @@ interface FormFieldProps {
 	error: string;
 	onChange: React.EventHandler<React.ChangeEvent<HTMLInputElement>>;
 }
-const FormField: React.FC<FormFieldProps> = ({
-	label,
-	error,
-	...rest
-}) => {
+const FormField: React.FC<FormFieldProps> = ({ label, error, ...rest }) => {
 	return (
 		<div className="form-field">
 			<label>
 				{label}
 				<input {...rest} />
+				{error && <span>{error}</span>}
 			</label>
 		</div>
 	);
