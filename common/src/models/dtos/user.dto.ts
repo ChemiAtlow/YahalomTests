@@ -1,11 +1,15 @@
-import { IsEmail, Matches } from "class-validator";
+import { IsEmail, IsEmpty, Matches } from "class-validator";
+import { constants } from "@yahalom-tests/common";
 import { User } from "../interfaces";
-const errorMessage = "Password needs to have at least: 1 upper-case, 1 lower-case, 1 number, 1 special char and minimum 8 chars";
 
 export class UserDto implements User {
 	@IsEmail()
 	public email!: string;
 	//1 upper-case, 1 lower-case, 1 number, 1 special char, minimum 8 chars
-	@Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[~!@#\$%\^&\*])(?=.{8,})/, { message: errorMessage })
+	@Matches(constants.validations.passwordRegex, {
+		message: constants.validations.passwordDescription,
+	})
 	password!: string;
+	@IsEmpty()
+	role!: "CaptainAmerica" | "Admin" | "Teacher";
 }
