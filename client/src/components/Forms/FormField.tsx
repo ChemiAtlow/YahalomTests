@@ -1,21 +1,39 @@
 import React from "react";
 import "./FormField.scoped.scss";
 
-interface FormFieldProps {
-	label: string;
+interface FormFieldProps
+	extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
 	type: "text" | "password" | "number" | "textarea" | "radio" | "checkbox";
-	value: string;
+	label: string;
 	error: string;
-	onChange: React.EventHandler<React.ChangeEvent<HTMLInputElement>>;
 }
-const FormField: React.FC<FormFieldProps> = ({ label, error, ...rest }) => {
+const FormField: React.FC<FormFieldProps> = ({
+	label,
+	error,
+	type,
+	...rest
+}) => {
 	return (
-		<div className="form-field">
-			<label>
-				{label}
-				<input {...rest} />
-				{error && <span>{error}</span>}
+		<div className={`form-field ${error ? "error" : ""}`}>
+			<label className="form-field__control">
+				{type === "textarea" ? (
+					<textarea
+						className="form-field__control-input"
+						placeholder=" "
+						{...rest}
+					/>
+				) : (
+					<input
+						className="form-field__control-input"
+						placeholder=" "
+						type={type}
+						{...rest}
+					/>
+				)}
+				<span className="form-field__control-label">{label}</span>
+				<div className="form-field__control-bar" />
 			</label>
+			{error && <p className="form-field__error">{error}</p>}
 		</div>
 	);
 };
