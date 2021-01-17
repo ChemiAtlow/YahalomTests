@@ -1,1 +1,6 @@
-export type EntityTypes = "Question" | "Test";
+export type EntityTypes =
+	| "Organization"
+	| "StudyField"
+	| "User"
+	| "Question"
+	| "Test";

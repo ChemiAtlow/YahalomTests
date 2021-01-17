@@ -6,6 +6,7 @@ export enum HTTPStatuses {
 	forbidden = 403,
 	notFound = 404,
 	iAmATeapot = 418,
+	unprocessableEntity = 422,
 	internalServerError = 500,
 	notImplemented = 501,
 }

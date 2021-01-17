@@ -1,20 +1,7 @@
 import axios from "axios";
 import environment from "../environments/environment";
 
-const axiosCreate = axios.create({ baseURL: `${environment.serverUrl}/api` });
-
-axiosCreate.interceptors.response.use(undefined, error => {
-	const expectedError =
-		error.response &&
-		error.response.status >= 400 &&
-		error.response.status < 500;
-
-	if (!expectedError) {
-		console.log("Logging the error", error);
-	}
-
-	return Promise.reject(error);
-});
+const axiosCreate = axios.create({ baseURL: `${environment.serverUrl}` });
 
 const methods = {
 	get: axiosCreate.get,

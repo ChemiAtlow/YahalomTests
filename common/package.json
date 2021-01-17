@@ -15,7 +15,10 @@
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
-	"dependencies": {},
+	"dependencies": {
+		"class-validator": "^0.13.1",
+		"reflect-metadata": "^0.1.13"
+	},
 	"devDependencies": {
 		"@types/node": "^14.14.20",
 		"@typescript-eslint/eslint-plugin": "^4.13.0",

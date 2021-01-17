@@ -1,23 +1,23 @@
 import { models } from "@yahalom-tests/common";
 import React, { useState, useContext, createContext } from "react";
+import { authService } from "../services";
 
-type userFn = (user: models.interfaces.User) => models.interfaces.User | null;
 type providerFn = {
-	user: models.interfaces.User | undefined;
-	signin: userFn;
-	signup: userFn;
+	jwt?: string; //json web token.
+	signin: (user: models.interfaces.User) => Promise<boolean>;
+	signup: (user: models.interfaces.User) => Promise<boolean>;
 	signout: () => void;
 	sendPasswordResetEmail: (email: string) => boolean;
 	confirmPasswordReset: (code: string, password: string) => boolean;
 };
-
+//define defaults results for context
 const authContext = createContext<providerFn>({
-	confirmPasswordReset: () => true,
+	confirmPasswordReset: () => false,
 	sendPasswordResetEmail: () => false,
-	signin: () => null,
-	signout: () => {},
-	signup: () => null,
-	user: undefined,
+	signin: async () => false,
+	signout: () => { },
+	signup: async () => false,
+	jwt: undefined
 });
 
 export function ProvideAuth({ children }: React.PropsWithChildren<{}>) {
@@ -30,24 +30,31 @@ export const useAuth = () => {
 };
 
 function useProvideAuth() {
-	const [user, setUser] = useState<models.interfaces.User>();
+	const [jwt, setJwt] = useState<string>();
 
-	// Wrap any Firebase methods we want to use making sure ...
-	// ... to save the user to state.
-	const signin: userFn = user => {
-		//DO async login
-		setUser(user);
-		return user;
+	const signin = async (user: models.interfaces.User) => {
+		try {
+			const { data } = await authService.login(user);
+			setJwt(data);
+			return true;
+		} catch (error) {
+			return false;
+		}
 	};
 
-	const signup: userFn = user => {
+	const signup = async (user: models.interfaces.User) => {
 		//DO async signup
-		setUser(user);
-		return user;
+		try {
+			const { data } = await authService.signup(user);
+			setJwt(data);
+			return true;
+		} catch (error) {
+			return false;
+		}
 	};
 
 	const signout = () => {
-		setUser(undefined);
+		setJwt(undefined);
 	};
 
 	const sendPasswordResetEmail = (email: string) => {
@@ -71,7 +78,7 @@ function useProvideAuth() {
 	// }, []);
 	// Return the user object and auth methods
 	return {
-		user,
+		jwt,
 		signin,
 		signup,
 		signout,
