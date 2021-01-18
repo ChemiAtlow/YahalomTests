@@ -1,0 +1,92 @@
+.tooltip {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	line-height: normal;
+	padding: 11px;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+	letter-spacing: normal;
+	word-break: normal;
+	word-spacing: normal;
+	word-wrap: normal;
+	white-space: nowrap;
+	line-break: auto;
+	z-index: 50;
+	transition: opacity ease 0.4s;
+	background-color: rgba(0, 0, 0, 0.75);
+	box-shadow: 0 2px 9px 0 rgba(0, 0, 0, 0.5);
+	color: $light;
+	border-radius: 8px;
+
+	&.top,
+	&.top-left,
+	&.top-right {
+		transform: translate(-50%, -100%);
+		margin-top: -10px;
+	}
+
+	&.top-right {
+		transform: translate(-100%, -100%);
+	}
+
+	&.top-left {
+		transform: translate(0%, -100%);
+	}
+
+	&.bottom,
+	&.bottom-left,
+	&.bottom-right {
+		transform: translate(-50%, 0%);
+		margin-top: 10px;
+	}
+
+	&.bottom-right {
+		transform: translate(-100%, 0%);
+	}
+
+	&.bottom-left {
+		transform: translate(0%, 0%);
+	}
+
+	&.left,
+	&.left-top,
+	&.left-bottom {
+		transform: translate(-100%, -50%);
+		margin-left: -10px;
+	}
+
+	&.left-top {
+		transform: translate(-100%, 0%);
+	}
+
+	&.left-bottom {
+		transform: translate(-100%, -100%);
+	}
+
+	&.right,
+	&.right-top,
+	&.right-bottom {
+		transform: translate(0%, -50%);
+		margin-left: 10px;
+	}
+
+	&.right-bottom {
+		transform: translate(0%, -100%);
+	}
+
+	&.right-top {
+		transform: translate(0%, 0%);
+	}
+
+	&.white {
+		border-radius: 0;
+		font-size: 12px;
+		border: 1px solid $c-border;
+		box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 0.15);
+		background-color: $light;
+		color: $primary;
+	}
+}
