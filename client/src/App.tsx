@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ProvideAuth } from "./hooks/auth.hook";
 import NavBar from "./components/NavBar/NavBar";
-import PrivateRoute from "./components/privateRoute";
+import PrivateRoute from "./components/PrivateRoute";
 import { Home, Login, Questions, Reports, Tests } from "./views";
 
 const App: React.FC = () => {
