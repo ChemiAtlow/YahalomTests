@@ -9,8 +9,8 @@ export type Column = {
 	isFromData: boolean;
 	template?: React.ComponentType<{ data?: any }>;
 } & (
-	| { isFromData: true; key: string }
-	| { isFromData: false; template: React.ComponentType });
+		| { isFromData: true; key: string }
+		| { isFromData: false; template: React.ComponentType });
 interface DataTableProps {
 	data: ArrayItem[];
 	columns: Column[];
@@ -43,15 +43,14 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
 				{!filteredData.length ? (
 					<div className="row row-full">No Records to show.</div>
 				) : (
-					filteredData.map((record, rowInd) => (
-						<Row
-							columns={columns}
-							record={record}
-							rowInd={rowInd}
-							key={`row-${rowInd}`}
-						/>
-					))
-				)}
+						filteredData.map((record, rowInd) => (
+							<Row
+								columns={columns}
+								record={record}
+								key={`row-${rowInd}`}
+							/>
+						))
+					)}
 			</div>
 		</div>
 	);
