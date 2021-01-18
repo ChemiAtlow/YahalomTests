@@ -3,7 +3,7 @@ export class EmailDto {
 	@IsString()
 	@IsNotEmpty()
 	subject!: string;
-    @IsString()
+	@IsString()
 	@IsNotEmpty()
-	body!: boolean;
+	body!: string;
 }
