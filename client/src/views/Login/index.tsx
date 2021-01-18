@@ -35,7 +35,6 @@ const Login: React.FC = () => {
 		e.preventDefault();
 		const authMethod = isLogin ? signin : signup;
 		if (await authMethod(tmpUser)) {
-			console.log(from, state);
 			replace(from);
 		}
 	};
