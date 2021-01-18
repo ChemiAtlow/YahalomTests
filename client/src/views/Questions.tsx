@@ -1,25 +1,34 @@
 import { models } from "@yahalom-tests/common";
 import React, { useEffect, useState } from "react";
+import Ellipsis from "../components/Ellipsis";
+import { AppButton } from "../components/Forms";
 import DataTable, { Column } from "../components/Table";
-import Tooltip from "../components/Tooltip";
 import { questionService } from "../services";
 
 const columns: Column[] = [
 	{
-		label: "Id",
-		isFromData: true,
-		key: "id",
-	},
-	{
-		label: "Question title",
+		label: "Title",
 		isFromData: true,
 		key: "title",
 		template: ({ data }) => (
-			<Tooltip value={data} direction="right">
-				{data}
-			</Tooltip>
+			<Ellipsis data={data} maxLength={50} direction="right" />
 		),
 	},
+	{
+		label: "Type",
+		isFromData: true,
+		key: "type",
+	},
+	{
+		label: "Last Update",
+		isFromData: true,
+		key: "lastUpdate",
+	},
+	{
+		label: "",
+		isFromData: true,
+		key: "active",
+	}
 ];
 
 const Questions: React.FC = () => {
@@ -35,6 +44,7 @@ const Questions: React.FC = () => {
 	return (
 		<div>
 			<h1>Questions</h1>
+			<AppButton>Add new question</AppButton>
 			<DataTable data={questions} columns={columns} />
 		</div>
 	);

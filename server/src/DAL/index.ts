@@ -11,7 +11,11 @@ export const studyFieldRepository = new Repository<models.interfaces.StudyField>
 	"StudyField"
 );
 export const userRepository = new UserRepository("userDB.json");
-export const questionsRepository = new Repository<models.interfaces.Question>(
+export const questionRepository = new Repository<models.interfaces.Question>(
 	"questionDB.json",
 	"Question"
+);
+export const testRepository = new Repository<models.interfaces.Test>(
+	"testDB.json",
+	"Test"
 );

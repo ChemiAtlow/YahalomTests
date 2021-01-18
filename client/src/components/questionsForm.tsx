@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { models } from "@yahalom-tests/common";
 
 interface QuestionsFormProps {
-	onAddQuestion: (question: models.interfaces.Question) => Promise<void>;
+	onAddQuestion: (question: models.dtos.QuestionDto) => Promise<void>;
 }
-type ErrorValues = Partial<Record<keyof models.interfaces.Question, string>>;
+type ErrorValues = Partial<Record<keyof models.dtos.QuestionDto, string>>;
 
 const QuestionsForm: React.FC<QuestionsFormProps> = ({ onAddQuestion }) => {
 	const [title, setTitle] = useState("");
@@ -28,7 +28,7 @@ const QuestionsForm: React.FC<QuestionsFormProps> = ({ onAddQuestion }) => {
 		setErrors(errors ?? {});
 		if (errors) return;
 
-		const questionToAdd: models.interfaces.Question = {
+		const questionToAdd: models.dtos.QuestionDto = {
 			title,
 			type: models.enums.QuestionType.SingleChoice,
 			alignment: "Horizontal",

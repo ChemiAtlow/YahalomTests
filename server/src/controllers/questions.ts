@@ -1,30 +1,39 @@
 import { models } from "@yahalom-tests/common";
-import { questionsRepository } from "../DAL";
+import { questionRepository, testRepository } from "../DAL";
 import { BadRequestError } from "../errors";
 
 // Get Questions
-export const getAllQuestions = () => {
-	return questionsRepository.getAll();
+export const getAllQuestions = async () => {
+	const tests = await testRepository.getAll();
+	const questions = await questionRepository.getAll();
+	questions.forEach(q => {
+		if (q.active) {
+			q.testCount = tests.filter(t => t.questions.includes(q.id || "")).length;
+		}
+	});
+	return questions;
 };
 
 export const getQuestionById = (id: models.classes.guid) => {
-	return questionsRepository.getItemById(id);
+	return questionRepository.getItemById(id);
 };
 
 // Add question to the list
 export const addQuestion = (question: models.dtos.QuestionDto) => {
-	return questionsRepository.addItem(question);
+	return questionRepository.addItem({ ...question, lastUpdate: Date.now(), active: false });
 };
 
 export const editQuestion = async (
 	id: models.classes.guid,
 	updatedQuestion: models.dtos.QuestionDto
 ) => {
-	await questionsRepository.updateItem(id, updatedQuestion);
+	await questionRepository.updateItem(id, { ...updatedQuestion, lastUpdate: Date.now() });
 	//update old question ==> handled by Repo
 	//push  edited question to db ==> handled by Repo
 };
 
 export const deleteQuestion = async (id: models.classes.guid) => {
-	await questionsRepository.deleteItem(id);
+	const question = await getQuestionById(id);
+	if (question.active) { throw new BadRequestError("This question cannot be deleted!"); }
+	await questionRepository.deleteItem(id);
 };
