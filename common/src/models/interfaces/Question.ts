@@ -9,4 +9,6 @@ export interface Question extends HasId {
 	answers: Answer[];
 	label: string;
 	alignment: "Horizontal" | "Vertical";
+	lastUpdate: number;
+	active?: boolean;
 }
