@@ -4,6 +4,7 @@ import { authService } from "../services";
 
 type providerFn = {
 	jwt?: string; //json web token.
+	studyFieldId?: string; //ID of current study field.
 	signin: (user: models.interfaces.User) => Promise<boolean>;
 	signup: (user: models.interfaces.User) => Promise<boolean>;
 	signout: () => void;
@@ -18,6 +19,7 @@ const authContext = createContext<providerFn>({
 	signout: () => {},
 	signup: async () => false,
 	jwt: undefined,
+	studyFieldId: undefined,
 });
 
 export function ProvideAuth({ children }: React.PropsWithChildren<{}>) {
@@ -31,6 +33,7 @@ export const useAuth = () => {
 
 function useProvideAuth() {
 	const [jwt, setJwt] = useState<string>();
+	const [studyFieldId, setStudyFieldId] = useState<models.classes.guid>();
 
 	const signin = async (user: models.interfaces.User) => {
 		try {
@@ -82,6 +85,8 @@ function useProvideAuth() {
 		signin,
 		signup,
 		signout,
+		studyFieldId,
+		setStudyFieldId,
 		sendPasswordResetEmail,
 		confirmPasswordReset,
 	};

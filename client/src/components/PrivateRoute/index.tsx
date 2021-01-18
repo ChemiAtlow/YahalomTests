@@ -1,23 +1,32 @@
 import React from "react";
 import { Redirect, Route, RouteProps } from "react-router-dom";
-import { useAuth } from "../hooks/auth.hook";
+import { useAuth } from "../../hooks/";
 
-const PrivateRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
-	const { jwt } = useAuth();
+interface PrivateRouteProps extends RouteProps {
+	reuqiresField?: boolean;
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({
+	children,
+	reuqiresField,
+	...rest
+}) => {
+	const { jwt, studyFieldId } = useAuth();
+	const isAuth = Boolean(jwt) && reuqiresField ? Boolean(studyFieldId) : true;
 	return (
 		<Route
 			{...rest}
 			render={({ location }) =>
-				jwt ? (
+				isAuth ? (
 					children
 				) : (
-						<Redirect
-							to={{
-								pathname: "/login",
-								state: { from: location },
-							}}
-						/>
-					)
+					<Redirect
+						to={{
+							pathname: "/login",
+							state: { from: location },
+						}}
+					/>
+				)
 			}
 		/>
 	);
