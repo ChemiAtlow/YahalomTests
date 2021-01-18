@@ -7,7 +7,7 @@
 }
 .arrow {
 	position: absolute;
-	top: 60px;
+	top: 65px;
 	right: 10px;
 	width: 300px;
 	z-index: 20;
@@ -23,7 +23,7 @@
 	}
 
 	.menu {
-		box-shadow: 0 1px 8px $primary;
+		box-shadow: 0 0 5px $primary;
 		border-radius: 8px;
 		overflow: hidden;
 		transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
@@ -49,12 +49,12 @@
 	&:before {
 		content: " ";
 		position: absolute;
-		right: 2.5px;
+		right: 4px;
 		top: -18px;
 		border-top: none;
-		border-right: 18px solid transparent;
-		border-left: 18px solid transparent;
-		border-bottom: 18px solid rgba($color: $primary, $alpha: 0.4);
+		border-right: 16px solid transparent;
+		border-left: 16px solid transparent;
+		border-bottom: 16px solid rgba($color: $primary, $alpha: 0.4);
 		filter: blur(1px);
 	}
 	&:after {

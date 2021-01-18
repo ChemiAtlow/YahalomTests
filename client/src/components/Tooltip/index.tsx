@@ -1,112 +1,136 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, cloneElement } from 'react';
+import * as ReactDOM from 'react-dom';
+import './Tooltip.scoped.scss';
+import { useClickOutside } from '../../hooks/';
 
-enum WindowRegion {
-	TopLeft,
-	TopRight,
-	BottomLeft,
-	BottomRight,
-}
+export type direction = 'top' |
+    'top-left' |
+    'top-right' |
+    'bottom' |
+    'bottom-left' |
+    'bottom-right' |
+    'right' |
+    'right-top' |
+    'right-bottom' |
+    'left' |
+    'left-top' |
+    'left-bottom';
 
-function windowRegion(mouseX: number, mouseY: number) {
-	const halfHeight = window.window.innerHeight * 0.5;
-	if (mouseX <= window.window.innerWidth * 0.5) {
-		return mouseY <= halfHeight
-			? WindowRegion.TopLeft
-			: WindowRegion.BottomLeft;
-	}
-	return mouseY <= halfHeight
-		? WindowRegion.TopRight
-		: WindowRegion.BottomRight;
-}
+type Cloneable = Parameters<typeof React['cloneElement']>[0]
 
-export interface TooltipProps {
-	content: string | JSX.Element;
-	tooltipClassName?: string;
-	offsetLeft?: number;
-	offsetRight?: number;
-	offsetTop?: number;
-	offsetBottom?: number;
-}
+export type ITooltipProps = {
+    className?: string;
+    delay?: number;
+    direction?: direction;
+    color?: 'black' | 'white';
+    value: React.ReactNode;
+    trigger?: 'hover' | 'click';
+	onVisibilityChanged?: (isVisible: boolean) => void;
+} & ({ attachToChild?: false; wrapperClassName?: string; } | { attachToChild: true; children: Cloneable })
 
-export interface TooltipState {
-	x: number;
-	y: number;
-	wndRegion: WindowRegion;
-	hidden: boolean;
-	ttClassName: string;
-	offsetLeft: number;
-	offsetRight: number;
-	offsetTop: number;
-	offsetBottom: number;
-}
+type Rect = { top: number, left: number, width: number, height: number };
+export const rectToStyles: (rect: Rect, direction: direction) => { top: number; left: number; opacity: number } = ({
+    top, left, width, height,
+}, direction) => {
+    switch (direction) {
+        case 'right':
+            return { top: top + height / 2, left: left + width, opacity: 0 };
+        case 'left':
+            return { top: top + height / 2, left, opacity: 0 };
+        case 'bottom':
+            return { top: top + height, left: left + width / 2, opacity: 0 };
+        case 'left-bottom':
+        case 'bottom-left':
+            return { top: top + height, left, opacity: 0 };
+        case 'right-bottom':
+        case 'bottom-right':
+            return { top: top + height, left: left + width, opacity: 0 };
+        case 'left-top':
+        case 'top-left':
+            return { top, left, opacity: 0 };
+        case 'right-top':
+        case 'top-right':
+            return { top, left: left + width, opacity: 0 };
+        case 'top':
+        default:
+            return { top, left: left + width / 2, opacity: 0 };
+    }
+};
 
-const Tooltip: React.FC<TooltipProps> = ({ children, content, tooltipClassName, ...offsets }) => {
-    const [state, setState] = useState<TooltipState>({
-        x: 0,
-        y:0,
-        wndRegion: WindowRegion.TopLeft,
-        hidden: true,
-        ttClassName: tooltipClassName || "tooltip",
-        offsetLeft: offsets.offsetLeft || 10,
-        offsetTop: offsets.offsetTop || 10,
-        offsetRight: offsets.offsetRight || 5,
-        offsetBottom: offsets.offsetBottom || 5,
-    });
+const Tooltip: React.FC<ITooltipProps> = ({ delay, direction, onVisibilityChanged, value, children, ...props }) => {
+	const [isVisible, setVisibility] = useState(false);
+	const [timeoutId, setTimeoutId] = useState<number | null>(null);
+    const [style, setStyle] = useState({ top: 0, left: 0, opacity: 0 });
+    const trigger = props.trigger || 'hover';
+    const handleVisibilyChanged = useCallback((isVisible: boolean) => {
+        setVisibility(isVisible);
+        onVisibilityChanged?.(isVisible);
+    }, [onVisibilityChanged, setVisibility]);
 
-	const onMouseEnter = (e: React.MouseEvent) => {
-		setState({
-            ...state,
-			hidden: false,
-			wndRegion: windowRegion(e.clientX, e.clientY),
-		});
-	};
+    const showTooltip = useCallback((targetBoundingRect: DOMRect) => {
+        if (!value) {
+            return;
+        }
+        const newStyle = rectToStyles(targetBoundingRect, direction ?? 'top');
+        setStyle(newStyle);
+		handleVisibilyChanged(true);
+		setTimeoutId(setTimeout(() => {
+            setStyle({ ...newStyle, opacity: 1 });
+            setTimeoutId(null);
+        }, delay ?? 0) as any);
+    }, [setStyle, setTimeoutId, delay, direction, value, handleVisibilyChanged]);
 
-	const onMouseLeave = () => {
-		setState({ ...state, hidden: true });
-	};
-    const computeStyle: () => React.CSSProperties  = () => {
-        const position = "fixed";
-		switch (state.wndRegion) {
-			case WindowRegion.TopLeft:
-				return {
-					position,
-					left: `${state.x + state.offsetLeft}px`,
-					top: `${state.y + state.offsetTop}px`,
-				};
-			case WindowRegion.TopRight:
-				return {
-					position,
-					right: `${window.window.innerWidth -
-						state.x +
-						state.offsetRight}px`,
-					top: `${state.y + state.offsetTop}px`,
-				};
-			case WindowRegion.BottomLeft:
-				return {
-					position,
-					left: `${state.x + state.offsetLeft}px`,
-					bottom: `${window.window.innerHeight -
-						state.y +
-						state.offsetBottom}px`,
-				};
-			case WindowRegion.BottomRight:
-				return {
-					position,
-					right: `${window.window.innerWidth -
-						state.x +
-						state.offsetRight}px`,
-					bottom: `${window.window.innerHeight -
-						state.y +
-						state.offsetBottom}px`,
-				};
-		}
-	};
-    return (
-        <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-            {children}
-            {state?.hidden ? null : (<div className={state.ttClassName} style={computeStyle()}>{content}</div>)}
-        </div>
-    )
-}
+    const handleMouseEnter = useCallback((e: React.MouseEvent<Element, MouseEvent>) => {
+        if (trigger === 'hover') {
+            showTooltip(e.currentTarget.getBoundingClientRect());
+        }
+    }, [showTooltip, trigger]);
+
+
+    const hideTooltip = useCallback(() => {
+		if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        setStyle({ top: 0, left: 0, opacity: 0 });
+        handleVisibilyChanged(false);
+    }, [setStyle, handleVisibilyChanged, timeoutId]);
+
+    const handleClick = useCallback((e: React.MouseEvent<Element, MouseEvent>) => {
+        if (trigger !== 'click') {
+            return;
+        }
+        if (isVisible) {
+            hideTooltip();
+        } else {
+            showTooltip(e.currentTarget.getBoundingClientRect());
+        }
+    }, [hideTooltip, isVisible, showTooltip, trigger]);
+
+    useClickOutside<HTMLDivElement>({ callback: hideTooltip, activate: isVisible && trigger === 'click', eventListenerOptions: false });
+
+    const handleMouseLeave = useCallback(() => {
+        if (trigger === 'hover') {
+            hideTooltip();
+        }
+    }, [hideTooltip, trigger]);
+
+    const tooltip = isVisible && ReactDOM.createPortal(<div
+        className={`tooltip ${props.className ?? ""} ${props.color ?? "black"} ${direction ?? "top"}`}
+        style={style}>
+        {value}
+    </div>, document.body);
+
+    if (props.attachToChild) {
+        return <>
+            {tooltip}
+            { cloneElement(children as Cloneable, trigger === 'hover' ? { onMouseEnter: handleMouseEnter, onMouseLeave: handleMouseLeave } as any : { onClick: handleClick })}
+        </>;
+    }
+
+    return <span className={props.wrapperClassName} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={handleClick}>
+        {tooltip}
+        {children}
+    </span>;
+};
 
 export default Tooltip;
