@@ -9,7 +9,7 @@ interface DataTableProps {
 }
 
 const DataTable: React.FC<DataTableProps> = ({ data }) => {
-	const { data: filteredData, sort } = useSearchAndSort(data);
+	const { data: filteredData, sort, sortTerms } = useSearchAndSort(data);
 	const [columns, setColumns] = useState<string[]>([]);
 
 	useEffect(() => {
@@ -17,18 +17,26 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
 		setColumns(keys);
 	}, [data, setColumns]);
 
+	const sortColumn = (key: string) => {
+		let descending = false;
+		if (sortTerms.term === key) {
+			descending = !sortTerms.isDescending;
+		}
+		sort(key, descending);
+	};
+
 	return (
 		<div className="table">
 			<div className="header">
 				{columns.map((col, i) => (
-					<div key={`header-${i}`} onClick={() => sort(col)}>
+					<div key={`header-${i}`} onClick={() => sortColumn(col)}>
 						{col}
 					</div>
 				))}
 			</div>
 			<div className="body">
-				{filteredData.length ? (
-					<div className="row row-full">No Records yet.</div>
+				{!filteredData.length ? (
+					<div className="row row-full">No Records to show.</div>
 				) : (
 					filteredData.map((record, rowInd) => (
 						<Row
