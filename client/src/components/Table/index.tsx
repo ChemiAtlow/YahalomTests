@@ -1,28 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useSearchAndSort } from "../../hooks";
 import Row from "./Row";
 import "./Table.scoped.scss";
 
-type arrayItem = { [key: string]: any };
+type ArrayItem = { [key: string]: any };
+export type Column = {
+	label: string;
+	isFromData: boolean;
+	template?: React.ComponentType<{ data?: any }>;
+} & (
+	| { isFromData: true; key: string }
+	| { isFromData: false; template: React.ComponentType });
 interface DataTableProps {
-	data: arrayItem[];
+	data: ArrayItem[];
+	columns: Column[];
 }
 
-const DataTable: React.FC<DataTableProps> = ({ data }) => {
+const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
 	const { data: filteredData, sort, sortTerms } = useSearchAndSort(data);
-	const [columns, setColumns] = useState<string[]>([]);
 
-	useEffect(() => {
-		const keys = Object.keys(Object(data[0]));
-		setColumns(keys);
-	}, [data, setColumns]);
-
-	const sortColumn = (key: string) => {
+	const sortColumn = (col: Column) => {
+		if (!col.isFromData) {
+			return;
+		}
 		let descending = false;
-		if (sortTerms.term === key) {
+		if (sortTerms.term === col.key) {
 			descending = !sortTerms.isDescending;
 		}
-		sort(key, descending);
+		sort(col.key, descending);
 	};
 
 	return (
@@ -30,7 +35,7 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
 			<div className="header">
 				{columns.map((col, i) => (
 					<div key={`header-${i}`} onClick={() => sortColumn(col)}>
-						{col}
+						{col.label}
 					</div>
 				))}
 			</div>
