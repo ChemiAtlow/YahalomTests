@@ -1,10 +1,17 @@
 import { models } from "@yahalom-tests/common";
-import { questionRepository } from "../DAL";
+import { questionRepository, testRepository } from "../DAL";
 import { BadRequestError } from "../errors";
 
 // Get Questions
-export const getAllQuestions = () => {
-	return questionRepository.getAll();
+export const getAllQuestions = async () => {
+	const tests = await testRepository.getAll();
+	const questions = await questionRepository.getAll();
+	questions.forEach(q => {
+		if (q.active) {
+			q.testCount = tests.filter(t => t.questions.includes(q.id || "")).length;
+		}
+	});
+	return questions;
 };
 
 export const getQuestionById = (id: models.classes.guid) => {

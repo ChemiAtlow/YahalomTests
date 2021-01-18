@@ -11,4 +11,5 @@ export interface Question extends HasId {
 	alignment: "Horizontal" | "Vertical";
 	lastUpdate: number;
 	active?: boolean;
+	testCount?: number;
 }
