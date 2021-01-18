@@ -1,48 +1,56 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
-export function useSearchAndSort<T extends {}>(incomingData: T[]) {
-	console.log("started sas hook:", incomingData);
-	const [baseData, setBaseData] = useState(incomingData);
+export function useSearchAndSort<T extends { [key: string]: any }>(
+	incomingData: T[]
+) {
 	const [searchTerm, setSearchTerm] = useState("");
-	const [data, setData] = useState<T[]>(baseData);
+	const [data, setData] = useState<T[]>(incomingData);
+	const [sortTerms, setSortTerms] = useState({
+		term: "",
+		isDescending: false,
+	});
 
 	const search = (term: string) => {
 		setSearchTerm(term);
 	};
 
-	const compareBy = (
-		self: T,
-		other: T,
-		key: keyof T,
-		isDescending: boolean
-	) => {
-		const result = () => {
-			if (self[key] < other[key]) return -1;
-			if (self[key] > other[key]) return 1;
-			return 0;
-		};
-		return isDescending ? result() * -1 : result();
+	const sort = (key: string, isDescending: boolean = false) => {
+		setSortTerms({ term: key, isDescending });
 	};
 
-	const sort = (key: keyof T, isDescending: boolean = false) => {
-		let arrayCopy = [...baseData];
-		arrayCopy.sort((a, b) => compareBy(a, b, key, isDescending));
-		setBaseData(arrayCopy);
-	};
-
-	useEffect(() => {
-		const results = baseData.filter(entry =>
+	useMemo(() => {
+		let arrayCopy = [...incomingData];
+		if (sortTerms.term) {
+			const compareBy = (
+				self: T,
+				other: T,
+				key: keyof T,
+				isDescending: boolean
+			) => {
+				const result = () => {
+					if (self[key] < other[key]) return -1;
+					if (self[key] > other[key]) return 1;
+					return 0;
+				};
+				return isDescending ? result() * -1 : result();
+			};
+			arrayCopy.sort((a, b) =>
+				compareBy(a, b, sortTerms.term, sortTerms.isDescending)
+			);
+		}
+		const results = arrayCopy.filter(entry =>
 			Object.values(entry).some(val =>
 				`${val}`.match(new RegExp(searchTerm, "i"))
 			)
 		);
 		setData(results);
-	}, [baseData, searchTerm, setData]);
+	}, [incomingData, sortTerms, searchTerm, setData]);
 
 	return {
 		data,
 		sort,
 		search,
+		sortTerms,
 		searchTerm,
 	};
 }
