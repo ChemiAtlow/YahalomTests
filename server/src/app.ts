@@ -4,7 +4,7 @@ import compression from "compression";
 import { json } from "body-parser";
 import { patchRouterParamForAsyncHandling } from "./utils";
 import { questionsRouter, authRouter } from "./routes";
-import { URLS } from "./constants/";
+import { constants } from "@yahalom-tests/common";
 import { errorMiddleware, notFoundMiddleware } from "./middleware";
 import "reflect-metadata";
 
@@ -20,7 +20,7 @@ app.use("/auth", authRouter);
 app.use("*", notFoundMiddleware);
 app.use(errorMiddleware);
 
-const { serverDomain, serverPort } = URLS;
+const { serverDomain, serverPort } = constants.URLS;
 
 app.listen(serverPort, () =>
 	console.log(
