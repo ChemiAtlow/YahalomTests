@@ -2,11 +2,11 @@ import React from "react";
 import { Redirect, Route, RouteProps } from "react-router-dom";
 import { useAuth } from "../../hooks/";
 
-interface PrivateRouteProps extends RouteProps {
+interface ProtectedRouteProps extends RouteProps {
 	reuqiresField?: boolean;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 	children,
 	reuqiresField,
 	...rest
@@ -32,4 +32,4 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
 	);
 };
 
-export default PrivateRoute;
+export default ProtectedRoute;
