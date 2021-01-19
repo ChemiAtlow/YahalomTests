@@ -33,9 +33,22 @@ const Login: React.FC = () => {
 	}, [tmpUser.password, setPasswordError]);
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const authMethod = isLogin ? signin : signup;
-		if (await authMethod(tmpUser)) {
-			replace(from);
+		if (isLogin) {
+			if (await signin(tmpUser)) {
+				replace(from);
+			}
+			else {
+				console.warn("login failed!");
+				//error component;
+			}
+		}
+		else {
+			if(await signup(tmpUser)){
+				// success message
+			}
+			else{
+				//failure message
+			}
 		}
 	};
 
