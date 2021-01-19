@@ -1,6 +1,6 @@
 import { BrowserRouter, Switch } from "react-router-dom";
 import { ProvideAuth } from "./hooks/auth.hook";
-import { NavBar, ProtectedRoute } from "./components";
+import { NavBar, ProtectedRoute, NestedRoutes } from "./components";
 import { Home, Login, Questions, Reports, Tests } from "./views";
 
 const App: React.FC = () => {
@@ -10,15 +10,21 @@ const App: React.FC = () => {
 				<NavBar />
 				<main className="app">
 					<Switch>
-						<ProtectedRoute requiresField path="/questions">
-							<Questions />
+						<ProtectedRoute requiresField path="/:organizationId/:fieldId">
+							<NestedRoutes>
+								<ProtectedRoute requiresField path="/questions">
+									<Questions />
+								</ProtectedRoute>
+								<ProtectedRoute requiresField path="/tests">
+									<Tests />
+								</ProtectedRoute>
+								<ProtectedRoute requiresField path="/reports">
+									<Reports />
+								</ProtectedRoute>
+							</NestedRoutes>
+							{/*component: contain question/tests/reports routes*/}
 						</ProtectedRoute>
-						<ProtectedRoute requiresField path="/tests">
-							<Tests />
-						</ProtectedRoute>
-						<ProtectedRoute requiresField path="/reports">
-							<Reports />
-						</ProtectedRoute>
+
 						<ProtectedRoute
 							onlyNonAuth
 							path={["/login", "/signup"]}>
