@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { constants } from "@yahalom-tests/common";
-import { AppButton, FormField } from "../../components/Forms";
+import { AppButton, FormField } from "../../components";
 import { useAuth } from "../../hooks/auth.hook";
 import "./Login.scoped.scss";
 

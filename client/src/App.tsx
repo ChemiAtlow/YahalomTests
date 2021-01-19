@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ProvideAuth } from "./hooks/auth.hook";
-import NavBar from "./components/NavBar/NavBar";
-import PrivateRoute from "./components/PrivateRoute";
+import { NavBar, ProtectedRoute } from "./components";
 import { Home, Login, Questions, Reports, Tests } from "./views";
 
 const App: React.FC = () => {
@@ -11,21 +10,21 @@ const App: React.FC = () => {
 				<NavBar />
 				<main className="app">
 					<Switch>
-						<PrivateRoute path="/questions">
+						<ProtectedRoute path="/questions">
 							<Questions />
-						</PrivateRoute>
-						<PrivateRoute path="/tests">
+						</ProtectedRoute>
+						<ProtectedRoute path="/tests">
 							<Tests />
-						</PrivateRoute>
-						<PrivateRoute path="/reports">
+						</ProtectedRoute>
+						<ProtectedRoute path="/reports">
 							<Reports />
-						</PrivateRoute>
+						</ProtectedRoute>
 						<Route path={["/login", "/signup"]}>
 							<Login />
 						</Route>
-						<PrivateRoute path="/">
+						<ProtectedRoute path="/">
 							<Home />
-						</PrivateRoute>
+						</ProtectedRoute>
 					</Switch>
 				</main>
 			</BrowserRouter>
