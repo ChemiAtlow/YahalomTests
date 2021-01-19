@@ -1,52 +1,61 @@
-import { useLocation, useParams } from "react-router-dom";
 import { models } from '@yahalom-tests/common'
-import React, { useState } from 'react'
-import { AppButton, FormField } from '../../components/Forms'
-import { QuestionType } from "@yahalom-tests/common/dist/models/enums";
+import React, { useState, useEffect } from 'react'
+import { AppButton, FormField, Select } from '../../components/Forms'
+import { useAuth } from "../../hooks";
 
-//use location hook - get id from url
-//use effect - will called once when location hook 
 interface EditParams {
     questionId?: models.classes.guid;
 }
+const types = (Object.values(models.enums.QuestionType) as number[])
+    .filter(isNaN)
+    .map(v => ({ label: v.toString() }));
 
 const EditQuestion: React.FC = () => {
-    const [question, SetQuestion] = useState<models.interfaces.Question>({ title: "", additionalContent: "", type: QuestionType.SingleChoice, answers: [], label: "", alignment: "Vertical", lastUpdate: -1 });
+    const [question, setQuestion] = useState<models.dtos.QuestionDto>({
+        title: "",
+        additionalContent: "",
+        type: models.enums.QuestionType.SingleChoice,
+        answers: [],
+        label: "",
+        alignment: "Vertical",
+    });
     const [titleError, setTitleError] = useState("");
     const [answersError, setAnswersError] = useState("");
     const [labelError, setLabelError] = useState("");
-    const [alignmentError, setAlignmentError] = useState("");
 
-    const isValid = Boolean(
+    const { activeStudyField } = useAuth()
+
+    const isInvalid = Boolean(
         titleError || answersError || labelError ||
-        alignmentError ||
-        question.type || question.answers.length < 1
+        question.answers.length < 2
     );
 
-    const [questionTypes, setQuestionTypes] = useState(models.enums.QuestionType);
-    const onTypeSelected = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        SetQuestion({ ...question, type: QuestionType.SingleChoice });
-    };
+    // useEffect(() => {
+     
+    // }, [question])
 
-    const { state, pathname } = useLocation<any>();
-    const { questionId } = useParams<EditParams>();
-    const isActive = (questionId === undefined) ? true : false; //this need to be changed to searching question in server.
+    const onTypeSelected = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setQuestion({ ...question, type: e.target.selectedIndex - 1 });
+    };
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log("save");
     };
 
-
     return (
         <form onSubmit={onSubmit}>
+            <p>Field: <b>{activeStudyField?.name}</b></p>
+            <Select label="Question type"
+                value={question.type}
+                onChange={onTypeSelected}
+                options={types} />
             <FormField
                 label="title"
                 type="text"
-                autoComplete={isActive ? "Edit title" : "Create title"}
                 value={question.title}
                 onChange={e =>
-                    SetQuestion({ ...question, title: e.target.value.trim() })
+                    setQuestion({ ...question, title: e.target.value.trim() })
                 }
                 error={titleError}
             />
@@ -54,65 +63,39 @@ const EditQuestion: React.FC = () => {
             <FormField
                 label="aditional content"
                 type="textarea"
-                autoComplete={isActive ? "Edit content" : "Create content"}
                 value={question.additionalContent}
                 onChange={e =>
-                    SetQuestion({ ...question, additionalContent: e.target.value.trim() })
+                    setQuestion({ ...question, additionalContent: e.target.value.trim() })
                 }
                 error={titleError}
             />
-            <div>
-                <select value={questionTypes.SingleChoice} onChange={onTypeSelected}>
-                    {Object.keys(QuestionType).map((key, i) => {
-                        (
-                            <option key={key} value={key}>
-                                {QuestionType[i]}
-                            </option>
-                        )
-                    })}
-                </select>
-            </div>
-
             {/* /*not render on UI. need to check*/}
             <div> Answers
               {
-                    Array(4).map((e, i) => {
-                        (
-                            <FormField
-                                label={`${i} answer`}
-                                type="textarea"
-                                autoComplete={isActive ? "Edit answer" : "Create answer"}
-                                value={question.answers[i]?.content}
-                                onChange={e =>
-                                    SetQuestion({ ...question, answers: [{ content: e.target.value, correct: false }] }) //need to complete correct setState
-                                }
-                                error={answersError}
-                            />
-                        )
-                    })}
+                    Array(4).map(i =>
+                        <FormField
+                            label={`${i} answer`}
+                            type="textarea"
+                            value={question.answers[i]?.content}
+                            onChange={e =>
+                                setQuestion({ ...question, answers: [{ content: e.target.value, correct: false }] }) //need to complete correct setState
+                            }
+                            error={answersError}
+                        />)
+                }
             </div>
 
             <FormField
                 label="label"
                 type="text"
-                autoComplete={isActive ? "Edit label" : "Create label"}
                 value={question.label}
                 onChange={e =>
-                    SetQuestion({ ...question, label: e.target.value.trim() })
+                    setQuestion({ ...question, label: e.target.value.trim() })
                 }
                 error={labelError}
             />
-            <FormField
-                label="alignment"
-                type="text"
-                autoComplete={isActive ? "Edit alignment" : "Create alignment"}
-                value={question.alignment}
-                onChange={e =>
-                    SetQuestion({ ...question, alignment: "Horizontal" !== e.target.value.trim() ? "Horizontal" : "Vertical" })
-                }
-                error={alignmentError}
-            />
-            <AppButton disabled={isValid} type="submit">
+
+            <AppButton disabled={isInvalid} type="submit">
                 Submit
 				</AppButton>
         </form >
