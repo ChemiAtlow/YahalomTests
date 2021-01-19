@@ -18,7 +18,6 @@ export const signup = async ({ email, password }: models.dtos.UserDto) => {
 	await userRepository.addItem({
 		email,
 		password: hashedPassword,
-		organizations: [],
 		role: "Teacher",
 	});
 };
@@ -36,15 +35,13 @@ export const login = async ({ email, password }: models.dtos.UserDto) => {
 	}
 	const jwt = createUserJWT(userFromDb);
 	//Get info of organization and study fields.
-	const organizations = userFromDb.organizations || [];
+	const organizations = await organizationRepository.getAll();
+	const userOrganizatios = organizations.filter(org =>
+		org.users.includes(userFromDb.id || "")
+	);
 	const organizationsInfo = await Promise.all(
-		organizations.map<Promise<models.interfaces.OrganizationBaseInfo>>(
-			async orgId => {
-				const {
-					id,
-					fields: fieldIds,
-					name,
-				} = await organizationRepository.getItemById(orgId);
+		userOrganizatios.map<Promise<models.interfaces.OrganizationBaseInfo>>(
+			async ({ fields: fieldIds, name, id }) => {
 				const fields = await Promise.all(
 					fieldIds.map(fId => studyFieldRepository.getItemById(fId))
 				);
