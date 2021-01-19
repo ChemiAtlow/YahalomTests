@@ -18,11 +18,19 @@ const columns: Column[] = [
 		label: "Type",
 		isFromData: true,
 		key: "type",
+		template: ({data})=> <span>{data===0 ? "Single choice":"Multi choice"}</span>,
 	},
 	{
 		label: "Last Update",
 		isFromData: true,
 		key: "lastUpdate",
+		template: ({data}) => <span>{new Date(data).toLocaleString()}</span>
+	},
+	{
+		label: "Usage count",
+		isFromData: true,
+		key: "testCount",
+		template: ({data}) => <span>{data || 0}</span>
 	},
 	{
 		label: "",
@@ -32,9 +40,7 @@ const columns: Column[] = [
 ];
 
 const Questions: React.FC = () => {
-	const [questions, setQuestions] = useState<models.interfaces.Question[]>(
-		[]
-	);
+	const [questions, setQuestions] = useState<models.interfaces.Question[]>([]);
 
 	useEffect(() => {
 		questionService
