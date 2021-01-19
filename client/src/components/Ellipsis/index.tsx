@@ -1,5 +1,5 @@
 import React from 'react';
-import Tooltip, { direction } from '../Tooltip';
+import { Tooltip, direction } from '../Tooltip';
 
 interface EllipsisProps {
     data: string;
@@ -7,7 +7,7 @@ interface EllipsisProps {
     direction: direction;
 }
 
-const Ellipsis: React.FC<EllipsisProps> = ({ data, maxLength,direction }) => {
+const Ellipsis: React.FC<EllipsisProps> = ({ data, maxLength, direction }) => {
     const textToShow = data.length > maxLength ? `${data.substring(0, maxLength - 1).trim()}...` : data;
 
     return (
