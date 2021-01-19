@@ -3,16 +3,24 @@ import "./Select.scoped.scss";
 
 interface SelectProps extends React.InputHTMLAttributes<HTMLSelectElement> {
 	label: string;
+	options: { label: string; value?: string }[];
 }
 
-const Select: React.FC<SelectProps> = ({ label }) => {
+const Select: React.FC<SelectProps> = ({
+	label,
+	options,
+	value = "",
+	...rest
+}) => {
 	return (
 		<div className="select">
-			<select className="select-text" required>
-				<option value="" disabled selected />
-				<option value="1">Option 1</option>
-				<option value="2">Option 2</option>
-				<option value="3">Option 3</option>
+			<select className="select-text" required value={value} {...rest}>
+				<option className="select-text__default" value="" disabled />
+				{options.map(({ value, label }, i) => (
+					<option key={i} value={value || label}>
+						{label}
+					</option>
+				))}
 			</select>
 			<span className="select-highlight" />
 			<span className="select-bar" />

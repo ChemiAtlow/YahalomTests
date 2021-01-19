@@ -17,17 +17,22 @@ $top-margin: 1.5rem;
 		border-radius: 0;
 		border: none;
 		border-bottom: 1px solid $dark-gray;
+		&__default {
+			display: none;
+		}
 		&:focus {
 			outline: none;
 			~ .select-bar {
 				border-bottom: 3.5px solid $primary;
 				transform: scaleX(150);
 			}
+			~ .select-label {
+				color: $primary;
+			}
 		}
 		&:focus,
 		&:valid {
 			~ .select-label {
-				color: $primary;
 				top: 0;
 				transition: 0.2s ease all;
 				font-size: 14px;
@@ -41,7 +46,7 @@ $top-margin: 1.5rem;
 		position: absolute;
 		pointer-events: none;
 		left: 0;
-		top: 10px;
+		top: calc(0.5rem + #{$top-margin});
 		transition: 0.2s ease all;
 	}
 	&-bar {
@@ -57,15 +62,15 @@ $top-margin: 1.5rem;
 		transition: all 400ms ease-in-out;
 		width: 1%;
 	}
-	&-highlight {
-		position: absolute;
-		height: 60%;
-		width: 100px;
-		top: 25%;
-		left: 0;
-		pointer-events: none;
-		opacity: 0.5;
-	}
+	// &-highlight {
+	// 	position: absolute;
+	// 	height: 60%;
+	// 	width: 100px;
+	// 	top: 25%;
+	// 	left: 0;
+	// 	pointer-events: none;
+	// 	opacity: 0.5;
+	// }
 	/* Use custom arrow */
 	&:after {
 		position: absolute;
