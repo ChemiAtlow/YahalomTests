@@ -5,7 +5,7 @@ interface FormFieldProps
 	extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
 	type: "text" | "password" | "number" | "textarea" | "radio" | "checkbox";
 	label: string;
-	error: string;
+	error?: string;
 }
 const FormField: React.FC<FormFieldProps> = ({
 	label,
