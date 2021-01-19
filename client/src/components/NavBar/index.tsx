@@ -21,6 +21,7 @@ const NavBar: React.FC = () => {
 							<div className="main__header-more__back" />
 						</div>
 					}>
+					<Link to="/">Select study field</Link>
 					{activeStudyField && (
 						<Link to="/questions">Manage questions</Link>
 					)}

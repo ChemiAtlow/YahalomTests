@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { AppButton, Select } from "../../components";
 import { useAuth } from "../../hooks";
@@ -18,7 +18,7 @@ const Home: React.FC = () => {
 	const organizations = (organizationBaseInfo || []).map(({ name: label, id: value }) => ({ label, value }));
 	const relevantFields = (activeOrganization?.fields.map(({ name: label, id: value }) => ({ label, value })) || []);
 
-	useMemo(() => {
+	useEffect(() => {
 		if (organizationBaseInfo?.length === 1) {
 			setActiveOrganization(organizationBaseInfo[0])
 		}
