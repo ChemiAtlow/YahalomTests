@@ -11,7 +11,7 @@ const NavBar: React.FC = () => {
 			<div className="main__header-title">
 				<h1>Yahalom Tests</h1>
 			</div>
-			{jwt && studyFieldId && (
+			{jwt && (
 				<FloatingMenu
 					trigger={
 						<div className="main__header-more">
@@ -21,9 +21,13 @@ const NavBar: React.FC = () => {
 							<div className="main__header-more__back" />
 						</div>
 					}>
-					<Link to="/questions">Manage questions</Link>
-					<Link to="/tests">Manage tests</Link>
-					<Link to="/reports">Reports </Link>
+					{studyFieldId && (
+						<>
+							<Link to="/questions">Manage questions</Link>
+							<Link to="/tests">Manage tests</Link>
+							<Link to="/reports">Reports </Link>
+						</>
+					)}
 					<div onClick={() => signout()}>Log out</div>
 				</FloatingMenu>
 			)}
