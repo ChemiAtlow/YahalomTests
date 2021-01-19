@@ -10,13 +10,13 @@ const App: React.FC = () => {
 				<NavBar />
 				<main className="app">
 					<Switch>
-						<ProtectedRoute reuqiresField path="/questions">
+						<ProtectedRoute requiresField path="/questions">
 							<Questions />
 						</ProtectedRoute>
-						<ProtectedRoute reuqiresField path="/tests">
+						<ProtectedRoute requiresField path="/tests">
 							<Tests />
 						</ProtectedRoute>
-						<ProtectedRoute reuqiresField path="/reports">
+						<ProtectedRoute requiresField path="/reports">
 							<Reports />
 						</ProtectedRoute>
 						<ProtectedRoute

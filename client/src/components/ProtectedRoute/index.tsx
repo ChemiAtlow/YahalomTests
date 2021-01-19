@@ -8,22 +8,22 @@ import {
 import { useAuth } from "../../hooks/";
 
 interface ProtectedRouteProps extends RouteProps {
-	reuqiresField?: boolean;
+	requiresField?: boolean;
 	onlyNonAuth?: boolean;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 	children,
-	reuqiresField: requiresField,
+	requiresField,
 	onlyNonAuth,
 	...rest
 }) => {
-	const { jwt, studyFieldId } = useAuth();
+	const { jwt, activeStudyField } = useAuth();
 	const isNonAuthAllowed = onlyNonAuth && !jwt;
 	const isAuthAllowed =
 		!onlyNonAuth &&
 		Boolean(jwt) &&
-		(requiresField ? Boolean(studyFieldId) : true);
+		(requiresField ? Boolean(activeStudyField) : true);
 	const redirection = ({ location }: RouteComponentProps) =>
 		onlyNonAuth ? (
 			<Redirect to={{ pathname: "/" }} />

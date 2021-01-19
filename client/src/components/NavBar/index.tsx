@@ -5,7 +5,7 @@ import FloatingMenu from "../FloatingMenu";
 import "./NavBar.scoped.scss";
 
 const NavBar: React.FC = () => {
-	const { jwt, studyFieldId, signout } = useAuth();
+	const { jwt, activeStudyField, signout } = useAuth();
 	return (
 		<header className="main__header">
 			<div className="main__header-title">
@@ -21,7 +21,7 @@ const NavBar: React.FC = () => {
 							<div className="main__header-more__back" />
 						</div>
 					}>
-					{studyFieldId && (
+					{activeStudyField && (
 						<>
 							<Link to="/questions">Manage questions</Link>
 							<Link to="/tests">Manage tests</Link>
