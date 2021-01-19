@@ -2,7 +2,11 @@ import { hash, compare } from "bcryptjs";
 import { randomBytes } from "crypto";
 import { sign } from "jsonwebtoken";
 import { models } from "@yahalom-tests/common";
-import { userRepository } from "../DAL";
+import {
+	userRepository,
+	organizationRepository,
+	studyFieldRepository,
+} from "../DAL";
 import { EmailTakenError, AuthError, HttpError } from "../errors";
 import { HTTPStatuses, TIME, general } from "../constants";
 
@@ -11,12 +15,12 @@ export const signup = async ({ email, password }: models.dtos.UserDto) => {
 		throw new EmailTakenError(email);
 	}
 	const hashedPassword = await hash(password, 12);
-	const newUser = await userRepository.addItem({
+	await userRepository.addItem({
 		email,
 		password: hashedPassword,
+		organizations: [],
 		role: "Teacher",
 	});
-	return createUserJWT(newUser);
 };
 
 export const login = async ({ email, password }: models.dtos.UserDto) => {
@@ -30,7 +34,29 @@ export const login = async ({ email, password }: models.dtos.UserDto) => {
 	if (!isMatchingPass) {
 		throw new AuthError();
 	}
-	return createUserJWT(userFromDb);
+	const jwt = createUserJWT(userFromDb);
+	//Get info of organization and study fields.
+	const organizations = userFromDb.organizations || [];
+	const organizationsInfo = await Promise.all(
+		organizations.map<Promise<models.interfaces.OrganizationBaseInfo>>(
+			async orgId => {
+				const {
+					id,
+					fields: fieldIds,
+					name,
+				} = await organizationRepository.getItemById(orgId);
+				const fields = await Promise.all(
+					fieldIds.map(fId => studyFieldRepository.getItemById(fId))
+				);
+				return {
+					id: id as models.classes.guid,
+					name,
+					fields,
+				};
+			}
+		)
+	);
+	return { jwt, organizationsInfo };
 };
 
 export const requestPasswordReset = async ({
