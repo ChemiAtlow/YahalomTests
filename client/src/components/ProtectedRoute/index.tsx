@@ -1,32 +1,42 @@
 import React from "react";
-import { Redirect, Route, RouteProps } from "react-router-dom";
+import {
+	Redirect,
+	Route,
+	RouteComponentProps,
+	RouteProps,
+} from "react-router-dom";
 import { useAuth } from "../../hooks/";
 
 interface ProtectedRouteProps extends RouteProps {
 	reuqiresField?: boolean;
+	onlyNonAuth?: boolean;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 	children,
-	reuqiresField,
+	reuqiresField: requiresField,
+	onlyNonAuth,
 	...rest
 }) => {
 	const { jwt, studyFieldId } = useAuth();
-	const isAuth = Boolean(jwt) && reuqiresField ? Boolean(studyFieldId) : true;
+	const isNonAuthAllowed = onlyNonAuth && !jwt;
+	const isAuthAllowed =
+		!onlyNonAuth &&
+		Boolean(jwt) &&
+		(requiresField ? Boolean(studyFieldId) : true);
+	const redirection = ({ location }: RouteComponentProps) =>
+		onlyNonAuth ? (
+			<Redirect to={{ pathname: "/" }} />
+		) : (
+			<Redirect to={{ pathname: "/login", state: { from: location } }} />
+		);
 	return (
 		<Route
 			{...rest}
-			render={({ location }) =>
-				isAuth ? (
-					children
-				) : (
-					<Redirect
-						to={{
-							pathname: "/login",
-							state: { from: location },
-						}}
-					/>
-				)
+			render={route =>
+				isNonAuthAllowed || isAuthAllowed
+					? children
+					: redirection(route)
 			}
 		/>
 	);

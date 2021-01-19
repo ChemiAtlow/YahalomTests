@@ -5,13 +5,13 @@ import FloatingMenu from "../FloatingMenu";
 import "./NavBar.scoped.scss";
 
 const NavBar: React.FC = () => {
-	const { jwt, signout } = useAuth();
+	const { jwt, studyFieldId, signout } = useAuth();
 	return (
 		<header className="main__header">
 			<div className="main__header-title">
 				<h1>Yahalom Tests</h1>
 			</div>
-			{jwt && (
+			{jwt && studyFieldId && (
 				<FloatingMenu
 					trigger={
 						<div className="main__header-more">
