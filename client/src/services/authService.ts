@@ -4,9 +4,12 @@ import http from "./httpService";
 const authRoute = "/auth/";
 
 export async function signup(user: models.interfaces.User) {
-	return await http.post<string>(`${authRoute}signup`, user);
+	await http.post<void>(`${authRoute}signup`, user);
 }
 
 export async function login(user: models.interfaces.User) {
-	return await http.post<string>(`${authRoute}login`, user);
+	return await http.post<{
+		jwt: string;
+		organizationsInfo: models.interfaces.OrganizationBaseInfo[];
+	}>(`${authRoute}login`, user);
 }

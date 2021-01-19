@@ -11,8 +11,8 @@ router.post(
 	validationMiddleware(models.dtos.UserDto),
 	async (req, res) => {
 		//send user to login.
-		const user = await authController.login(req.body);
-		res.send(user);
+		const jwtWithOrgAndFields = await authController.login(req.body);
+		res.send(jwtWithOrgAndFields);
 	}
 );
 
@@ -20,8 +20,10 @@ router.post(
 	"/signup",
 	validationMiddleware(models.dtos.UserDto),
 	async (req, res) => {
-		const user = await authController.signup(req.body);
-		res.status(HTTPStatuses.created).send(user);
+		await authController.signup(req.body);
+		res.status(HTTPStatuses.created).send({
+			message: "user created successfully",
+		});
 	}
 );
 

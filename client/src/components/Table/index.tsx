@@ -16,7 +16,7 @@ interface DataTableProps {
 	columns: Column[];
 }
 
-const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
+export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
 	const { data: filteredData, sort, sortTerms } = useSearchAndSort(data);
 
 	const sortColumn = (col: Column) => {
@@ -43,17 +43,15 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
 				{!filteredData.length ? (
 					<div className="row row-full">No Records to show.</div>
 				) : (
-						filteredData.map((record, rowInd) => (
-							<Row
-								columns={columns}
-								record={record}
-								key={`row-${rowInd}`}
-							/>
-						))
-					)}
+					filteredData.map((record, rowInd) => (
+						<Row
+							columns={columns}
+							record={record}
+							key={`row-${rowInd}`}
+						/>
+					))
+				)}
 			</div>
 		</div>
 	);
 };
-
-export default DataTable;
