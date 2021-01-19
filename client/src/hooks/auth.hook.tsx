@@ -10,9 +10,9 @@ type providerFn = {
 	signin: (user: models.interfaces.User) => Promise<boolean>;
 	signup: (user: models.interfaces.User) => Promise<boolean>;
 	signout: () => void;
-	setActiveStudyField: (val: ActiveItem) => void;
+	setActiveStudyField: (val?: ActiveItem) => void;
 	setActiveOrganization: (
-		val: models.interfaces.OrganizationBaseInfo
+		val?: models.interfaces.OrganizationBaseInfo
 	) => void;
 	sendPasswordResetEmail: (email: string) => boolean;
 	confirmPasswordReset: (code: string, password: string) => boolean;
@@ -20,12 +20,12 @@ type providerFn = {
 type ActiveItem = { name: string; id?: models.classes.guid };
 //define defaults results for context
 const authContext = createContext<providerFn>({
-	setActiveOrganization: () => {},
-	setActiveStudyField: () => {},
+	setActiveOrganization: () => { },
+	setActiveStudyField: () => { },
 	confirmPasswordReset: () => false,
 	sendPasswordResetEmail: () => false,
 	signin: async () => false,
-	signout: () => {},
+	signout: () => { },
 	signup: async () => false,
 	jwt: undefined,
 	activeStudyField: undefined,
