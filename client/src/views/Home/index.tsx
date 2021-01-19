@@ -1,24 +1,29 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
+import { useHistory } from "react-router-dom";
 import { Select } from "../../components";
 import { useAuth } from "../../hooks";
 import "./Home.scoped.scss";
 
 const Home: React.FC = () => {
-	const { organizationBaseInfo } = useAuth();
-	const [studyField, setStudyField] = useState("");
-	const [organization, setOrganization] = useState("");
+	const { replace } = useHistory();
+	const { organizationBaseInfo, activeOrganization, activeStudyField, setActiveOrganization, setActiveStudyField } = useAuth();
 
+	if(organizationBaseInfo?.length === 1 && organizationBaseInfo[0].fields.length === 1){
+		//There is only one organization, and one studyField, user has no buisness here.
+		//Mark his organization and studyField then move him away.
+		setActiveOrganization(organizationBaseInfo[0]);
+		setActiveStudyField(organizationBaseInfo[0].fields[0]);
+		replace("/questions");
+	}
 	const organizations = (organizationBaseInfo || []).map(({ name: label, id: value }) => ({ label, value }));
-	const relevantFields = (() => {
-		const selectedOrg = (organizationBaseInfo || []).find(org => org.id === organization);
-		const fields = selectedOrg?.fields.map(({ name: label, id: value }) => ({ label, value }));
-		return fields || [];
-	})();
+	const relevantFields = (activeOrganization?.fields.map(({ name: label, id: value }) => ({ label, value })) || []);
+
 	useMemo(() => {
-		if (organizationBaseInfo?.length && organizationBaseInfo.length === 1) {
-			setOrganization(organizationBaseInfo[0].id)
+		if (organizationBaseInfo?.length === 1) {
+			setActiveOrganization(organizationBaseInfo[0])
 		}
-	}, [organizationBaseInfo, setOrganization]);
+	}, [organizationBaseInfo, setActiveOrganization]);
+
 
 	return (
 		<div className="home-page">
@@ -31,18 +36,16 @@ const Home: React.FC = () => {
 					<Select
 						label="Organization"
 						onChange={e =>
-							setOrganization(organizations[e.target.selectedIndex - 1].value)
+							setActiveOrganization((organizationBaseInfo.find(org => org.id === organizations[e.target.selectedIndex - 1].value)!))
 						}
 						disabled={organizationBaseInfo.length === 1}
-						value={organization}
+						value={activeOrganization?.id}
 						options={organizations}
 					/>
 					<Select
 						label="Study field"
-						onChange={e =>
-							setStudyField(relevantFields[e.target.selectedIndex - 1].value || "")
-						}
-						value={studyField}
+						onChange={e => setActiveStudyField((activeOrganization?.fields.find(f => f.id === relevantFields[e.target.selectedIndex - 1].value)!))						}
+						value={activeStudyField?.id}
 						options={relevantFields}
 					/>
 				</>
