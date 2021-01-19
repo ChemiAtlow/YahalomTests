@@ -22,12 +22,10 @@ const NavBar: React.FC = () => {
 						</div>
 					}>
 					{activeStudyField && (
-						<>
-							<Link to="/questions">Manage questions</Link>
-							<Link to="/tests">Manage tests</Link>
-							<Link to="/reports">Reports </Link>
-						</>
+						<Link to="/questions">Manage questions</Link>
 					)}
+					{activeStudyField && <Link to="/tests">Manage tests</Link>}
+					{activeStudyField && <Link to="/reports">Reports</Link>}
 					<div onClick={() => signout()}>Log out</div>
 				</FloatingMenu>
 			)}
