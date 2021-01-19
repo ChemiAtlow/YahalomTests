@@ -10,9 +10,9 @@ const NestedRoutes: React.FC<NestedRoutesProp> = ({ children }) => {
 
     return (
         <Switch>
-            {children.map(c => {
-                cloneElement(c, { path: `${path}/${c.props.path}` })
-            })}
+            {children.map((c, i) =>
+                cloneElement(c, { path: `${path}${c.props.path}`, key: i })
+            )}
         </Switch>
     )
 }
