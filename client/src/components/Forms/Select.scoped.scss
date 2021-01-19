@@ -4,6 +4,7 @@ $top-margin: 1.5rem;
 .select {
 	position: relative;
 	overflow: hidden;
+	margin-bottom: 1rem;
 	&-text {
 		margin-top: $top-margin;
 		appearance: none;
@@ -16,6 +17,7 @@ $top-margin: 1.5rem;
 		font-size: $select-height;
 		border-radius: 0;
 		border: none;
+		cursor: pointer;
 		border-bottom: 1px solid $dark-gray;
 		&__default {
 			display: none;
@@ -31,12 +33,16 @@ $top-margin: 1.5rem;
 			}
 		}
 		&:focus,
-		&:valid {
+		&:valid,
+		&:disabled {
 			~ .select-label {
 				top: 0;
 				transition: 0.2s ease all;
 				font-size: 14px;
 			}
+		}
+		&:disabled {
+			cursor: initial;
 		}
 	}
 	&-label {
