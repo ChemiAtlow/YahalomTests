@@ -5,7 +5,7 @@ import FloatingMenu from "../FloatingMenu";
 import "./NavBar.scoped.scss";
 
 const NavBar: React.FC = () => {
-	const { jwt, signout } = useAuth();
+	const { jwt, activeStudyField, signout } = useAuth();
 	return (
 		<header className="main__header">
 			<div className="main__header-title">
@@ -21,9 +21,12 @@ const NavBar: React.FC = () => {
 							<div className="main__header-more__back" />
 						</div>
 					}>
-					<Link to="/questions">Manage questions</Link>
-					<Link to="/tests">Manage tests</Link>
-					<Link to="/reports">Reports </Link>
+					<Link to="/">Select study field</Link>
+					{activeStudyField && (
+						<Link to="/questions">Manage questions</Link>
+					)}
+					{activeStudyField && <Link to="/tests">Manage tests</Link>}
+					{activeStudyField && <Link to="/reports">Reports</Link>}
 					<div onClick={() => signout()}>Log out</div>
 				</FloatingMenu>
 			)}

@@ -1,8 +1,6 @@
 import { models } from "@yahalom-tests/common";
 import React, { useEffect, useState } from "react";
-import Ellipsis from "../components/Ellipsis";
-import { AppButton } from "../components/Forms";
-import DataTable, { Column } from "../components/Table";
+import { Ellipsis, AppButton, DataTable, Column } from "../components";
 import { questionService } from "../services";
 
 const columns: Column[] = [
@@ -28,7 +26,7 @@ const columns: Column[] = [
 		label: "",
 		isFromData: true,
 		key: "active",
-	}
+	},
 ];
 
 const Questions: React.FC = () => {

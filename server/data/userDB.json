@@ -1,1 +1,8 @@
-[]
+[
+	{
+		"email": "dummy@user.use",
+		"password": "$2a$12$2ag6JI8OkJmfHlIfLw5KquzCzotjSx65t5XhmkFo2g6Avw0Mt3j9a",
+		"role": "Teacher",
+		"id": "50c6d0af-dea3-a8be-a6f5-35637e5c780a"
+	}
+]

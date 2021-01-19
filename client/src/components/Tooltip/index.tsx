@@ -1,7 +1,7 @@
 import React, { useState, useCallback, cloneElement } from 'react';
 import * as ReactDOM from 'react-dom';
-import './Tooltip.scoped.scss';
 import { useClickOutside } from '../../hooks/';
+import './Tooltip.scoped.scss';
 
 export type direction = 'top' |
     'top-left' |
@@ -57,7 +57,7 @@ export const rectToStyles: (rect: Rect, direction: direction) => { top: number; 
     }
 };
 
-const Tooltip: React.FC<ITooltipProps> = ({ delay, direction, onVisibilityChanged, value, children, ...props }) => {
+export const Tooltip: React.FC<ITooltipProps> = ({ delay, direction, onVisibilityChanged, value, children, ...props }) => {
 	const [isVisible, setVisibility] = useState(false);
 	const [timeoutId, setTimeoutId] = useState<number | null>(null);
     const [style, setStyle] = useState({ top: 0, left: 0, opacity: 0 });
@@ -132,5 +132,3 @@ const Tooltip: React.FC<ITooltipProps> = ({ delay, direction, onVisibilityChange
         {children}
     </span>;
 };
-
-export default Tooltip;

@@ -3,7 +3,7 @@ class GuidFlavoring<FlavorT> {
 	_type?: FlavorT;
 }
 /** A **guid** type, based on **string** */
-type GuidFlavor<T, FlavorT> = T & GuidFlavoring<FlavorT>;
+export type GuidFlavor<T, FlavorT> = T & GuidFlavoring<FlavorT>;
 export type guid = GuidFlavor<string, "guid">;
 
 export class Guid {
