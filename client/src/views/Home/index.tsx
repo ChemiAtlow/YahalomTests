@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useHistory } from "react-router-dom";
-import { Select } from "../../components";
+import { AppButton, Select } from "../../components";
 import { useAuth } from "../../hooks";
 import "./Home.scoped.scss";
 
@@ -48,6 +48,7 @@ const Home: React.FC = () => {
 						value={activeStudyField?.id}
 						options={relevantFields}
 					/>
+					<AppButton disabled={!activeOrganization || !activeStudyField} onClick={() => replace("/questions")}>Continue</AppButton>
 				</>
 			}
 		</div>
