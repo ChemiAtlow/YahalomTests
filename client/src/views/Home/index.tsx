@@ -4,13 +4,19 @@ import { AppButton, Select } from "../../components";
 import { useAuth } from "../../hooks";
 import "./Home.scoped.scss";
 
-const buildItemsForSelect = (arr: { id?: string, name: string }[]) => (arr || []).map(({ name: label, id: value }) => ({ label, value }));
-
-
+const buildItemsForSelect = (arr: { id?: string, name: string }[]) =>
+	(arr || []).map(({ name: label, id: value }) => ({ label, value }));
 
 const Home: React.FC = () => {
 	const { replace } = useHistory();
-	const { organizationBaseInfo, activeOrganization, activeStudyField, setActiveOrganization, setActiveStudyField } = useAuth();
+	const {
+		organizationBaseInfo,
+		activeOrganization,
+		activeStudyField,
+		setActiveOrganization,
+		setActiveStudyField,
+		getOrganizationAndFieldUrl
+	} = useAuth();
 	const organizations = buildItemsForSelect(organizationBaseInfo || []); //user organizations
 	const relevantFields = buildItemsForSelect(activeOrganization?.fields || []); //organization fields
 
@@ -39,7 +45,7 @@ const Home: React.FC = () => {
 	};
 
 	const handleClick = () => {
-		replace(`/${activeOrganization?.id}/${activeStudyField?.id}/questions`);
+		replace(getOrganizationAndFieldUrl("questions"));
 	};
 
 	return (
@@ -57,13 +63,16 @@ const Home: React.FC = () => {
 						value={activeOrganization?.id}
 						options={organizations}
 					/>
-					<Select
-						label="Study field"
-						onChange={onStudyFieldChanged}
-						value={activeStudyField?.id}
-						options={relevantFields}
-					/>
-					<AppButton disabled={!activeOrganization || !activeStudyField} onClick={handleClick}>Continue</AppButton>
+					{ !activeOrganization ?
+						<p>Please select an organization first!</p> :
+						activeOrganization?.fields.length > 0 ?
+							<Select
+								label="Study field"
+								onChange={onStudyFieldChanged}
+								value={activeStudyField?.id}
+								options={relevantFields}
+							/> : <p>The organization has no study field yet!</p>}
+					{activeOrganization && activeStudyField && <AppButton onClick={handleClick}>Continue</AppButton>}
 				</>
 			}
 		</div>

@@ -10,7 +10,9 @@ const App: React.FC = () => {
 				<NavBar />
 				<main className="app">
 					<Switch>
-						<ProtectedRoute requiresField path="/:organizationId/:fieldId">
+						<ProtectedRoute
+							requiresField
+							path="/:organizationId/:fieldId">
 							<NestedRoutes>
 								<ProtectedRoute requiresField path="/questions">
 									<Questions />
@@ -22,9 +24,7 @@ const App: React.FC = () => {
 									<Reports />
 								</ProtectedRoute>
 							</NestedRoutes>
-							{/*component: contain question/tests/reports routes*/}
 						</ProtectedRoute>
-
 						<ProtectedRoute
 							onlyNonAuth
 							path={["/login", "/signup"]}>

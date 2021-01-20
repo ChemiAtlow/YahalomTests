@@ -5,8 +5,12 @@ import FloatingMenu from "../FloatingMenu";
 import "./NavBar.scoped.scss";
 
 const NavBar: React.FC = () => {
-	const { jwt, activeStudyField, activeOrganization, signout } = useAuth();
-	const baseUrl = `/${activeOrganization?.id}/${activeStudyField?.id}/`;
+	const {
+		jwt,
+		activeStudyField,
+		signout,
+		getOrganizationAndFieldUrl,
+	} = useAuth();
 
 	return (
 		<header className="main__header">
@@ -24,9 +28,21 @@ const NavBar: React.FC = () => {
 						</div>
 					}>
 					<Link to="/">Select study field</Link>
-					{activeStudyField && (<Link to={`${baseUrl}questions`}>Manage questions</Link>)}
-					{activeStudyField && <Link to={`${baseUrl}tests`}>Manage tests</Link>}
-					{activeStudyField && <Link to={`${baseUrl}reports`}>Reports</Link>}
+					{activeStudyField && (
+						<Link to={getOrganizationAndFieldUrl("questions")}>
+							Manage questions
+						</Link>
+					)}
+					{activeStudyField && (
+						<Link to={getOrganizationAndFieldUrl("tests")}>
+							Manage tests
+						</Link>
+					)}
+					{activeStudyField && (
+						<Link to={getOrganizationAndFieldUrl("reports")}>
+							Reports
+						</Link>
+					)}
 					<div onClick={() => signout()}>Log out</div>
 				</FloatingMenu>
 			)}

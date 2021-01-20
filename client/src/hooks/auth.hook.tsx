@@ -10,6 +10,7 @@ type providerFn = {
 	signin: (user: models.interfaces.User) => Promise<boolean>;
 	signup: (user: models.interfaces.User) => Promise<boolean>;
 	signout: () => void;
+	getOrganizationAndFieldUrl: (...params: string[]) => string;
 	setActiveStudyField: (val?: ActiveItem) => void;
 	setActiveOrganization: (
 		val?: models.interfaces.OrganizationBaseInfo
@@ -20,12 +21,13 @@ type providerFn = {
 type ActiveItem = { name: string; id?: models.classes.guid };
 //define defaults results for context
 const authContext = createContext<providerFn>({
-	setActiveOrganization: () => { },
-	setActiveStudyField: () => { },
+	getOrganizationAndFieldUrl: () => "",
+	setActiveOrganization: () => {},
+	setActiveStudyField: () => {},
 	confirmPasswordReset: () => false,
 	sendPasswordResetEmail: () => false,
 	signin: async () => false,
-	signout: () => { },
+	signout: () => {},
 	signup: async () => false,
 	jwt: undefined,
 	activeStudyField: undefined,
@@ -86,6 +88,9 @@ function useProvideAuth(): providerFn {
 		return true;
 	};
 
+	const getOrganizationAndFieldUrl = (...params: string[]) => {
+		return `/${activeOrganization}/${activeStudyField}/${params.join("")}`;
+	};
 	// useEffect(() => {
 	// 	const unsubscribe = firebase.auth().onAuthStateChanged(user => {
 	// 		if (user) {
@@ -110,5 +115,6 @@ function useProvideAuth(): providerFn {
 		organizationBaseInfo,
 		sendPasswordResetEmail,
 		confirmPasswordReset,
+		getOrganizationAndFieldUrl,
 	};
 }
