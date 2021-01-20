@@ -23,7 +23,5 @@ app.use(errorMiddleware);
 const { serverDomain, serverPort } = constants.URLS;
 
 app.listen(serverPort, () =>
-	console.log(
-		`YahalomTests server is running at ${serverDomain}:${serverPort}`
-	)
+    console.log(`YahalomTests server is running at ${serverDomain}:${serverPort}`)
 );
