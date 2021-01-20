@@ -5,28 +5,37 @@ import { FormField } from "../Forms";
 type EditMode = {
     isEditMode: true;
     onContentChange: React.ChangeEventHandler<HTMLInputElement>;
-    onCorrectChange: React.ChangeEventHandler<HTMLInputElement>;
 };
 type ExamMode = {
     isEditMode?: false;
-    alignment: models.interfaces.Question["alignment"];
-    onExamAnswerChange: React.ChangeEventHandler<HTMLInputElement>;
+    alignment: models.enums.Alignment;
 };
 type QuestionAnswerProps = {
     answer: models.interfaces.Answer;
-    type: models.enums.QuestionType;
-} & (ExamMode | EditMode);
+    answerIndex: number;
+    questionType: models.enums.QuestionType;
+    mode: EditMode | ExamMode;
+    onSelectionChange: React.ChangeEventHandler<HTMLInputElement>
+};
 
-const QuestionAnswer: React.FC<QuestionAnswerProps> = ({ answer, isEditMode, type, ...props }) => {
+const QuestionAnswer: React.FC<QuestionAnswerProps> = ({
+    answer,
+    answerIndex,
+    questionType,
+    mode,
+    onSelectionChange,
+}) => {
+    const selectionType =
+        questionType === models.enums.QuestionType.MultiChoice ? "checkbox" : "radio";
     return (
-        <div className={`question__answer ${isEditMode ? "" : props.alignment}`}>
-            <input type="checkbox" />
-            {isEditMode ? (
+        <div className={`question__answer ${mode.isEditMode ? "" : mode.alignment}`}>
+            <input type={selectionType} onChange={onSelectionChange} />
+            {mode.isEditMode ? (
                 <FormField
-                    label="Answer"
+                    label={`Answer ${answerIndex}`}
                     type="textarea"
                     value={answer.content}
-                    onChange={props.onContentChange}
+                    onChange={mode.onContentChange}
                 />
             ) : (
                 <p>{answer.content}</p>
