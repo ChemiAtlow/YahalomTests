@@ -1,6 +1,6 @@
 import { models } from '@yahalom-tests/common'
 import React, { useState, useEffect } from 'react'
-import { Row, AppButton, FormField, Select } from '../../components';
+import { Row, AppButton, FormField, Select, QuestionAnswer } from '../../components';
 import { useAuth } from "../../hooks";
 import { enumToArray, SwitchCamelCaseToHuman } from '../../utils';
 
@@ -82,7 +82,7 @@ const EditQuestion: React.FC = () => {
                 }
                 error={titleError}
             />
-             <FormField
+            <FormField
                 label="Tags"
                 required
                 type="text"
@@ -93,10 +93,35 @@ const EditQuestion: React.FC = () => {
                 error={labelError}
             />
             {/* /*not render on UI. need to check*/}
-            <div> Answers
-              {
-                    /**Will use answer component */
-                }
+            <div>Answers
+                <QuestionAnswer
+                    content="One"
+                    selected={true}
+                    answerIndex={0}
+                    questionType={models.enums.QuestionType.SingleChoice}
+                    onSelectionChange={() => { }}
+                    mode={{ isEditMode: true, onContentChange: () => { } }} />
+                <QuestionAnswer
+                    content="Two"
+                    selected={false}
+                    answerIndex={0}
+                    questionType={models.enums.QuestionType.SingleChoice}
+                    onSelectionChange={() => { }}
+                    mode={{ isEditMode: true, onContentChange: () => { } }} />
+                <QuestionAnswer
+                    content="Three"
+                    selected={true}
+                    answerIndex={0}
+                    questionType={models.enums.QuestionType.MultiChoice}
+                    onSelectionChange={() => { }}
+                    mode={{ isEditMode: true, onContentChange: () => { } }} />
+                <QuestionAnswer
+                    content="Four"
+                    selected={false}
+                    answerIndex={0}
+                    questionType={models.enums.QuestionType.MultiChoice}
+                    onSelectionChange={() => { }}
+                    mode={{ isEditMode: true, onContentChange: () => { } }} />
             </div>
 
             <AppButton disabled={isInvalid} type="submit">
