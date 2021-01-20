@@ -17,7 +17,7 @@ const Select: React.FC<SelectProps> = ({
 			<select className="select-text" required value={value} {...rest}>
 				<option className="select-text__default" value="" disabled />
 				{options.map(({ value, label }, i) => (
-					<option key={i} value={value || label}>
+					<option key={i} value={value || i}>
 						{label}
 					</option>
 				))}
