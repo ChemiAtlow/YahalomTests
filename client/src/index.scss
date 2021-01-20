@@ -24,6 +24,11 @@ body {
 		text-align: center;
 		& > .app {
 			position: relative;
+			.container {
+				width: 95%;
+				max-width: 45rem;
+				margin: 1rem auto;
+			}
 		}
 	}
 }

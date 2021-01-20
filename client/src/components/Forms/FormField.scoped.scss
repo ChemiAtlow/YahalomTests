@@ -1,106 +1,106 @@
 $animation-duration: 0.4s;
 
 @mixin label-inactive() {
-	font-size: 1.2rem;
-	transform: translateY(0);
+    font-size: 1.2rem;
+    transform: translateY(0);
 }
 
 @mixin label-active() {
-	font-size: 0.75rem;
-	transform: translateY(-14px);
+    font-size: 0.75rem;
+    transform: translateY(-14px);
 }
 
 .form-field {
-	$form-field: &;
-	display: block;
-	margin-bottom: 16px;
-	&__control {
-		display: block;
-		overflow: hidden;
-		position: relative;
-		width: 100%;
-		&-label {
-			@include label-active();
-			display: block;
-			font-weight: normal;
-			text-align: left;
-			position: absolute;
-			top: 0;
-			left: 0;
-			margin: 0;
-			padding: 18px 12px 0;
-			transition: all $animation-duration;
-			width: 100%;
-		}
-		&-input {
-			display: block;
-			appearance: none;
-			background: transparent;
-			border: none;
-			outline: none;
-			border-bottom: 1px solid $dark-gray;
-			font-size: 1.2rem;
-			margin-top: 24px;
-			padding: 0 12px 10px 12px;
-			width: 100%;
-			@at-root {
-				textarea#{&} {
-					height: 150px;
-				}
-			}
-			// IE 10-11
-			&:-ms-input-placeholder ~ .form-field__control-label {
-				@include label-inactive();
-			}
-			// All other browsers
-			&:placeholder-shown ~ .form-field__control-label {
-				@include label-inactive();
-			}
-			&:focus {
-				~ .form-field__control-label {
-					color: $primary;
-					@include label-active();
-				}
-				~ .form-field__control-bar {
-					border-bottom: 3.5px solid $primary;
-					transform: scaleX(150);
-				}
-			}
-		}
-		&-bar {
-			position: absolute;
-			bottom: 0;
-			right: 0;
-			left: 0;
-			border-bottom: 2px solid $primary;
-			content: "";
-			display: block;
-			margin: 0 auto;
-			transform: scaleX(0);
-			transition: all $animation-duration;
-			width: 1%;
-		}
-	}
-	&.error {
-		#{$form-field}__control {
-			&-label {
-				color: $dark-red;
-			}
-			&-input {
-				border-bottom: 1px solid $dark-red;
-				&:focus ~ #{$form-field}__control-bar {
-					border-bottom: 3.5px solid $dark-red;
-				}
-			}
-			&-bar {
-				border-bottom: 2px solid $dark-red;
-			}
-		}
-		#{$form-field}__error {
-			margin: 0;
-			padding: 5px 12px;
-			color: $dark-red;
-			text-align: left;
-		}
-	}
+    $form-field: &;
+    display: block;
+    margin-bottom: 16px;
+    &__control {
+        display: block;
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+        &-label {
+            @include label-active();
+            display: block;
+            font-weight: normal;
+            text-align: left;
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 0;
+            padding: 18px 0 0;
+            transition: all $animation-duration;
+            width: 100%;
+        }
+        &-input {
+            display: block;
+            appearance: none;
+            background: transparent;
+            border: none;
+            outline: none;
+            border-bottom: 1px solid $dark-gray;
+            font-size: 1.2rem;
+            margin-top: 24px;
+            padding: 0 12px 10px 12px;
+            width: 100%;
+            @at-root {
+                textarea#{&} {
+                    height: 150px;
+                }
+            }
+            // IE 10-11
+            &:-ms-input-placeholder ~ .form-field__control-label {
+                @include label-inactive();
+            }
+            // All other browsers
+            &:placeholder-shown ~ .form-field__control-label {
+                @include label-inactive();
+            }
+            &:focus {
+                ~ .form-field__control-label {
+                    color: $primary;
+                    @include label-active();
+                }
+                ~ .form-field__control-bar {
+                    border-bottom: 3.5px solid $primary;
+                    transform: scaleX(150);
+                }
+            }
+        }
+        &-bar {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            border-bottom: 2px solid $primary;
+            content: "";
+            display: block;
+            margin: 0 auto;
+            transform: scaleX(0);
+            transition: all $animation-duration;
+            width: 1%;
+        }
+    }
+    &.error {
+        #{$form-field}__control {
+            &-label {
+                color: $dark-red;
+            }
+            &-input {
+                border-bottom: 1px solid $dark-red;
+                &:focus ~ #{$form-field}__control-bar {
+                    border-bottom: 3.5px solid $dark-red;
+                }
+            }
+            &-bar {
+                border-bottom: 2px solid $dark-red;
+            }
+        }
+        #{$form-field}__error {
+            margin: 0;
+            padding: 5px 12px;
+            color: $dark-red;
+            text-align: left;
+        }
+    }
 }
