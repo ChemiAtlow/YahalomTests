@@ -22,12 +22,12 @@ type ActiveItem = { name: string; id?: models.classes.guid };
 //define defaults results for context
 const authContext = createContext<providerFn>({
 	getOrganizationAndFieldUrl: () => "",
-	setActiveOrganization: () => {},
-	setActiveStudyField: () => {},
+	setActiveOrganization: () => { },
+	setActiveStudyField: () => { },
 	confirmPasswordReset: () => false,
 	sendPasswordResetEmail: () => false,
 	signin: async () => false,
-	signout: () => {},
+	signout: () => { },
 	signup: async () => false,
 	jwt: undefined,
 	activeStudyField: undefined,
@@ -89,7 +89,7 @@ function useProvideAuth(): providerFn {
 	};
 
 	const getOrganizationAndFieldUrl = (...params: string[]) => {
-		return `/${activeOrganization?.id}/${activeStudyField?.id}/${params.join("")}`;
+		return `/${activeOrganization?.id}/${activeStudyField?.id}/${params.join("/")}`;
 	};
 	// useEffect(() => {
 	// 	const unsubscribe = firebase.auth().onAuthStateChanged(user => {

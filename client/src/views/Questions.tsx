@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Switch, useHistory, useRouteMatch } from "react-router-dom";
 import { Ellipsis, AppButton, DataTable, Column, ProtectedRoute } from "../components";
 import { questionService } from "../services";
+import { useAuth } from "../hooks";
 import EditQuestion from "./Edit Question/EditQuestion";
 
 const columns: Column[] = [
@@ -41,9 +42,9 @@ const columns: Column[] = [
 
 const Questions: React.FC = () => {
 	const [questions, setQuestions] = useState<models.interfaces.Question[]>([]);
-	const { path, url } = useRouteMatch();
-	console.log(`path : ${path} url: ${url}`);
+	const { path } = useRouteMatch();
 	const { push } = useHistory();
+	const { getOrganizationAndFieldUrl } = useAuth();
 	useEffect(() => {
 		questionService
 			.getAllQuestions()
@@ -54,7 +55,7 @@ const Questions: React.FC = () => {
 			<Switch>
 				<ProtectedRoute requiresField path={path} exact>
 					<h1>Questions</h1>
-					<AppButton onClick={()=> push(`${url}/edit`) }>Add new question</AppButton>
+					<AppButton onClick={() => push(getOrganizationAndFieldUrl("questions", "edit"))}>Add new question</AppButton>
 					<DataTable data={questions} columns={columns} />
 				</ProtectedRoute>
 				<ProtectedRoute requiresField path={`${path}/edit/:questionId?`}>
