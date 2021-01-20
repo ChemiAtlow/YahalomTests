@@ -3,8 +3,8 @@ import { ICONS } from "./icons";
 
 interface IconProps {
     icon: keyof typeof ICONS;
-    size: number;
-    color: React.StyleHTMLAttributes<HTMLElement>["color"];
+    size?: number;
+    color?: React.StyleHTMLAttributes<HTMLElement>["color"];
 }
 
 const Icon: React.FC<IconProps> = ({ icon, color = "black", size = 16 }) => (

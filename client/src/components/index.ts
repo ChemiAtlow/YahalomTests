@@ -4,6 +4,7 @@ export { default as NavBar } from "./NavBar";
 export { default as ProtectedRoute } from "./ProtectedRoute";
 export { default as NestedRoutes } from "./NestedRoutes";
 export { default as QuestionAnswer } from "./QuestionAnswer";
+export { default as Icon } from "./Icon";
 export * from "./Tooltip";
 export * from "./Table";
 export * from "./Forms";
