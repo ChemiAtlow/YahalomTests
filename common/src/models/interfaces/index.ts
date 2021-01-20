@@ -7,3 +7,4 @@ export * from "./StudyField";
 export * from "./User";
 export * from "./Email";
 export * from "./Test";
+export * from "./Student";
