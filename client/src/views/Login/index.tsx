@@ -10,7 +10,6 @@ const Login: React.FC = () => {
 	const { state, pathname } = useLocation<any>();
 	const isLogin = /login/i.test(pathname);
 	const { signin, signup } = useAuth();
-	const { from } = state || { from: { pathname: "/" } };
 	const [tmpUser, setTmpUser] = useState({ email: "", password: "" });
 	const [emailError, setEmailError] = useState("");
 	const [passwordError, setPasswordError] = useState("");
@@ -35,7 +34,7 @@ const Login: React.FC = () => {
 		e.preventDefault();
 		if (isLogin) {
 			if (await signin(tmpUser)) {
-				replace(from);
+				replace("/", state);
 			}
 			else {
 				console.warn("login failed!");
