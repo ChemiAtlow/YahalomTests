@@ -89,7 +89,7 @@ function useProvideAuth(): providerFn {
 	};
 
 	const getOrganizationAndFieldUrl = (...params: string[]) => {
-		return `/${activeOrganization}/${activeStudyField}/${params.join("")}`;
+		return `/${activeOrganization?.id}/${activeStudyField?.id}/${params.join("")}`;
 	};
 	// useEffect(() => {
 	// 	const unsubscribe = firebase.auth().onAuthStateChanged(user => {
