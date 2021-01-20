@@ -31,7 +31,7 @@ const QuestionsForm: React.FC<QuestionsFormProps> = ({ onAddQuestion }) => {
 		const questionToAdd: models.dtos.QuestionDto = {
 			title,
 			type: models.enums.QuestionType.SingleChoice,
-			alignment: "Horizontal",
+			alignment: models.enums.Alignment.Vertical,
 			label: "test",
 			answers: [
 				{ content: "bla", correct: false },

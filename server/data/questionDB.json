@@ -7,7 +7,7 @@
 		"label": "Server,C#,MVC",
 		"lastUpdate": 1606226746947,
 		"active": false,
-		"alignment": "Horizontal",
+		"alignment": 1,
 		"answers": [
 			{"content": "A","correct": true},
 			{"content": "B","correct": true},
@@ -23,7 +23,7 @@
 		"label": "Client, framework, React, JS, Node",
 		"lastUpdate": 1607926746947,
 		"active": false,
-		"alignment": "Horizontal",
+		"alignment": 0,
 		"answers": [
 			{"content": "A","correct": true},
 			{"content": "B","correct": false},
@@ -38,7 +38,7 @@
 		"label": "WPF, C#",
 		"lastUpdate": 1608126746947,
 		"active": false,
-		"alignment": "Vertiacal",
+		"alignment": 1,
 		"answers": [
 			{"content": "A","correct": false},
 			{"content": "B","correct": false},
@@ -54,7 +54,7 @@
 		"label": "DOCKER, Unix",
 		"lastUpdate": 1606299746947,
 		"active": false,
-		"alignment": "Verical",
+		"alignment": 1,
 		"answers": [
 	
 			{"content": "A","correct": false},
