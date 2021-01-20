@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { AppButton, Select } from "../../components";
 import { useAuth } from "../../hooks";
-import "./Home.scoped.scss";
 
 const buildItemsForSelect = (arr: { id?: string, name: string }[]) =>
 	(arr || []).map(({ name: label, id: value }) => ({ label, value }));
@@ -49,7 +48,7 @@ const Home: React.FC = () => {
 	};
 
 	return (
-		<div className="home-page">
+		<div className="container">
 			<span>
 				In order to continue, select organization and field to work on.
 			</span>

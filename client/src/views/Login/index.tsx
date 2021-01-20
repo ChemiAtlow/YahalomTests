@@ -56,46 +56,40 @@ const Login: React.FC = () => {
 	};
 
 	return (
-		<div className="login__dialog">
-			<h1 className="login__dialog-title">
-				{isLogin ? "Login" : "Sign up"}
-			</h1>
-			<form onSubmit={onSubmit}>
-				<FormField
-					label="Email"
-					type="text"
-					autoComplete="username"
-					value={tmpUser.email}
-					onChange={e =>
-						setTmpUser({ ...tmpUser, email: e.target.value.trim() })
-					}
-					error={emailError}
-				/>
-				<FormField
-					label="Password"
-					type="password"
-					autoComplete={isLogin ? "current-password" : "new-password"}
-					value={tmpUser.password}
-					onChange={e =>
-						setTmpUser({
-							...tmpUser,
-							password: e.target.value.trim(),
-						})
-					}
-					error={passwordError}
-				/>
-				<AppButton disabled={isValid} type="submit">
-					Submit
-				</AppButton>
-			</form>
+        <div className="login__dialog container">
+            <h1 className="login__dialog-title">{isLogin ? "Login" : "Sign up"}</h1>
+            <form onSubmit={onSubmit}>
+                <FormField
+                    label="Email"
+                    type="text"
+                    autoComplete="username"
+                    value={tmpUser.email}
+                    onChange={e => setTmpUser({ ...tmpUser, email: e.target.value.trim() })}
+                    error={emailError}
+                />
+                <FormField
+                    label="Password"
+                    type="password"
+                    autoComplete={isLogin ? "current-password" : "new-password"}
+                    value={tmpUser.password}
+                    onChange={e =>
+                        setTmpUser({
+                            ...tmpUser,
+                            password: e.target.value.trim(),
+                        })
+                    }
+                    error={passwordError}
+                />
+                <AppButton disabled={isValid} type="submit">
+                    Submit
+                </AppButton>
+            </form>
 
-			<AppButton onClick={onPageChangeRequest} type="button">
-				{isLogin
-					? "Not registered? Signup!"
-					: "Have an account? Login!"}
-			</AppButton>
-		</div>
-	);
+            <AppButton onClick={onPageChangeRequest} type="button">
+                {isLogin ? "Not registered? Signup!" : "Have an account? Login!"}
+            </AppButton>
+        </div>
+    );
 };
 
 export default Login;
