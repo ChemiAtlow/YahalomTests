@@ -19,7 +19,7 @@ type QuestionAnswerProps = {
 
 const QuestionAnswer: React.FC<QuestionAnswerProps> = ({ answer, isEditMode, type, ...props }) => {
     return (
-        <div className={`question__answer ${isEditMode ? props.alignment : ""}`}>
+        <div className={`question__answer ${isEditMode ? "" : props.alignment}`}>
             <input type="checkbox" />
             {isEditMode ? (
                 <FormField
