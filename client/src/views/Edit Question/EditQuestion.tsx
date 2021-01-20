@@ -51,18 +51,21 @@ const EditQuestion: React.FC = () => {
         <form className="container" onSubmit={onSubmit}>
             <p>Field: <b>{activeStudyField?.name}</b></p>
             <Row>
-                <Select label="Question type*"
+                <Select label="Question type"
+                    required
                     value={question.type}
                     onChange={onTypeSelected}
                     options={types} />
-                <Select label="Answer layout*"
+                <Select label="Answer layout"
+                    required
                     value={question.alignment}
                     onChange={onAlignmentSelected}
                     options={alignments} />
             </Row>
             <FormField
-                label="Title*"
+                label="Title"
                 type="text"
+                required
                 value={question.title}
                 onChange={e =>
                     setQuestion({ ...question, title: e.target.value.trim() })
@@ -79,15 +82,9 @@ const EditQuestion: React.FC = () => {
                 }
                 error={titleError}
             />
-            {/* /*not render on UI. need to check*/}
-            <div> Answers
-              {
-                    /**Will use answer component */
-                }
-            </div>
-
-            <FormField
-                label="Label*"
+             <FormField
+                label="Tags"
+                required
                 type="text"
                 value={question.label}
                 onChange={e =>
@@ -95,6 +92,12 @@ const EditQuestion: React.FC = () => {
                 }
                 error={labelError}
             />
+            {/* /*not render on UI. need to check*/}
+            <div> Answers
+              {
+                    /**Will use answer component */
+                }
+            </div>
 
             <AppButton disabled={isInvalid} type="submit">
                 Submit
