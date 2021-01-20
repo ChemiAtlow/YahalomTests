@@ -31,17 +31,20 @@ const EditQuestion: React.FC = () => {
     );
 
     // useEffect(() => {
-     
+
     // }, [question])
 
     const onTypeSelected = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        console.log(question);
         setQuestion({ ...question, type: e.target.selectedIndex - 1 });
+        console.log(question);
     };
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log("save");
     };
+ 
 
     return (
         <form onSubmit={onSubmit}>
@@ -72,16 +75,7 @@ const EditQuestion: React.FC = () => {
             {/* /*not render on UI. need to check*/}
             <div> Answers
               {
-                    Array(4).map(i =>
-                        <FormField
-                            label={`${i} answer`}
-                            type="textarea"
-                            value={question.answers[i]?.content}
-                            onChange={e =>
-                                setQuestion({ ...question, answers: [{ content: e.target.value, correct: false }] }) //need to complete correct setState
-                            }
-                            error={answersError}
-                        />)
+                    /**Will use answer component */
                 }
             </div>
 
