@@ -47,10 +47,10 @@ const getMsgPlainText = (text: string) =>
     text.replace(/(<\/p>|<br \/>)/g, "\n").replace(/<\/?[a-z]+( [a-z\-]+=".*")*>/g, "");
 
 const sendEmail = async (to: string, email: models.interfaces.Email) => {
-    let testAccount = await createTestAccount();
+    const testAccount = await createTestAccount();
 
     // create reusable transporter object using the default SMTP transport
-    let transporter = createTransport({
+    const transporter = createTransport({
         host: "smtp.ethereal.email",
         port: 587,
         secure: false, // true for 465, false for other ports
@@ -60,7 +60,7 @@ const sendEmail = async (to: string, email: models.interfaces.Email) => {
         },
     });
     // send mail with defined transport object
-    let info = await transporter.sendMail({
+    const info = await transporter.sendMail({
         from: '"Yahalom tests 👨🏽‍🏫" <info@y-tests.io>',
         to, //: "bar@example.com, baz@example.com"
         subject: email.subject,
