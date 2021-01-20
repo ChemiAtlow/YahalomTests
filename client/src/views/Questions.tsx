@@ -1,7 +1,15 @@
 import { models } from "@yahalom-tests/common";
 import React, { useEffect, useState } from "react";
 import { Switch, useHistory, useRouteMatch } from "react-router-dom";
-import { Ellipsis, AppButton, DataTable, Column, ProtectedRoute, Icon } from "../components";
+import {
+    Ellipsis,
+    AppButton,
+    DataTable,
+    Column,
+    ProtectedRoute,
+    Icon,
+    Tooltip,
+} from "../components";
 import { questionService } from "../services";
 import { useAuth } from "../hooks";
 import EditQuestion from "./Edit Question/EditQuestion";
@@ -35,13 +43,21 @@ const columns: Column[] = [
         label: "",
         isFromData: true,
         key: "active",
-        template: ({ data }) => <Icon icon={data ? "active" : "trash"} />,
+        template: ({ data }) => (
+            <Tooltip value={data ? "Question is active" : "Remove question."}>
+                <Icon icon={data ? "active" : "trash"} />
+            </Tooltip>
+        ),
     },
     {
         label: "",
         isFromData: true,
         key: "id",
-        template: ({ data }) => <Icon icon="edit" />,
+        template: ({ data }) => (
+            <Tooltip value="Click to edit the question.">
+                <Icon icon="edit" />
+            </Tooltip>
+        ),
     },
 ];
 
