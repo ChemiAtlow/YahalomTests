@@ -15,9 +15,9 @@ export const SectionNavigator: React.FC<SectionNavigatorProps> = ({ children }) 
                     <span key={i} onClick={() => setCurrent(i)}>{s.props.label}</span>
                 )}
             </div>
-            <div className="section-content">
+            <section className="section-content">
                 {children[current]}
-            </div>
+            </section>
         </div>
     )
 }

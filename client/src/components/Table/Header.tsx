@@ -15,7 +15,9 @@ const Header: React.FC<{
             {columns.map((column, i) => (
                 <div
                     key={`header-${i}`}
-                    // className={column.smallColumn ? "header__small" : ""}
+                    className={`${column.smallColumn ? "header__small" : ""} ${
+                        column.largeColumn ? "header__large" : ""
+                    } ${column === sortedCol ? "sorted" : ""}`}
                     onClick={() => onSort(column)}>
                     {column.label}
                     {sortedCol === column && <Icon color="white" icon={sortIcon} />}

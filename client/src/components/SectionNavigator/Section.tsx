@@ -4,9 +4,5 @@ export interface SectionProps {
 }
 
 export const Section: React.FC<SectionProps> = ({ children }) => {
-    return (
-        <div>
-            {children}
-        </div>
-    )
+    return <>{children}</>;
 }

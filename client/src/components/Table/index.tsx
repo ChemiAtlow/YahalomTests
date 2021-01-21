@@ -12,7 +12,9 @@ export type SortedColumn = {
 export type Column = {
     label: string;
     smallColumn?: boolean;
+    largeColumn?: boolean;
     template?: React.ComponentType<{ data?: any }>;
+    sortable: boolean;
 } & ({ isFromData: true; key: string } | { isFromData: false; template: React.ComponentType });
 interface DataTableProps {
     data: ArrayItem[];
@@ -24,7 +26,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
     const [sortedColumn, setSortedColumn] = useState<SortedColumn>();
 
     const sortColumn = (col: Column) => {
-        if (!col.isFromData) {
+        if (!col.isFromData || !col.sortable) {
             return;
         }
         if (!sortedColumn || sortedColumn.col !== col) {
