@@ -43,6 +43,7 @@ const columns: Column[] = [
         label: "",
         isFromData: true,
         key: "active",
+        smallColumn: true,
         template: ({ data }) => (
             <Tooltip value={data ? "Question is active" : "Remove question."}>
                 <Icon icon={data ? "active" : "trash"} />
@@ -53,6 +54,7 @@ const columns: Column[] = [
         label: "",
         isFromData: true,
         key: "id",
+        smallColumn: true,
         template: ({ data }) => (
             <Tooltip value="Click to edit the question.">
                 <Icon icon="edit" />
