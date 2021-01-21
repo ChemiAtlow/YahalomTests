@@ -19,34 +19,40 @@ const columns: Column[] = [
         label: "Title",
         isFromData: true,
         key: "title",
+        sortable: true,
+        largeColumn: true,
         template: ({ data }) => <Ellipsis data={data} maxLength={50} direction="right" />,
     },
     {
         label: "Type",
         isFromData: true,
         key: "type",
+        sortable: true,
         template: ({ data }) => <span>{data === 0 ? "Single choice" : "Multi choice"}</span>,
     },
     {
         label: "Last Update",
         isFromData: true,
         key: "lastUpdate",
+        sortable: true,
         template: ({ data }) => <span>{new Date(data).toLocaleString()}</span>,
     },
     {
         label: "Usage count",
         isFromData: true,
         key: "testCount",
+        sortable: true,
         template: ({ data }) => <span>{data || 0}</span>,
     },
     {
         label: "",
         isFromData: true,
-        key: "active",
+        key: "*",
+        sortable: false,
         smallColumn: true,
         template: ({ data }) => (
-            <Tooltip value={data ? "Question is active" : "Remove question."}>
-                <Icon icon={data ? "active" : "trash"} />
+            <Tooltip value={data.active ? "Question is active" : "Remove question."}>
+                <Icon icon={data.active ? "active" : "trash"} />
             </Tooltip>
         ),
     },
@@ -54,6 +60,7 @@ const columns: Column[] = [
         label: "",
         isFromData: true,
         key: "id",
+        sortable: false,
         smallColumn: true,
         template: ({ data }) => (
             <Tooltip value="Click to edit the question.">

@@ -2,13 +2,20 @@
 		display: flex;
         background-color: $primary;
         color: $light;
-
+        font-weight: bold;
+        font-size: 1.2rem;
 		& > div {
 			flex: 1;
-			padding: 0.2rem 0.4em;
+			padding: 0.6rem 0.4em;
             cursor: pointer;
             &.header__small {
-                flex: 0;
+                flex: 0 5%;
+            }
+            &.header__large {
+                flex: 2;
+            }
+            &:hover:not(.header__small), &.sorted {
+                background-color: $deep-blue;
             }
 		}
 	}
