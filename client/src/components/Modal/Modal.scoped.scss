@@ -1,0 +1,68 @@
+$modal-padding: 1.5rem;
+$modal-radius: 0.15rem;
+$modal-section-height: 4.5rem;
+.modal {
+    position: fixed;
+    top: 6rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 45rem;
+    max-width: 90%;
+    max-height: calc(100% - 12rem);
+    background: $light;
+    border-radius: $modal-radius;
+    box-shadow: 0 0 0.6rem $primary;
+    overflow-y: auto;
+    &-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba($primary, 0.4);
+        backdrop-filter: blur(0.25rem);
+        height: 100%;
+    }
+    &-header {
+        display: flex;
+        align-items: center;
+        height: $modal-section-height;
+        border-bottom: 1px solid $primary;
+        padding-left: $modal-padding;
+        &__title {
+            flex: 1;
+            text-align: left;
+            text-transform: uppercase;
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 0.12rem;
+        }
+        &__close {
+            font-size: 2.7rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: $modal-section-height;
+            height: $modal-section-height;
+            color: rgba($color: $primary, $alpha: 0.3);
+            border-left: 1px solid $primary;
+            transition: all 350ms ease-in;
+            &:hover {
+                color: $primary;
+                background: $gray;
+            }
+        }
+    }
+    &-body {
+        padding: 0 $modal-padding;
+        min-height: $modal-section-height;
+    }
+    &-actions {
+        height: $modal-section-height;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-top: 1px solid $primary;
+    }
+}
