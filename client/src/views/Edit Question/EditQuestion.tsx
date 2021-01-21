@@ -1,6 +1,6 @@
 import { models } from '@yahalom-tests/common'
-import React, { useState, useEffect } from 'react'
-import { Row, AppButton, FormField, Select, QuestionAnswer } from '../../components';
+import React, { useState } from 'react'
+import { Row, AppButton, FormField, Select, QuestionAnswer, SectionNavigator, Section } from '../../components';
 import { useAuth } from "../../hooks";
 import { enumToArray, SwitchCamelCaseToHuman } from '../../utils';
 
@@ -50,80 +50,83 @@ const EditQuestion: React.FC = () => {
     return (
         <form className="container" onSubmit={onSubmit}>
             <p>Field: <b>{activeStudyField?.name}</b></p>
-            <Row>
-                <Select label="Question type"
-                    required
-                    value={question.type}
-                    onChange={onTypeSelected}
-                    options={types} />
-                <Select label="Answer layout"
-                    required
-                    value={question.alignment}
-                    onChange={onAlignmentSelected}
-                    options={alignments} />
-            </Row>
-            <FormField
-                label="Title"
-                type="text"
-                required
-                value={question.title}
-                onChange={e =>
-                    setQuestion({ ...question, title: e.target.value.trim() })
-                }
-                error={titleError}
-            />
+            <SectionNavigator>
+                <Section label="Question Details">
+                    <Row>
+                        <Select label="Question type"
+                            required
+                            value={question.type}
+                            onChange={onTypeSelected}
+                            options={types} />
+                        <Select label="Answer layout"
+                            required
+                            value={question.alignment}
+                            onChange={onAlignmentSelected}
+                            options={alignments} />
+                    </Row>
+                    <FormField
+                        label="Title"
+                        type="text"
+                        required
+                        value={question.title}
+                        onChange={e =>
+                            setQuestion({ ...question, title: e.target.value.trim() })
+                        }
+                        error={titleError}
+                    />
 
-            <FormField
-                label="Aditional content"
-                type="textarea"
-                value={question.additionalContent}
-                onChange={e =>
-                    setQuestion({ ...question, additionalContent: e.target.value })
-                }
-                error={titleError}
-            />
-            <FormField
-                label="Tags"
-                required
-                type="text"
-                value={question.label}
-                onChange={e =>
-                    setQuestion({ ...question, label: e.target.value.trim() })
-                }
-                error={labelError}
-            />
-            {/* /*not render on UI. need to check*/}
-            <div>Answers
-                <QuestionAnswer
-                    content="One"
-                    selected={true}
-                    answerIndex={0}
-                    questionType={models.enums.QuestionType.SingleChoice}
-                    onSelectionChange={() => { }}
-                    mode={{ isEditMode: true, onContentChange: () => { } }} />
-                <QuestionAnswer
-                    content="Two"
-                    selected={false}
-                    answerIndex={0}
-                    questionType={models.enums.QuestionType.SingleChoice}
-                    onSelectionChange={() => { }}
-                    mode={{ isEditMode: true, onContentChange: () => { } }} />
-                <QuestionAnswer
-                    content="Three"
-                    selected={true}
-                    answerIndex={0}
-                    questionType={models.enums.QuestionType.MultiChoice}
-                    onSelectionChange={() => { }}
-                    mode={{ isEditMode: true, onContentChange: () => { } }} />
-                <QuestionAnswer
-                    content="Four"
-                    selected={false}
-                    answerIndex={0}
-                    questionType={models.enums.QuestionType.MultiChoice}
-                    onSelectionChange={() => { }}
-                    mode={{ isEditMode: true, onContentChange: () => { } }} />
-            </div>
-
+                    <FormField
+                        label="Aditional content"
+                        type="textarea"
+                        value={question.additionalContent}
+                        onChange={e =>
+                            setQuestion({ ...question, additionalContent: e.target.value })
+                        }
+                        error={titleError}
+                    />
+                    <FormField
+                        label="Tags"
+                        required
+                        type="text"
+                        value={question.label}
+                        onChange={e =>
+                            setQuestion({ ...question, label: e.target.value.trim() })
+                        }
+                        error={labelError}
+                    />
+                </Section>
+                <Section label="Question answers">
+                    {/* /*not render on UI. need to check*/}
+                    <QuestionAnswer
+                        content="One"
+                        selected={true}
+                        answerIndex={0}
+                        questionType={models.enums.QuestionType.SingleChoice}
+                        onSelectionChange={() => { }}
+                        mode={{ isEditMode: true, onContentChange: () => { } }} />
+                    <QuestionAnswer
+                        content="Two"
+                        selected={false}
+                        answerIndex={0}
+                        questionType={models.enums.QuestionType.SingleChoice}
+                        onSelectionChange={() => { }}
+                        mode={{ isEditMode: true, onContentChange: () => { } }} />
+                    <QuestionAnswer
+                        content="Three"
+                        selected={true}
+                        answerIndex={0}
+                        questionType={models.enums.QuestionType.MultiChoice}
+                        onSelectionChange={() => { }}
+                        mode={{ isEditMode: true, onContentChange: () => { } }} />
+                    <QuestionAnswer
+                        content="Four"
+                        selected={false}
+                        answerIndex={0}
+                        questionType={models.enums.QuestionType.MultiChoice}
+                        onSelectionChange={() => { }}
+                        mode={{ isEditMode: true, onContentChange: () => { } }} />
+                </Section>
+            </SectionNavigator>
             <AppButton disabled={isInvalid} type="submit">
                 Submit
             </AppButton>
