@@ -34,7 +34,7 @@ const Login: React.FC = () => {
 		e.preventDefault();
 		if (isLogin) {
 			if (await signin(tmpUser)) {
-				replace("/", state);
+				replace(state?.from?.pathname || "/");
 			}
 			else {
 				console.warn("login failed!");
@@ -42,11 +42,12 @@ const Login: React.FC = () => {
 			}
 		}
 		else {
-			if(await signup(tmpUser)){
-				// success message
+			if (await signup(tmpUser)) {
+				// display success message
+				push("/login")
 			}
-			else{
-				//failure message
+			else {
+				//display failure message
 			}
 		}
 	};
@@ -56,40 +57,40 @@ const Login: React.FC = () => {
 	};
 
 	return (
-        <div className="login__dialog container">
-            <h1 className="login__dialog-title">{isLogin ? "Login" : "Sign up"}</h1>
-            <form onSubmit={onSubmit}>
-                <FormField
-                    label="Email"
-                    type="text"
-                    autoComplete="username"
-                    value={tmpUser.email}
-                    onChange={e => setTmpUser({ ...tmpUser, email: e.target.value.trim() })}
-                    error={emailError}
-                />
-                <FormField
-                    label="Password"
-                    type="password"
-                    autoComplete={isLogin ? "current-password" : "new-password"}
-                    value={tmpUser.password}
-                    onChange={e =>
-                        setTmpUser({
-                            ...tmpUser,
-                            password: e.target.value.trim(),
-                        })
-                    }
-                    error={passwordError}
-                />
-                <AppButton disabled={isValid} type="submit">
-                    Submit
+		<div className="login__dialog container">
+			<h1 className="login__dialog-title">{isLogin ? "Login" : "Sign up"}</h1>
+			<form onSubmit={onSubmit}>
+				<FormField
+					label="Email"
+					type="text"
+					autoComplete="username"
+					value={tmpUser.email}
+					onChange={e => setTmpUser({ ...tmpUser, email: e.target.value.trim() })}
+					error={emailError}
+				/>
+				<FormField
+					label="Password"
+					type="password"
+					autoComplete={isLogin ? "current-password" : "new-password"}
+					value={tmpUser.password}
+					onChange={e =>
+						setTmpUser({
+							...tmpUser,
+							password: e.target.value.trim(),
+						})
+					}
+					error={passwordError}
+				/>
+				<AppButton disabled={isValid} type="submit">
+					Submit
                 </AppButton>
-            </form>
+			</form>
 
-            <AppButton onClick={onPageChangeRequest} type="button">
-                {isLogin ? "Not registered? Signup!" : "Have an account? Login!"}
-            </AppButton>
-        </div>
-    );
+			<AppButton onClick={onPageChangeRequest} type="button">
+				{isLogin ? "Not registered? Signup!" : "Have an account? Login!"}
+			</AppButton>
+		</div>
+	);
 };
 
 export default Login;

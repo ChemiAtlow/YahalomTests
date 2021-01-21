@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { AppButton, Select } from "../../components";
 import { useAuth } from "../../hooks";
 
@@ -18,8 +18,6 @@ const Home: React.FC = () => {
 	} = useAuth();
 	const organizations = buildItemsForSelect(organizationBaseInfo || []); //user organizations
 	const relevantFields = buildItemsForSelect(activeOrganization?.fields || []); //organization fields
-	const { state } = useLocation<any>();
-	const { from } = state || { from: { pathname: getOrganizationAndFieldUrl("questions") } };
 	useEffect(() => {
 		if (organizationBaseInfo?.length === 1) {
 			setActiveOrganization(organizationBaseInfo[0])
@@ -27,10 +25,10 @@ const Home: React.FC = () => {
 				//There is only one organization, and one studyField, user has no buisness here.
 				//Mark his organization and studyField then move him away.
 				setActiveStudyField(organizationBaseInfo[0].fields[0]);
-				replace(from);
+				replace(getOrganizationAndFieldUrl("questions"));
 			}
 		}
-	}, [from, organizationBaseInfo, setActiveOrganization, setActiveStudyField, replace]);
+	}, [organizationBaseInfo, getOrganizationAndFieldUrl, setActiveOrganization, setActiveStudyField, replace]);
 
 	const getSelectedIndex = (e: React.ChangeEvent<HTMLSelectElement>) => e.target.selectedIndex - 1;
 	const onOrganizationChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -44,7 +42,7 @@ const Home: React.FC = () => {
 		setActiveStudyField(field);
 	};
 	const handleClick = () => {
-		replace(from);
+		replace(getOrganizationAndFieldUrl("questions"));
 	};
 
 	return (

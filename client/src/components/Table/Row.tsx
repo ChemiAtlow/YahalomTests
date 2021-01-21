@@ -9,7 +9,9 @@ const Row: React.FC<{
 	return (
         <div className="table-row">
             {columns.map((col, colInd) => (
-                <div className="col" key={`col-${colInd}`}>
+                <div
+                    className={`col ${col.smallColumn ? "col__small" : ""}`}
+                    key={`col-${colInd}`}>
                     {col.isFromData ? (
                         col.template ? (
                             <col.template data={record[col.key]} />
