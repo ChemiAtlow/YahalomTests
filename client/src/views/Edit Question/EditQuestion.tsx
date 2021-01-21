@@ -1,5 +1,5 @@
 import { models } from '@yahalom-tests/common'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Row, AppButton, FormField, Select, QuestionAnswer, SectionNavigator, Section } from '../../components';
 import { useAuth } from "../../hooks";
 import { enumToArray, SwitchCamelCaseToHuman } from '../../utils';
@@ -20,15 +20,23 @@ const EditQuestion: React.FC = () => {
         alignment: models.enums.Alignment.Vertical,
     });
     const [titleError, setTitleError] = useState("");
-    const [answersError, setAnswersError] = useState("");
+    const [additionalContentError, setAdditionalContentError] = useState("");
     const [labelError, setLabelError] = useState("");
-
     const { activeStudyField } = useAuth()
 
     const isInvalid = Boolean(
-        titleError || answersError || labelError ||
+        titleError || additionalContentError || labelError ||
         question.answers.length < 2
     );
+    useEffect(() => {
+        question.title ? setTitleError("") : setTitleError("Question must have title!");
+    }, [question.title, setTitleError]);
+    useEffect(() => {
+        question.label ? setLabelError("") : setLabelError("Question must have label!");
+    }, [question.label, setLabelError]);
+    useEffect(() => {
+        question.additionalContent ? setAdditionalContentError("") : setAdditionalContentError("Question must have additional content!");
+    }, [question.additionalContent, setAdditionalContentError]);
 
     const onTypeSelected = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setQuestion({ ...question, type: e.target.selectedIndex - 1 });
@@ -103,7 +111,7 @@ const EditQuestion: React.FC = () => {
                         onChange={e =>
                             setQuestion({ ...question, additionalContent: e.target.value })
                         }
-                        error={titleError}
+                        error={additionalContentError}
                     />
                     <FormField
                         label="Tags"
@@ -117,7 +125,6 @@ const EditQuestion: React.FC = () => {
                     />
                 </Section>
                 <Section label="Question answers">
-                    {/* /*not render on UI. need to check*/}
                     {question.answers.map(({ content, correct }, i) =>
                         <QuestionAnswer
                             key={i}
