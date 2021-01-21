@@ -27,7 +27,7 @@ $modal-section-height: 4.5rem;
         display: flex;
         align-items: center;
         height: $modal-section-height;
-        border-bottom: 1px solid $primary;
+        border-bottom: 1px solid $dialog-gray;
         padding-left: $modal-padding;
         &__title {
             flex: 1;
@@ -45,8 +45,8 @@ $modal-section-height: 4.5rem;
             justify-content: center;
             width: $modal-section-height;
             height: $modal-section-height;
-            color: rgba($color: $primary, $alpha: 0.3);
-            border-left: 1px solid $primary;
+            color: $dialog-gray;
+            border-left: 1px solid $dialog-gray;
             transition: all 350ms ease-in;
             &:hover {
                 color: $primary;
@@ -63,6 +63,6 @@ $modal-section-height: 4.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-top: 1px solid $primary;
+        border-top: 1px solid $dialog-gray;
     }
 }
