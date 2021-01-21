@@ -20,8 +20,10 @@ export function useSearchAndSort<T extends { [key: string]: any }>(incomingData:
         if (sortTerms) {
             arrayCopy = [...incomingData];
             const compareBy = (self: T, other: T, { term, isDescending }: SortTerms<T>) => {
-                if (self[term] < other[term]) return isDescending ? 1 : -1;
-                if (self[term] > other[term]) return isDescending ? -1 : 1;
+                const selfTerm = `${self[term]}`.toLowerCase();
+                const otherTerm = `${other[term]}`.toLowerCase();
+                if (selfTerm < otherTerm) return isDescending ? 1 : -1;
+                if (selfTerm > otherTerm) return isDescending ? -1 : 1;
                 return 0;
             };
             arrayCopy.sort((a, b) => compareBy(a, b, sortTerms));
