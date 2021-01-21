@@ -15,7 +15,7 @@ const EditQuestion: React.FC = () => {
         title: "",
         additionalContent: "",
         type: models.enums.QuestionType.SingleChoice,
-        answers: [],
+        answers: [{ content: "", correct: false }],
         label: "",
         alignment: models.enums.Alignment.Vertical,
     });
@@ -30,10 +30,6 @@ const EditQuestion: React.FC = () => {
         question.answers.length < 2
     );
 
-    // useEffect(() => {
-
-    // }, [question])
-
     const onTypeSelected = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setQuestion({ ...question, type: e.target.selectedIndex - 1 });
     };
@@ -46,6 +42,31 @@ const EditQuestion: React.FC = () => {
         console.log("save");
     };
 
+    const onSelectionChanged = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        //check if question is singlechoice
+        if (question.type === models.enums.QuestionType.SingleChoice) {
+            question.answers.forEach((answer, i) => {
+                answer.correct = index === i;
+            })
+        }
+        else {
+            question.answers[index].correct = e.target.checked;
+        }
+        setQuestion({ ...question });
+    };
+    //needs to add new answer to existing question
+    const onContentChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        const { answers } = question;
+        const { value } = e.target;
+        answers[index].content = value;
+        //check automatocaly add new answer
+        if (answers.length < 10 && index === answers.length - 1 && value) {
+            answers.push({ content: "", correct: false });
+        } else if (index === answers.length - 2 && !value && !answers?.[index + 1]?.content) {
+            answers.pop();
+        }
+        setQuestion({ ...question });
+    };
 
     return (
         <form className="container" onSubmit={onSubmit}>
@@ -97,34 +118,17 @@ const EditQuestion: React.FC = () => {
                 </Section>
                 <Section label="Question answers">
                     {/* /*not render on UI. need to check*/}
-                    <QuestionAnswer
-                        content="One"
-                        selected={true}
-                        answerIndex={0}
-                        questionType={models.enums.QuestionType.SingleChoice}
-                        onSelectionChange={() => { }}
-                        mode={{ isEditMode: true, onContentChange: () => { } }} />
-                    <QuestionAnswer
-                        content="Two"
-                        selected={false}
-                        answerIndex={0}
-                        questionType={models.enums.QuestionType.SingleChoice}
-                        onSelectionChange={() => { }}
-                        mode={{ isEditMode: true, onContentChange: () => { } }} />
-                    <QuestionAnswer
-                        content="Three"
-                        selected={true}
-                        answerIndex={0}
-                        questionType={models.enums.QuestionType.MultiChoice}
-                        onSelectionChange={() => { }}
-                        mode={{ isEditMode: true, onContentChange: () => { } }} />
-                    <QuestionAnswer
-                        content="Four"
-                        selected={false}
-                        answerIndex={0}
-                        questionType={models.enums.QuestionType.MultiChoice}
-                        onSelectionChange={() => { }}
-                        mode={{ isEditMode: true, onContentChange: () => { } }} />
+                    {question.answers.map(({ content, correct }, i) =>
+                        <QuestionAnswer
+                            key={i}
+                            questionType={question.type}
+                            content={content}
+                            answerIndex={i}
+                            mode={{ isEditMode: true, onContentChange: e => onContentChange(e, i) }}
+                            selected={correct}
+                            onSelectionChange={e => onSelectionChanged(e, i)}
+                        />
+                    )}
                 </Section>
             </SectionNavigator>
             <AppButton disabled={isInvalid} type="submit">
