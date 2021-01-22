@@ -1,24 +1,109 @@
+@mixin button($primaryBgColor, $hoverBgColor, $labelColor: $light, $secondaryLabelHoverColor: $light) {
+    @extend %app-button;
+
+    background: $primary;
+
+    @if $labelColor != $light {
+        color: $labelColor;
+    }
+
+    &:hover {
+        background: $hoverBgColor;
+    }
+
+    &.secondary {
+        box-shadow: inset 0 0 0 1px $deep-blue;
+        color: $primaryBgColor;
+
+        &:hover {
+            background: $primaryBgColor !important;
+            @if $labelColor != $light or $secondaryLabelHoverColor != $light {
+                color: $secondaryLabelHoverColor !important;
+            }
+        }
+    }
+}
+
+@mixin button-variety($variety, $colors...) {
+    &.#{$variety} {
+        @include button($colors...);
+    }
+}
+
+%app-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 120px;
+    height: 40px;
+    border-radius: 0.3rem;
+    border: none;
+    cursor: pointer;
+    padding: 0 20px;
+    font-size: 13px;
+    letter-spacing: 1.2px;
+    color: $light;
+    white-space: nowrap;
+    text-transform: uppercase;
+    transition: border-color .3s linear,color .3s linear,background-color .3s linear;
+
+    &:hover {
+        text-decoration: none;
+    }
+
+    &[disabled] {
+        pointer-events: none;
+        opacity: .3;
+        cursor: default;
+    }
+
+    &.small {
+        min-width: 80px;
+        height: 30px;
+        padding: 0 14px;
+    }
+
+    &.large {
+        height: 50px;
+        border-radius: 3px;
+        padding: 0 34px;
+    }
+
+    &.secondary {
+        background: $light !important;
+
+        &:hover {
+            box-shadow: none !important;
+            color: $light !important;
+        }
+
+        &.error {
+            box-shadow: inset 0px 0px 0px 2px $red;
+            color: $red !important;
+
+            &:hover {
+                box-shadow: inset 0px 0px 0px 2px $red !important;
+                background: $light !important;
+                color: $red !important;
+            }
+        }
+    }
+
+    &.error:not(.secondary) {
+        box-shadow: none !important;
+        background: $red !important;
+        color: $light !important;
+
+        &:hover {
+            background: $red !important;
+        }
+    }
+}
+
 .app-button {
-	background: $button-bg;
-	color: $light;
-	border-radius: 0.3rem;
-	border: none;
-	outline: none;
-	font-size: 1rem;
-	letter-spacing: 1.4px;
-	font-weight: bold;
-	text-transform: uppercase;
-	transition: all 0.3s linear;
-	cursor: pointer;
-	padding: 0.5rem 1rem;
-	margin: 0.3rem;
-	&:hover,
-	&:focus {
-		filter: drop-shadow(0 0 4px $primary);
-	}
-	&:disabled {
-		cursor: default;
-		background-color: $dark-gray;
-		color: rgba($color: $light, $alpha: 0.6);
-	}
+	@include button($primary, $deep-blue);
+	// @include button-variety('orange', $orange, $orange-bright);
+	// @include button-variety('pink', $pink, $pink-bright);
+	@include button-variety('white', $light, $light, $primary, $primary);
+	@include button-variety('gray', rgba(216,218,229, 70%), rgba(0,0,0,12%), #1B2331);
 }
