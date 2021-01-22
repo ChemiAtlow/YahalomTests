@@ -1,26 +1,20 @@
-@mixin button($primaryBgColor, $hoverBgColor, $labelColor: $light, $secondaryLabelHoverColor: $light) {
+@mixin button($primaryBgColor, $labelColor: $light, $hoverColor: $primary, $borderColor: $primary) {
     @extend %app-button;
 
-    background: $primary;
+    background: $primaryBgColor;
 
     @if $labelColor != $light {
         color: $labelColor;
     }
 
     &:hover {
-        background: $hoverBgColor;
+        filter: drop-shadow(0 0 3px $hoverColor);
     }
 
     &.secondary {
-        box-shadow: inset 0 0 0 1px $deep-blue;
-        color: $primaryBgColor;
-
-        &:hover {
-            background: $primaryBgColor !important;
-            @if $labelColor != $light or $secondaryLabelHoverColor != $light {
-                color: $secondaryLabelHoverColor !important;
-            }
-        }
+        background: $light;
+        color: $borderColor;
+        border: 1px solid $borderColor;
     }
 }
 
@@ -38,6 +32,7 @@
     height: 40px;
     border-radius: 0.3rem;
     border: none;
+    outline: none;
     cursor: pointer;
     padding: 0 20px;
     font-size: 13px;
@@ -45,15 +40,12 @@
     color: $light;
     white-space: nowrap;
     text-transform: uppercase;
-    transition: border-color .3s linear,color .3s linear,background-color .3s linear;
-
-    &:hover {
-        text-decoration: none;
-    }
+    transition: filter 300ms linear;
+    margin: 0 0.2rem;
 
     &[disabled] {
         pointer-events: none;
-        opacity: .3;
+        opacity: 0.3;
         cursor: default;
     }
 
@@ -68,42 +60,12 @@
         border-radius: 3px;
         padding: 0 34px;
     }
-
-    &.secondary {
-        background: $light !important;
-
-        &:hover {
-            box-shadow: none !important;
-            color: $light !important;
-        }
-
-        &.error {
-            box-shadow: inset 0px 0px 0px 2px $red;
-            color: $red !important;
-
-            &:hover {
-                box-shadow: inset 0px 0px 0px 2px $red !important;
-                background: $light !important;
-                color: $red !important;
-            }
-        }
-    }
-
-    &.error:not(.secondary) {
-        box-shadow: none !important;
-        background: $red !important;
-        color: $light !important;
-
-        &:hover {
-            background: $red !important;
-        }
-    }
 }
 
 .app-button {
-	@include button($primary, $deep-blue);
+	@include button($button-bg);
 	// @include button-variety('orange', $orange, $orange-bright);
 	// @include button-variety('pink', $pink, $pink-bright);
-	@include button-variety('white', $light, $light, $primary, $primary);
-	@include button-variety('gray', rgba(216,218,229, 70%), rgba(0,0,0,12%), #1B2331);
+	@include button-variety('error', $warn-bg, $light, $red, $red);
+	@include button-variety('gray', rgba(216, 218, 229, 0.7), rgba(0,0,0, 0.12), #1b2331,#1b2331);
 }
