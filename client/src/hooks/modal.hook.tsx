@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { Backdrop } from "../components";
 
@@ -8,6 +8,7 @@ type ModalContextFn = {
         Component: React.FC<T>,
         props: Omit<T, "close">
     ) => Modal<T>;
+    closeModal: <V extends {}, T extends ModalInstance<V>>(modal: Modal<T>, value: V) => void;
     hasOpenModals: () => boolean;
 };
 export interface ModalInstance<T extends {} = any> {
@@ -19,17 +20,10 @@ export class Modal<T extends ModalInstance> {
     public promise: Promise<closeModal<T>>;
     public resolve!: (value: closeModal<T>) => void;
 
-    constructor(
-        public Component: React.FC<T>,
-        public props: Omit<T, "close">,
-        public closeCB: (modal: Modal<T>, value: closeModal<T>) => void
-    ) {
-        this.promise = new Promise(resolve => {
-            this.resolve = resolve;
+    constructor(public Component: React.FC<T>, public props: Omit<T, "close">) {
+        this.promise = new Promise(res => {
+            this.resolve = res;
         });
-    }
-    close(value: closeModal<T>) {
-        this.closeCB(this, value);
     }
 }
 
@@ -37,6 +31,7 @@ const ModalContext = createContext<ModalContextFn>({
     modalInstances: [],
     hasOpenModals: () => false,
     openModal: () => ({} as any),
+    closeModal: () => undefined,
 });
 
 export function ModalProvider({ children }: React.PropsWithChildren<any>) {
@@ -47,7 +42,10 @@ export function ModalProvider({ children }: React.PropsWithChildren<any>) {
             {value.modalInstances.length && <Backdrop />}
             {value.modalInstances.map(modal =>
                 createPortal(
-                    <modal.Component close={modal.close.bind(modal)} {...modal.props} />,
+                    <modal.Component
+                        close={(val: any) => value.closeModal(modal, val)}
+                        {...modal.props}
+                    />,
                     document.body
                 )
             )}
@@ -65,27 +63,21 @@ function useModalProvider(): ModalContextFn {
         Component: React.FC<T>,
         props: Omit<T, "close"> = {} as any
     ) => {
-        const modal = new Modal<T>(Component, props, (m,v) =>closeModal(m,v));
+        const modal = new Modal<T>(Component, props);
         setModalInstances([...modalInstances, modal]);
         return modal;
     };
 
-    const closeModal = useCallback(
-        <V extends {}, T extends ModalInstance<V>>(modal: Modal<T>, value: V) => {
-            console.log(modalInstances, modal);
-            modal.resolve(value);
-            const index = modalInstances.indexOf(modal);
-            if (index !== -1) {
-                setModalInstances([...modalInstances.splice(index, 1)]);
-            }
-        },
-        [modalInstances, setModalInstances]
-    );
+    const closeModal = <V extends {}, T extends ModalInstance<V>>(modal: Modal<T>, value: V) => {
+        modal.resolve(value);
+        setModalInstances(modalInstances.filter(m => m !== modal));
+    };
 
     const hasOpenModals = () => modalInstances.length > 0;
     return {
         modalInstances,
         hasOpenModals,
+        closeModal,
         openModal,
     };
 }
