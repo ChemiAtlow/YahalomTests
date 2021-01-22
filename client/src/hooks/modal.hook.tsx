@@ -39,7 +39,7 @@ export function ModalProvider({ children }: React.PropsWithChildren<any>) {
     return (
         <ModalContext.Provider value={value}>
             {children}
-            {value.modalInstances.length && <Backdrop />}
+            {value.modalInstances.length && <Backdrop onEscape={() => console.log("ESC CLICKED")} />}
             {value.modalInstances.map(modal =>
                 createPortal(
                     <modal.Component
