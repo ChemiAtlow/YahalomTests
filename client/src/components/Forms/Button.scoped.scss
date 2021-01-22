@@ -64,8 +64,6 @@
 
 .app-button {
 	@include button($button-bg);
-	// @include button-variety('orange', $orange, $orange-bright);
-	// @include button-variety('pink', $pink, $pink-bright);
 	@include button-variety('error', $warn-bg, $light, $red, $red);
 	@include button-variety('gray', rgba(216, 218, 229, 0.7), rgba(0,0,0, 0.12), #1b2331,#1b2331);
 }
