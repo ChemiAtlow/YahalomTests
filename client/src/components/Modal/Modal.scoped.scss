@@ -13,16 +13,6 @@ $modal-section-height: 4.5rem;
     border-radius: $modal-radius;
     box-shadow: 0 0 0.6rem $primary;
     overflow-y: auto;
-    &-backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        background: rgba($primary, 0.4);
-        backdrop-filter: blur(0.25rem);
-        height: 100%;
-    }
     &-header {
         display: flex;
         align-items: center;
