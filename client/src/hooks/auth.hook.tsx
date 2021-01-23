@@ -1,5 +1,6 @@
 import { models } from "@yahalom-tests/common";
 import React, { useState, useContext, createContext } from "react";
+import { AuthRequest } from "../models";
 import { authService } from "../services";
 
 type providerFn = {
@@ -17,10 +18,12 @@ type providerFn = {
 	) => void;
 	sendPasswordResetEmail: (email: string) => boolean;
 	confirmPasswordReset: (code: string, password: string) => boolean;
+	buildAuthRequestData: () => AuthRequest
 };
 type ActiveItem = { name: string; id?: models.classes.guid };
 //define defaults results for context
 const authContext = createContext<providerFn>({
+	buildAuthRequestData: () => ({ jwt: "", organizationId: "", studyFieldId: "" }),
 	getOrganizationAndFieldUrl: () => "",
 	setActiveOrganization: () => { },
 	setActiveStudyField: () => { },
@@ -91,6 +94,9 @@ function useProvideAuth(): providerFn {
 	const getOrganizationAndFieldUrl = (...params: string[]) => {
 		return `/${activeOrganization?.id}/${activeStudyField?.id}/${params.join("/")}`;
 	};
+	const buildAuthRequestData = () => {
+		return { jwt: jwt ?? "", organizationId: activeOrganization?.id ?? "", studyFieldId: activeStudyField?.id ?? "" }
+	}
 	// useEffect(() => {
 	// 	const unsubscribe = firebase.auth().onAuthStateChanged(user => {
 	// 		if (user) {
@@ -114,6 +120,7 @@ function useProvideAuth(): providerFn {
 		setActiveOrganization,
 		organizationBaseInfo,
 		sendPasswordResetEmail,
+		buildAuthRequestData,
 		confirmPasswordReset,
 		getOrganizationAndFieldUrl,
 	};
