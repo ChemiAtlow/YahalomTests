@@ -1,26 +1,35 @@
 import { models } from "@yahalom-tests/common";
 import { questionRepository, testRepository } from "../DAL";
 import { BadRequestError } from "../errors";
+import { fieldService, organizationService } from "../services";
+
 
 // Get Questions
-export const getAllQuestions = async () => {
+export const getAllQuestions = async (fieldId: models.classes.guid) => {
+	const questionIds = await fieldService.getQuestionIdsByField(fieldId);
 	const tests = await testRepository.getAll();
 	const questions = await questionRepository.getAll();
-	questions.forEach(q => {
-		if (q.active) {
-			q.testCount = tests.filter(t => t.questions.includes(q.id || "")).length;
-		}
+	const filteredQuestions = questions.filter(q => questionIds.includes(q.id!));
+	filteredQuestions.forEach(q => {
+		q.testCount = tests.filter(t => t.questions.includes(q.id || "")).length;
+		q.active = q.testCount > 0;
 	});
-	return questions;
+	return filteredQuestions;
 };
 
+//This method should be in question service
 export const getQuestionById = (id: models.classes.guid) => {
 	return questionRepository.getItemById(id);
 };
 
 // Add question to the list
-export const addQuestion = (question: models.dtos.QuestionDto) => {
-	return questionRepository.addItem({ ...question, lastUpdate: Date.now(), active: false });
+export const addQuestion = async (question: models.dtos.QuestionDto,
+	organizationId: models.classes.guid,
+	fieldId: models.classes.guid) => {
+	const newQuestion = await questionRepository.addItem({ ...question, lastUpdate: Date.now(), active: false });
+	await organizationService.addQuestion(organizationId, newQuestion.id!);
+	await fieldService.addQuestion(fieldId, newQuestion.id!);
+	return newQuestion;
 };
 
 export const editQuestion = async (
