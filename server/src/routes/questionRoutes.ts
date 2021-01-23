@@ -3,14 +3,14 @@ import { models } from "@yahalom-tests/common";
 import { questionsController } from "../controllers";
 import { HttpError } from "../errors";
 import { HTTPStatuses } from "../constants";
-import { validationMiddleware } from "../middleware";
+import { validationMiddleware, authMiddleware } from "../middleware";
 
 export const router = Router();
 
 //Get all questions
-router.get("", async (_, res) => {
+router.get("", authMiddleware, async (req, res) => {
 	try {
-		const data = await questionsController.getAllQuestions();
+		const data = await questionsController.getAllQuestions(req.headers.field as models.classes.guid);
 		res.send(data);
 	} catch (err) {
 		if (err instanceof HttpError) {
@@ -42,10 +42,12 @@ router.get("/:id", async (req, res) => {
 //Add question to the list in json
 router.post(
 	"",
+	authMiddleware,
 	validationMiddleware(models.dtos.QuestionDto),
 	async (req, res) => {
 		try {
-			const data = await questionsController.addQuestion(req.body);
+			const { field, organization } = req.headers as { field: models.classes.guid; organization: models.classes.guid };
+			const data = await questionsController.addQuestion(req.body, organization, field);
 			res.status(HTTPStatuses.created).send(data);
 		} catch (err) {
 			if (err instanceof HttpError) {
