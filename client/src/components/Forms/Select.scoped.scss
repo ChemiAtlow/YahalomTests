@@ -2,93 +2,93 @@ $select-height: 1.15rem;
 $top-margin: 1.5rem;
 
 .select {
-	position: relative;
-	overflow: hidden;
-	margin-bottom: 1rem;
-	&-text {
-		margin-top: $top-margin;
-		appearance: none;
-		-webkit-appearance: none;
-		position: relative;
-		font-family: inherit;
-		background-color: transparent;
-		width: 100%;
-		padding: 10px 10px 10px 0;
-		font-size: $select-height;
-		border-radius: 0;
-		border: none;
-		cursor: pointer;
-		border-bottom: 1px solid $dark-gray;
-		&__default {
-			display: none;
-		}
-		&:focus {
-			outline: none;
-			~ .select-bar {
-				border-bottom: 3.5px solid $primary;
-				transform: scaleX(150);
-			}
-			~ .select-label {
-				color: $primary;
-			}
-		}
-		&:focus,
-		&:valid,
-		&:disabled {
-			~ .select-label {
-				top: 0;
-				transition: 0.2s ease all;
-				font-size: 14px;
-			}
-		}
-		&:disabled {
-			cursor: initial;
-		}
-	}
-	&-label {
-		color: $dark-gray;
-		font-size: $select-height;
-		font-weight: normal;
-		position: absolute;
-		pointer-events: none;
-		left: 0;
-		top: calc(0.5rem + #{$top-margin});
-		transition: 0.2s ease all;
-	}
-	&-bar {
-		position: absolute;
-		bottom: 0;
-		right: 0;
-		left: 0;
-		border-bottom: 2px solid $primary;
-		content: "";
-		display: block;
-		margin: 0 auto;
-		transform: scaleX(0);
-		transition: all 400ms ease-in-out;
-		width: 1%;
-	}
-	// &-highlight {
-	// 	position: absolute;
-	// 	height: 60%;
-	// 	width: 100px;
-	// 	top: 25%;
-	// 	left: 0;
-	// 	pointer-events: none;
-	// 	opacity: 0.5;
-	// }
-	/* Use custom arrow */
-	&:after {
-		position: absolute;
-		top: calc(#{$select-height} + #{$top-margin});
-		right: 10px;
-		width: 0;
-		height: 0;
-		padding: 0;
-		content: "";
-		border-left: 6px solid transparent;
-		border-right: 6px solid transparent;
-		border-top: 6px solid $dark-gray;
-		pointer-events: none;
-	}
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    &-text {
+        margin-top: $top-margin;
+        appearance: none;
+        -webkit-appearance: none;
+        position: relative;
+        font-family: inherit;
+        background-color: transparent;
+        width: 100%;
+        padding: 10px 12px 10px 12px;
+        font-size: $select-height;
+        border-radius: 0;
+        border: none;
+        cursor: pointer;
+        border-bottom: 1px solid $dark-gray;
+        &__default {
+            display: none;
+        }
+        &:focus {
+            outline: none;
+            ~ .select-bar {
+                border-bottom: 3.5px solid $primary;
+                transform: scaleX(150);
+            }
+            ~ .select-label {
+                color: $primary;
+            }
+        }
+        &:focus,
+        &:valid,
+        &:disabled {
+            ~ .select-label {
+                top: 0;
+                transition: 0.2s ease all;
+                font-size: 14px;
+            }
+        }
+        &:disabled {
+            cursor: initial;
+        }
+    }
+    &-label {
+        color: $dark-gray;
+        font-size: $select-height;
+        font-weight: normal;
+        position: absolute;
+        pointer-events: none;
+        left: 0;
+        top: calc(0.5rem + #{$top-margin});
+        transition: 0.2s ease all;
+    }
+    &-bar {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        border-bottom: 2px solid $primary;
+        content: "";
+        display: block;
+        margin: 0 auto;
+        transform: scaleX(0);
+        transition: all 400ms ease-in-out;
+        width: 1%;
+    }
+    // &-highlight {
+    // 	position: absolute;
+    // 	height: 60%;
+    // 	width: 100px;
+    // 	top: 25%;
+    // 	left: 0;
+    // 	pointer-events: none;
+    // 	opacity: 0.5;
+    // }
+    /* Use custom arrow */
+    &:after {
+        position: absolute;
+        top: calc(#{$select-height} + #{$top-margin});
+        right: 10px;
+        width: 0;
+        height: 0;
+        padding: 0;
+        content: "";
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid $dark-gray;
+        pointer-events: none;
+    }
 }

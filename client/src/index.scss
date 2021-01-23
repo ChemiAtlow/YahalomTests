@@ -2,6 +2,20 @@
 	box-sizing: border-box;
 }
 
+::-webkit-scrollbar {
+    width: 0.4rem;
+    &-track {
+        background: $primary;
+    }
+    &-thumb {
+		background: $darker-blue;
+		background: $button-bg;
+		&:hover {
+			background: $dark-blue;
+        }
+    }
+}
+
 html,
 body {
 	margin: 0;
@@ -24,6 +38,12 @@ body {
 		text-align: center;
 		& > .app {
 			position: relative;
+			overflow-y: auto;
+			.container {
+				width: 95%;
+				max-width: 45rem;
+				margin: 1rem auto;
+			}
 		}
 	}
 }

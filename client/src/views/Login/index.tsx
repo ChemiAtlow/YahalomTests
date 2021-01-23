@@ -10,7 +10,6 @@ const Login: React.FC = () => {
 	const { state, pathname } = useLocation<any>();
 	const isLogin = /login/i.test(pathname);
 	const { signin, signup } = useAuth();
-	const { from } = state || { from: { pathname: "/" } };
 	const [tmpUser, setTmpUser] = useState({ email: "", password: "" });
 	const [emailError, setEmailError] = useState("");
 	const [passwordError, setPasswordError] = useState("");
@@ -33,9 +32,23 @@ const Login: React.FC = () => {
 	}, [tmpUser.password, setPasswordError]);
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const authMethod = isLogin ? signin : signup;
-		if (await authMethod(tmpUser)) {
-			replace(from);
+		if (isLogin) {
+			if (await signin(tmpUser)) {
+				replace(state?.from?.pathname || "/");
+			}
+			else {
+				console.warn("login failed!");
+				//error component;
+			}
+		}
+		else {
+			if (await signup(tmpUser)) {
+				// display success message
+				push("/login")
+			}
+			else {
+				//display failure message
+			}
 		}
 	};
 
@@ -44,19 +57,15 @@ const Login: React.FC = () => {
 	};
 
 	return (
-		<div className="login__dialog">
-			<h1 className="login__dialog-title">
-				{isLogin ? "Login" : "Sign up"}
-			</h1>
+		<div className="login__dialog container">
+			<h1 className="login__dialog-title">{isLogin ? "Login" : "Sign up"}</h1>
 			<form onSubmit={onSubmit}>
 				<FormField
 					label="Email"
 					type="text"
 					autoComplete="username"
 					value={tmpUser.email}
-					onChange={e =>
-						setTmpUser({ ...tmpUser, email: e.target.value.trim() })
-					}
+					onChange={e => setTmpUser({ ...tmpUser, email: e.target.value.trim() })}
 					error={emailError}
 				/>
 				<FormField
@@ -74,13 +83,11 @@ const Login: React.FC = () => {
 				/>
 				<AppButton disabled={isValid} type="submit">
 					Submit
-				</AppButton>
+                </AppButton>
 			</form>
 
 			<AppButton onClick={onPageChangeRequest} type="button">
-				{isLogin
-					? "Not registered? Signup!"
-					: "Have an account? Login!"}
+				{isLogin ? "Not registered? Signup!" : "Have an account? Login!"}
 			</AppButton>
 		</div>
 	);

@@ -1,8 +1,15 @@
-.error-modal__title-icon {
+.error-modal__title {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-left: -1 * $modal-padding;
+    &-icon {
         display: flex;
         align-items: center;
         justify-content: center;
+        height: 100%;
         width: $modal-section-height;
         border-right: 1px solid $dialog-gray;
+        margin-right: $modal-padding;
     }
 }

@@ -1,5 +1,6 @@
 import { models } from "@yahalom-tests/common";
 import React, { useState, useContext, createContext } from "react";
+import { AuthRequest } from "../models";
 import { authService } from "../services";
 
 type providerFn = {
@@ -10,22 +11,26 @@ type providerFn = {
 	signin: (user: models.interfaces.User) => Promise<boolean>;
 	signup: (user: models.interfaces.User) => Promise<boolean>;
 	signout: () => void;
-	setActiveStudyField: (val: ActiveItem) => void;
+	getOrganizationAndFieldUrl: (...params: string[]) => string;
+	setActiveStudyField: (val?: ActiveItem) => void;
 	setActiveOrganization: (
-		val: models.interfaces.OrganizationBaseInfo
+		val?: models.interfaces.OrganizationBaseInfo
 	) => void;
 	sendPasswordResetEmail: (email: string) => boolean;
 	confirmPasswordReset: (code: string, password: string) => boolean;
+	buildAuthRequestData: () => AuthRequest
 };
 type ActiveItem = { name: string; id?: models.classes.guid };
 //define defaults results for context
 const authContext = createContext<providerFn>({
-	setActiveOrganization: () => {},
-	setActiveStudyField: () => {},
+	buildAuthRequestData: () => ({ jwt: "", organizationId: "", studyFieldId: "" }),
+	getOrganizationAndFieldUrl: () => "",
+	setActiveOrganization: () => { },
+	setActiveStudyField: () => { },
 	confirmPasswordReset: () => false,
 	sendPasswordResetEmail: () => false,
 	signin: async () => false,
-	signout: () => {},
+	signout: () => { },
 	signup: async () => false,
 	jwt: undefined,
 	activeStudyField: undefined,
@@ -86,6 +91,12 @@ function useProvideAuth(): providerFn {
 		return true;
 	};
 
+	const getOrganizationAndFieldUrl = (...params: string[]) => {
+		return `/${activeOrganization?.id}/${activeStudyField?.id}/${params.join("/")}`;
+	};
+	const buildAuthRequestData = () => {
+		return { jwt: jwt ?? "", organizationId: activeOrganization?.id ?? "", studyFieldId: activeStudyField?.id ?? "" }
+	}
 	// useEffect(() => {
 	// 	const unsubscribe = firebase.auth().onAuthStateChanged(user => {
 	// 		if (user) {
@@ -109,6 +120,8 @@ function useProvideAuth(): providerFn {
 		setActiveOrganization,
 		organizationBaseInfo,
 		sendPasswordResetEmail,
+		buildAuthRequestData,
 		confirmPasswordReset,
+		getOrganizationAndFieldUrl,
 	};
 }

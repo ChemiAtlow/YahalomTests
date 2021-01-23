@@ -11,6 +11,7 @@ const FormField: React.FC<FormFieldProps> = ({
 	label,
 	error,
 	type,
+	required,
 	...rest
 }) => {
 	return (
@@ -20,17 +21,19 @@ const FormField: React.FC<FormFieldProps> = ({
 					<textarea
 						className="form-field__control-input"
 						placeholder=" "
+						required
 						{...rest}
 					/>
 				) : (
 					<input
 						className="form-field__control-input"
 						placeholder=" "
+						required
 						type={type}
 						{...rest}
 					/>
 				)}
-				<span className="form-field__control-label">{label}</span>
+				<span className="form-field__control-label">{`${label}${required ? '*' : ''}`}</span>
 				<div className="form-field__control-bar" />
 			</label>
 			{error && <p className="form-field__error">{error}</p>}

@@ -1,0 +1,25 @@
+.section {
+    display: grid;
+    grid-template-rows: $header-height 1fr;
+    &-links {
+        display: flex;
+        background: $grayish-blue;
+        &__item {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            &:not(:last-of-type) {
+                border-right: 1px solid $primary;
+            }
+            &.active,
+            &:hover {
+                background: $gray;
+            }
+        }
+    }
+    &-content {
+        height: 100%;
+        overflow-y: auto;
+    }
+}

@@ -10,7 +10,6 @@ type ModalContextFn = {
     ) => ModalWrapper<T>;
     closeModal: <V extends {}, T extends ModalInstance<V>>(modal: ModalWrapper<T>, value: V) => void;
     closeLastModal: () => void;
-    hasOpenModals: () => boolean;
 };
 export interface ModalInstance<T extends {} = any> {
     close: (value?: T) => void;
@@ -30,7 +29,6 @@ export class ModalWrapper<T extends ModalInstance> {
 
 const ModalContext = createContext<ModalContextFn>({
     modalInstances: [],
-    hasOpenModals: () => false,
     openModal: () => ({} as any),
     closeModal: () => undefined,
     closeLastModal: () => {}
@@ -41,7 +39,7 @@ export function ModalProvider({ children }: React.PropsWithChildren<any>) {
     return (
         <ModalContext.Provider value={value}>
             {children}
-            {value.modalInstances.length && <Backdrop onEscape={() => value.closeLastModal()} />}
+            {value.modalInstances.length ? <Backdrop onEscape={() => value.closeLastModal()} /> : ''}
             {value.modalInstances.map(modal =>
                 createPortal(
                     <modal.Component
@@ -80,10 +78,8 @@ function useModalProvider(): ModalContextFn {
         lastModal?.resolve(undefined);
         setModalInstances([...modalInstances]);
     }
-    const hasOpenModals = () => modalInstances.length > 0;
     return {
         modalInstances,
-        hasOpenModals,
         closeLastModal,
         closeModal,
         openModal,

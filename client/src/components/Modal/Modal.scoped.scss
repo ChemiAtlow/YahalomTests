@@ -23,20 +23,18 @@
             font-size: 1.2rem;
             font-weight: bold;
             letter-spacing: 0.12rem;
+            height:100%;
         }
         &__close {
-            font-size: 2.7rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             width: $modal-section-height;
             height: $modal-section-height;
-            color: $dialog-gray;
             border-left: 1px solid $dialog-gray;
             transition: all 350ms ease-in;
             &:hover {
-                color: $primary;
                 background: $gray;
             }
         }

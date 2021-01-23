@@ -1,7 +1,8 @@
 import axios from "axios";
-import environment from "../environments/environment";
+import{constants} from "@yahalom-tests/common";
+const {serverDomain,serverPort} = constants.URLS;
 
-const axiosCreate = axios.create({ baseURL: `${environment.serverUrl}` });
+const axiosCreate = axios.create({ baseURL: `${serverDomain}:${serverPort}` });
 
 const methods = {
 	get: axiosCreate.get,
