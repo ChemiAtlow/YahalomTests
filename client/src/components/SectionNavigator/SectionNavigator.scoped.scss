@@ -1,0 +1,10 @@
+.section-wrapper {
+    position: relative;
+    .section-links {
+        position: absolute;
+        top: 0;
+        right:0;
+        left: 0;
+        background: $grayish-blue;
+    }
+}

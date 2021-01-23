@@ -77,65 +77,68 @@ const EditQuestion: React.FC = () => {
     };
 
     return (
-        <form className="container" onSubmit={onSubmit}>
-            <p>Field: <b>{activeStudyField?.name}</b></p>
+        <form onSubmit={onSubmit}>
             <SectionNavigator>
                 <Section label="Question Details">
-                    <Row>
-                        <Select label="Question type"
+                    <div className="container">
+                        <p>Field: <b>{activeStudyField?.name}</b></p>
+                        <Row>
+                            <Select label="Question type"
+                                required
+                                value={question.type}
+                                onChange={onTypeSelected}
+                                options={types} />
+                            <Select label="Answer layout"
+                                required
+                                value={question.alignment}
+                                onChange={onAlignmentSelected}
+                                options={alignments} />
+                        </Row>
+                        <FormField
+                            label="Title"
+                            type="text"
                             required
-                            value={question.type}
-                            onChange={onTypeSelected}
-                            options={types} />
-                        <Select label="Answer layout"
+                            value={question.title}
+                            onChange={e =>
+                                setQuestion({ ...question, title: e.target.value.trim() })
+                            }
+                            error={titleError}
+                        />
+                        <FormField
+                            label="Aditional content"
+                            type="textarea"
+                            value={question.additionalContent}
+                            onChange={e =>
+                                setQuestion({ ...question, additionalContent: e.target.value })
+                            }
+                            error={additionalContentError}
+                        />
+                        <FormField
+                            label="Tags"
                             required
-                            value={question.alignment}
-                            onChange={onAlignmentSelected}
-                            options={alignments} />
-                    </Row>
-                    <FormField
-                        label="Title"
-                        type="text"
-                        required
-                        value={question.title}
-                        onChange={e =>
-                            setQuestion({ ...question, title: e.target.value.trim() })
-                        }
-                        error={titleError}
-                    />
-
-                    <FormField
-                        label="Aditional content"
-                        type="textarea"
-                        value={question.additionalContent}
-                        onChange={e =>
-                            setQuestion({ ...question, additionalContent: e.target.value })
-                        }
-                        error={additionalContentError}
-                    />
-                    <FormField
-                        label="Tags"
-                        required
-                        type="text"
-                        value={question.label}
-                        onChange={e =>
-                            setQuestion({ ...question, label: e.target.value.trim() })
-                        }
-                        error={labelError}
-                    />
+                            type="text"
+                            value={question.label}
+                            onChange={e =>
+                                setQuestion({ ...question, label: e.target.value.trim() })
+                            }
+                            error={labelError}
+                        />
+                    </div>
                 </Section>
                 <Section label="Question answers">
-                    {question.answers.map(({ content, correct }, i) =>
-                        <QuestionAnswer
-                            key={i}
-                            questionType={question.type}
-                            content={content}
-                            answerIndex={i}
-                            mode={{ isEditMode: true, onContentChange: e => onContentChange(e, i) }}
-                            selected={correct}
-                            onSelectionChange={e => onSelectionChanged(e, i)}
-                        />
-                    )}
+                    <div className="container">
+                        {question.answers.map(({ content, correct }, i) =>
+                            <QuestionAnswer
+                                key={i}
+                                questionType={question.type}
+                                content={content}
+                                answerIndex={i}
+                                mode={{ isEditMode: true, onContentChange: e => onContentChange(e, i) }}
+                                selected={correct}
+                                onSelectionChange={e => onSelectionChanged(e, i)}
+                            />
+                        )}
+                    </div>
                 </Section>
             </SectionNavigator>
             <AppButton disabled={isInvalid} type="submit">
