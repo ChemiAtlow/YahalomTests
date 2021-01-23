@@ -9,10 +9,10 @@ import {
     ProtectedRoute,
     Icon,
     Tooltip,
-} from "../components";
-import { questionService } from "../services";
-import { useAuth } from "../hooks";
-import EditQuestion from "./Edit Question/EditQuestion";
+} from "../../components";
+import { questionService } from "../../services";
+import { useAuth } from "../../hooks";
+import EditQuestion from "./EditQuestion";
 
 const columns: Column[] = [
     {
@@ -51,7 +51,9 @@ const columns: Column[] = [
         sortable: false,
         smallColumn: true,
         template: ({ data }) => (
-            <Tooltip value={data.active ? "Question is active" : "Remove question."}>
+            <Tooltip
+                value={data.active ? "Question is active" : "Remove question."}
+                direction="left">
                 <Icon icon={data.active ? "active" : "trash"} />
             </Tooltip>
         ),
@@ -63,7 +65,7 @@ const columns: Column[] = [
         sortable: false,
         smallColumn: true,
         template: ({ data }) => (
-            <Tooltip value="Click to edit the question.">
+            <Tooltip value="Click to edit the question." direction="left">
                 <Icon icon="edit" />
             </Tooltip>
         ),
