@@ -2,12 +2,12 @@ import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
 import "./Backdrop.scoped.scss";
 
-const Backdrop: React.FC<{ onEscape?: () => void }> = ({onEscape}) => {
+const Backdrop: React.FC<{ onEscape?: () => void }> = ({ onEscape }) => {
     useEffect(() => {
         if (onEscape) {
             const listener = (event: KeyboardEvent) => {
                 if (event.key === "Escape") {
-                    onEscape!();
+                    onEscape();
                 }
             };
             document.addEventListener("keydown", listener, { capture: true });
