@@ -19,7 +19,7 @@ const Questions: React.FC = () => {
     const { path } = useRouteMatch();
     const { push } = useHistory();
     const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
-    const reomveQuestion = (id: models.classes.guid) => {
+    const removeQuestion = (id: models.classes.guid) => {
         console.log("I have to remove ");
     };
     const goToEditQuestion = (id: models.classes.guid) =>
@@ -66,7 +66,7 @@ const Questions: React.FC = () => {
                     direction="left">
                     <Icon
                         icon={data.active ? "active" : "trash"}
-                        onClick={data.active ? undefined : () => reomveQuestion(data.id)}
+                        onClick={data.active ? undefined : () => removeQuestion(data.id)}
                     />
                 </Tooltip>
             ),

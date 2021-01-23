@@ -5,7 +5,7 @@ import http from "./httpService";
 
 const questionRoute = "/questions/";
 
-const authRequestToHeades: (authReqData: AuthRequest) => AxiosRequestConfig = ({
+const authRequestToHeaders: (authReqData: AuthRequest) => AxiosRequestConfig = ({
     jwt,
     organizationId,
     studyFieldId,
@@ -22,7 +22,7 @@ const authRequestToHeades: (authReqData: AuthRequest) => AxiosRequestConfig = ({
 export async function getAllQuestions(authReqData: AuthRequest) {
     return await http.get<models.interfaces.Question[]>(
         questionRoute,
-        authRequestToHeades(authReqData)
+        authRequestToHeaders(authReqData)
     );
 }
 
@@ -30,12 +30,12 @@ export async function addQuestion(authReqData: AuthRequest, question: models.dto
     return await http.post<models.interfaces.Question>(
         questionRoute,
         question,
-        authRequestToHeades(authReqData)
+        authRequestToHeaders(authReqData)
     );
 }
 export async function deleteQuestion(authReqData: AuthRequest, id: models.classes.guid) {
     return await http.delete<models.interfaces.Question>(
         `questionRoute${id}`,
-        authRequestToHeades(authReqData)
+        authRequestToHeaders(authReqData)
     );
 }
