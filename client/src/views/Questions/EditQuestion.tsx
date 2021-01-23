@@ -1,12 +1,13 @@
-import { models } from '@yahalom-tests/common'
-import React, { useState, useEffect } from 'react'
-import { Row, AppButton, FormField, Select, QuestionAnswer, SectionNavigator, Section } from '../../components';
-import { useAuth } from "../../hooks";
+import { models } from '@yahalom-tests/common';
+import React, { useState, useEffect } from 'react';
+import { Row, AppButton, FormField, Select, QuestionAnswer, SectionNavigator, Section, ErrorModal } from '../../components';
+import { useAuth, useModal } from "../../hooks";
+import { questionService } from '../../services';
 import { enumToArray, SwitchCamelCaseToHuman } from '../../utils';
 
-interface EditParams {
-    questionId?: models.classes.guid;
-}
+// interface EditParams {
+//     questionId?: models.classes.guid;
+// }
 const types = enumToArray(models.enums.QuestionType).map(SwitchCamelCaseToHuman);
 const alignments = enumToArray(models.enums.Alignment).map(SwitchCamelCaseToHuman);
 
@@ -22,7 +23,8 @@ const EditQuestion: React.FC = () => {
     const [titleError, setTitleError] = useState("");
     const [additionalContentError, setAdditionalContentError] = useState("");
     const [labelError, setLabelError] = useState("");
-    const { activeStudyField } = useAuth()
+    const { activeStudyField, buildAuthRequestData } = useAuth();
+    const { openModal } = useModal();
 
     const isInvalid = Boolean(
         titleError || additionalContentError || labelError ||
@@ -47,7 +49,16 @@ const EditQuestion: React.FC = () => {
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("save");
+        try {
+            const questionClone = { ...question };
+            const { answers } = questionClone;
+            if (!answers[answers.length - 1]?.content.trim()) {
+                answers.pop();
+            }
+            await questionService.addQuestion(buildAuthRequestData(), questionClone);
+        } catch (err) {
+            openModal(ErrorModal, { title: "Add question failed", body: err.message });
+        }
     };
 
     const onSelectionChanged = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -77,7 +88,7 @@ const EditQuestion: React.FC = () => {
     };
 
     return (
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} noValidate>
             <SectionNavigator>
                 <Section label="Question Details">
                     <div className="container">
