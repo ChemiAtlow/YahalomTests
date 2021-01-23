@@ -35,3 +35,11 @@ export const isUserConnectedToOrganization = async (
     const organization = await getOrganizationById(organizationId);
     return organization.users.includes(userdId);
 };
+
+export const isQuestionConnectedToOrganization = async (
+    organizationId: models.classes.guid,
+    questionId: models.classes.guid
+) => {
+    const organization = await getOrganizationById(organizationId);
+    return organization.questions.includes(questionId);
+};
