@@ -1,6 +1,7 @@
 import React from "react";
 import { ModalInstance, useClickOutside } from "../../hooks";
 import { AppButton } from "../Forms";
+import Icon from "../Icon";
 import "./Modal.scoped.scss";
 
 export interface ModalProps extends ModalInstance<boolean> {
@@ -27,18 +28,21 @@ export const BaseModal: React.FC<ModalProps> = ({
         <div ref={dialogRef} className="modal">
             <header className="modal-header">
                 <div className="modal-header__title">{title}</div>
-                {/* Use Icon from different branch. this is like a machine time! */}
-                {/* <Icon onClick={() => props.closeModal()} icon='close' className="modal-header__close" /> */}
                 <div className="modal-header__close" onClick={() => close(false)}>
-                    &times;
+                    <Icon icon="close" />
                 </div>
             </header>
             <main className="modal-body">{children}</main>
             {(okText || cancelText) && (
                 <footer className="modal-actions">
-                    {okText && <AppButton onClick={() => {
-                        close(true);
-                    }}>{okText}</AppButton>}
+                    {okText && (
+                        <AppButton
+                            onClick={() => {
+                                close(true);
+                            }}>
+                            {okText}
+                        </AppButton>
+                    )}
                     {cancelText && (
                         <AppButton varaiety="secondary" onClick={() => close(false)}>
                             {cancelText}
