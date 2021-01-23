@@ -2,36 +2,37 @@ import { BrowserRouter, Switch } from "react-router-dom";
 import { ProvideAuth } from "./hooks/auth.hook";
 import { NavBar, ProtectedRoute } from "./components";
 import { Home, Login, Questions, Reports, Tests } from "./views";
+import { ModalProvider } from "./hooks";
 
 const App: React.FC = () => {
 	return (
-		<ProvideAuth>
-			<BrowserRouter>
-				<NavBar />
-				<main className="app">
-					<Switch>
-						<ProtectedRoute requiresField path="/questions">
-							<Questions />
-						</ProtectedRoute>
-						<ProtectedRoute requiresField path="/tests">
-							<Tests />
-						</ProtectedRoute>
-						<ProtectedRoute requiresField path="/reports">
-							<Reports />
-						</ProtectedRoute>
-						<ProtectedRoute
-							onlyNonAuth
-							path={["/login", "/signup"]}>
-							<Login />
-						</ProtectedRoute>
-						<ProtectedRoute path="/">
-							<Home />
-						</ProtectedRoute>
-					</Switch>
-				</main>
-			</BrowserRouter>
-		</ProvideAuth>
-	);
+        <ModalProvider>
+            <ProvideAuth>
+                <BrowserRouter>
+                    <NavBar />
+                    <main className="app">
+                        <Switch>
+                            <ProtectedRoute requiresField path="/questions">
+                                <Questions />
+                            </ProtectedRoute>
+                            <ProtectedRoute requiresField path="/tests">
+                                <Tests />
+                            </ProtectedRoute>
+                            <ProtectedRoute requiresField path="/reports">
+                                <Reports />
+                            </ProtectedRoute>
+                            <ProtectedRoute onlyNonAuth path={["/login", "/signup"]}>
+                                <Login />
+                            </ProtectedRoute>
+                            <ProtectedRoute path="/">
+                                <Home />
+                            </ProtectedRoute>
+                        </Switch>
+                    </main>
+                </BrowserRouter>
+            </ProvideAuth>
+        </ModalProvider>
+    );
 };
 
 export default App;

@@ -1,0 +1,10 @@
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba($primary, 0.4);
+    backdrop-filter: blur(0.25rem);
+    height: 100%;
+}

@@ -1,24 +1,69 @@
+@mixin button($primaryBgColor, $labelColor: $light, $hoverColor: $primary, $borderColor: $primary) {
+    @extend %app-button;
+
+    background: $primaryBgColor;
+
+    @if $labelColor != $light {
+        color: $labelColor;
+    }
+
+    &:hover {
+        filter: drop-shadow(0 0 3px $hoverColor);
+    }
+
+    &.secondary {
+        background: $light;
+        color: $borderColor;
+        border: 1px solid $borderColor;
+    }
+}
+
+@mixin button-variety($variety, $colors...) {
+    &.#{$variety} {
+        @include button($colors...);
+    }
+}
+
+%app-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 120px;
+    height: 40px;
+    border-radius: 0.3rem;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0 20px;
+    font-size: 13px;
+    letter-spacing: 1.2px;
+    color: $light;
+    white-space: nowrap;
+    text-transform: uppercase;
+    transition: filter 300ms linear;
+    margin: 0 0.2rem;
+
+    &[disabled] {
+        pointer-events: none;
+        opacity: 0.3;
+        cursor: default;
+    }
+
+    &.small {
+        min-width: 80px;
+        height: 30px;
+        padding: 0 14px;
+    }
+
+    &.large {
+        height: 50px;
+        border-radius: 3px;
+        padding: 0 34px;
+    }
+}
+
 .app-button {
-	background: $button-bg;
-	color: $light;
-	border-radius: 0.3rem;
-	border: none;
-	outline: none;
-	font-size: 1rem;
-	letter-spacing: 1.4px;
-	font-weight: bold;
-	text-transform: uppercase;
-	transition: all 0.3s linear;
-	cursor: pointer;
-	padding: 0.5rem 1rem;
-	margin: 0.3rem;
-	&:hover,
-	&:focus {
-		filter: drop-shadow(0 0 4px $primary);
-	}
-	&:disabled {
-		cursor: default;
-		background-color: $dark-gray;
-		color: rgba($color: $light, $alpha: 0.6);
-	}
+	@include button($button-bg);
+	@include button-variety('error', $warn-bg, $light, $red, $red);
+	@include button-variety('gray', rgba(216, 218, 229, 0.7), rgba(0,0,0, 0.12), #1b2331,#1b2331);
 }
