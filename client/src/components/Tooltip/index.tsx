@@ -1,5 +1,5 @@
 import React, { useState, useCallback, cloneElement } from 'react';
-import * as ReactDOM from 'react-dom';
+import { createPortal } from 'react-dom';
 import { useClickOutside } from '../../hooks/';
 import './Tooltip.scoped.scss';
 
@@ -25,7 +25,7 @@ export type ITooltipProps = {
     color?: 'black' | 'white';
     value: React.ReactNode;
     trigger?: 'hover' | 'click';
-	onVisibilityChanged?: (isVisible: boolean) => void;
+    onVisibilityChanged?: (isVisible: boolean) => void;
 } & ({ attachToChild?: false; wrapperClassName?: string; } | { attachToChild: true; children: Cloneable })
 
 type Rect = { top: number, left: number, width: number, height: number };
@@ -58,8 +58,8 @@ export const rectToStyles: (rect: Rect, direction: direction) => { top: number; 
 };
 
 export const Tooltip: React.FC<ITooltipProps> = ({ delay, direction, onVisibilityChanged, value, children, ...props }) => {
-	const [isVisible, setVisibility] = useState(false);
-	const [timeoutId, setTimeoutId] = useState<number | null>(null);
+    const [isVisible, setVisibility] = useState(false);
+    const [timeoutId, setTimeoutId] = useState<number | null>(null);
     const [style, setStyle] = useState({ top: 0, left: 0, opacity: 0 });
     const trigger = props.trigger || 'hover';
     const handleVisibilyChanged = useCallback((isVisible: boolean) => {
@@ -73,8 +73,8 @@ export const Tooltip: React.FC<ITooltipProps> = ({ delay, direction, onVisibilit
         }
         const newStyle = rectToStyles(targetBoundingRect, direction ?? 'top');
         setStyle(newStyle);
-		handleVisibilyChanged(true);
-		setTimeoutId(setTimeout(() => {
+        handleVisibilyChanged(true);
+        setTimeoutId(setTimeout(() => {
             setStyle({ ...newStyle, opacity: 1 });
             setTimeoutId(null);
         }, delay ?? 0) as any);
@@ -88,7 +88,7 @@ export const Tooltip: React.FC<ITooltipProps> = ({ delay, direction, onVisibilit
 
 
     const hideTooltip = useCallback(() => {
-		if (timeoutId) {
+        if (timeoutId) {
             clearTimeout(timeoutId);
         }
         setStyle({ top: 0, left: 0, opacity: 0 });
@@ -114,7 +114,7 @@ export const Tooltip: React.FC<ITooltipProps> = ({ delay, direction, onVisibilit
         }
     }, [hideTooltip, trigger]);
 
-    const tooltip = isVisible && ReactDOM.createPortal(<div
+    const tooltip = isVisible && createPortal(<div
         className={`tooltip ${props.className ?? ""} ${props.color ?? "black"} ${direction ?? "top"}`}
         style={style}>
         {value}
