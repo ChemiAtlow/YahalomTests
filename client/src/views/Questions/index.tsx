@@ -91,21 +91,21 @@ const Questions: React.FC = () => {
             .then(({ data }) => setQuestions(data));
     }, [setQuestions, buildAuthRequestData]);
     return (
-        <div>
-            <Switch>
-                <ProtectedRoute requiresField path={path} exact>
+        <Switch>
+            <ProtectedRoute requiresField path={path} exact>
+                <div>
                     <h1>Questions</h1>
                     <AppButton
                         onClick={() => push(getOrganizationAndFieldUrl("questions", "edit"))}>
                         Add new question
                     </AppButton>
                     <DataTable data={questions} columns={columns} />
-                </ProtectedRoute>
-                <ProtectedRoute requiresField path={`${path}/edit/:questionId?`}>
-                    <EditQuestion />
-                </ProtectedRoute>
-            </Switch>
-        </div>
+                </div>
+            </ProtectedRoute>
+            <ProtectedRoute requiresField path={`${path}/edit/:questionId?`}>
+                <EditQuestion />
+            </ProtectedRoute>
+        </Switch>
     );
 };
 
