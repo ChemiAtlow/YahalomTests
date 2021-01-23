@@ -1,11 +1,11 @@
 import React from "react";
-import { AppButton, Modal } from "../components";
+import { AppButton, BaseModal } from "../components";
 import { useModal } from "../hooks";
 
 const Reports: React.FC = () => {
     const { openModal } = useModal();
     const showMessage = (title: string, body: string) =>
-        openModal(Modal, {
+        openModal(BaseModal, {
             title,
 			children: <p>{body}</p>,
             okText: "SAVE",

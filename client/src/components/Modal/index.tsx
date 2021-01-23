@@ -11,7 +11,7 @@ export interface ModalProps extends ModalInstance<boolean> {
     closeOnClickOutside?: boolean;
 }
 
-export const Modal: React.FC<ModalProps> = ({
+export const BaseModal: React.FC<ModalProps> = ({
     title,
     children,
     close,

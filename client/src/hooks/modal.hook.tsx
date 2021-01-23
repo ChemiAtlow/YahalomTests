@@ -3,12 +3,12 @@ import { createPortal } from "react-dom";
 import { Backdrop } from "../components";
 
 type ModalContextFn = {
-    modalInstances: Modal<any>[];
+    modalInstances: ModalWrapper<any>[];
     openModal: <T extends ModalInstance>(
         Component: React.FC<T>,
         props: Omit<T, "close">
-    ) => Modal<T>;
-    closeModal: <V extends {}, T extends ModalInstance<V>>(modal: Modal<T>, value: V) => void;
+    ) => ModalWrapper<T>;
+    closeModal: <V extends {}, T extends ModalInstance<V>>(modal: ModalWrapper<T>, value: V) => void;
     hasOpenModals: () => boolean;
 };
 export interface ModalInstance<T extends {} = any> {
@@ -16,7 +16,7 @@ export interface ModalInstance<T extends {} = any> {
 }
 type closeModal<T extends ModalInstance> = Parameters<T["close"]>[0];
 
-export class Modal<T extends ModalInstance> {
+export class ModalWrapper<T extends ModalInstance> {
     public promise: Promise<closeModal<T>>;
     public resolve!: (value: closeModal<T>) => void;
 
@@ -58,17 +58,17 @@ export const useModal = () => {
 };
 
 function useModalProvider(): ModalContextFn {
-    const [modalInstances, setModalInstances] = useState<Modal<any>[]>([]);
+    const [modalInstances, setModalInstances] = useState<ModalWrapper<any>[]>([]);
     const openModal = <T extends ModalInstance>(
         Component: React.FC<T>,
         props: Omit<T, "close"> = {} as any
     ) => {
-        const modal = new Modal<T>(Component, props);
+        const modal = new ModalWrapper<T>(Component, props);
         setModalInstances([...modalInstances, modal]);
         return modal;
     };
 
-    const closeModal = <V extends {}, T extends ModalInstance<V>>(modal: Modal<T>, value: V) => {
+    const closeModal = <V extends {}, T extends ModalInstance<V>>(modal: ModalWrapper<T>, value: V) => {
         modal.resolve(value);
         setModalInstances(modalInstances.filter(m => m !== modal));
     };
