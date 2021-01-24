@@ -7,7 +7,10 @@ const maxHeight = 70;
 const lineSize = 174;
 const signatureHeight = 390;
 
-export function createCertificate({ firstName, lastName }: Omit<models.interfaces.Student, "email">) {
+export function createCertificate({
+    firstName,
+    lastName,
+}: Omit<models.interfaces.Student, "email">) {
     const studentName = `${firstName} ${lastName}`;
     const doc = new PDFDocument({
         layout: "landscape",
@@ -17,6 +20,7 @@ export function createCertificate({ firstName, lastName }: Omit<models.interface
     doc.rect(0, 0, doc.page.width, doc.page.height).fill("#fff");
     doc.fontSize(10);
 
+    //#region Margin
     // Margin
     doc.fillAndStroke("#0e8cc3")
         .lineWidth(20)
@@ -28,10 +32,10 @@ export function createCertificate({ firstName, lastName }: Omit<models.interface
             doc.page.height - distanceMargin * 2
         )
         .stroke();
+    //#endregion
 
-    // Header
+    //#region Header
     const img = require.resolve("../../assets/winners.png");
-    console.log(img);
     doc.image(img, doc.page.width / 2 - maxWidth / 2, 60, {
         fit: [maxWidth, maxHeight],
         align: "center",
@@ -44,8 +48,9 @@ export function createCertificate({ firstName, lastName }: Omit<models.interface
         .text("NAME OF COURSE", { align: "center" });
 
     jumpLine(doc, 2);
+    //#endregion
 
-    // Content
+    //#region Content
     doc.fontSize(16) //.font("fonts/NotoSansJP-Regular.otf")
         .fill("#021c27")
         .text("CERTIFICATE OF COMPLETION", { align: "center" });
@@ -71,8 +76,9 @@ export function createCertificate({ firstName, lastName }: Omit<models.interface
     jumpLine(doc, 7);
 
     doc.lineWidth(1);
+    //#endregion
 
-    // Signatures
+    //#region Signatures
     doc.fillAndStroke("#021c27");
     doc.strokeOpacity(0.2);
 
@@ -153,8 +159,16 @@ export function createCertificate({ firstName, lastName }: Omit<models.interface
             width: lineSize,
             align: "center",
         });
-
-    // jumpLine(doc, 4);
+    //#endregion
+    
+    //#region Footer
+    jumpLine(doc, 4);
+    const bottomHeight = doc.page.height - 140;
+    const stamp = require.resolve("../../assets/stamp.png");
+    doc.image(stamp, doc.page.width / 2 - 50, bottomHeight, {
+        fit: [100, 100],
+    });
+    //#endregion
 
     // doc.end();
     return doc;
