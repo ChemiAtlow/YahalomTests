@@ -1,6 +1,8 @@
+$shadow-size: 0.2rem;
 .edit-question__form {
+    margin-top: $shadow-size;
     display: grid;
     grid-template-rows: 1fr $header-height;
     overflow: hidden;
-    height: 100%;
+    height: calc(100% - #{$shadow-size});
 }
