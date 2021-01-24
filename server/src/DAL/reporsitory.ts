@@ -41,8 +41,8 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 	}
 
 	async getItemById(id: models.classes.guid) {
-		const index = this.findIndexById(id);
-		return this.fullData![index];
+		const items = await this.getAll();
+		return items.find(item => item.id === id);
 	}
 
 	async addItem(entity: EntityType) {
