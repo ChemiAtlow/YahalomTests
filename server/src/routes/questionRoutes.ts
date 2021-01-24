@@ -22,9 +22,10 @@ router.post(
 //Edit question
 router.put(
     "/:id",
+    authMiddleware,
     validationMiddleware(models.dtos.QuestionDto, true),
     questionsController.editQuestion
 );
 
 //Delete question
-router.delete("/:id", questionsController.deleteQuestion);
+router.delete("/:id", authMiddleware, questionsController.deleteQuestion);
