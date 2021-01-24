@@ -7,7 +7,9 @@
 		& > div {
 			flex: 1;
 			padding: 0.6rem 0.4em;
-            cursor: pointer;
+            &.sortable {
+                cursor: pointer;
+            }
             &.header__small {
                 flex: 0 5%;
             }
