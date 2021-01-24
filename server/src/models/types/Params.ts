@@ -3,7 +3,7 @@ import { Request } from "express";
 
 export type ParamsWithId = {
     id: models.classes.guid;
-}
+};
 
 export type RequestWithId<
     ResBody = any,
