@@ -9,4 +9,4 @@ export const getExamPassedCertificate = (req: Request, res: Response) => {
     });
     doc.pipe(res);
     doc.end();
-}
+};
