@@ -7,6 +7,7 @@ import { types } from "../models";
 export class Repository<EntityType extends models.interfaces.HasId> {
 	private fileName: string;
 	private data?: EntityType[];
+	private fullData?: EntityType[];
 
 	constructor(fileName: string, protected entityName: types.EntityTypes) {
 		this.fileName = pathResolve(__dirname, "..", "..", "data", fileName);
@@ -28,7 +29,8 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 			if (!Array.isArray(data)) {
 				throw new DbError("Db is corrupt");
 			}
-			this.data = data;
+			this.fullData = data;
+			this.filterArchived();
 			return data;
 		} catch (err) {
 			if (err instanceof DbError) {
@@ -40,29 +42,35 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 
 	async getItemById(id: models.classes.guid) {
 		const index = this.findIndexById(id);
-		return this.data![index];
+		return this.fullData![index];
 	}
 
 	async addItem(entity: EntityType) {
 		entity.id = models.classes.Guid.newGuid(); //set id
-		this.data = this.data || [];
-		this.data.push(entity);
+		this.fullData = this.fullData || [];
+		this.fullData.push(entity);
+		this.filterArchived();
 		await this.writeToFile();
 		return entity;
 	}
 
 	async updateItem(id: models.classes.guid, entity: Partial<EntityType>) {
 		let index = this.findIndexById(id);
-		this.data![index] = { ...this.data![index], ...entity, id };
+		this.fullData![index] = { ...this.data![index], ...entity, id };
 		await this.writeToFile();
-		return this.data![index];
+		this.filterArchived();
+		return this.fullData![index];
 	}
 
 	async deleteItem(id: models.classes.guid) {
-		let index = this.findIndexById(id);
-		const removed = this.data!.splice(index, 1);
+		const removed = await this.updateItem(id, { archived: true } as any);
 		await this.writeToFile();
+		this.filterArchived();
 		return removed;
+	}
+
+	private filterArchived() {
+		this.data = (this.fullData || []).filter(d => !d.archived);
 	}
 
 	private findIndexById(id: models.classes.guid) {
