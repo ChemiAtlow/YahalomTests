@@ -8,7 +8,7 @@ import { organizationService, questionService } from "../services";
 export const getAllQuestions = async (req: Request, res: Response) => {
     try {
         const fieldId = req.headers.field as models.classes.guid;
-        const data = questionService.getAllQuestionsByField(fieldId);
+        const data = await questionService.getAllQuestionsByField(fieldId);
         res.send(data);
     } catch (err) {
         if (err instanceof HttpError) {
