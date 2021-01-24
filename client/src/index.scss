@@ -39,9 +39,10 @@ body {
 		& > .app {
 			position: relative;
 			overflow-y: auto;
+			height: 100%;
 			.container {
 				width: 95%;
-				max-width: 45rem;
+				max-width: 60rem;
 				margin: 1rem auto;
 			}
 		}

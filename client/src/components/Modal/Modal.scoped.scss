@@ -24,6 +24,11 @@
             font-weight: bold;
             letter-spacing: 0.12rem;
             height:100%;
+            &-wrapper {
+                display: flex;
+                align-items: center;
+                height: 100%;
+            }
         }
         &__close {
             cursor: pointer;
