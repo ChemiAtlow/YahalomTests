@@ -31,7 +31,7 @@ const QuestionAnswer: React.FC<QuestionAnswerProps> = ({
     const selectionType =
         questionType === models.enums.QuestionType.MultiChoice ? "checkbox" : "radio";
     return (
-        <div className={`question__answer ${mode.isEditMode ? "" : mode.alignment}`}>
+        <div className="question__answer">
             <input
                 className="question__answer-selection"
                 type={selectionType}
