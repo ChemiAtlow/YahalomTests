@@ -1,6 +1,6 @@
 import { models } from '@yahalom-tests/common';
 import React, { useState, useEffect } from 'react';
-import { Row, AppButton, FormField, Select, QuestionAnswer, SectionNavigator, Section, ErrorModal } from '../../components';
+import { Row, AppButton, FormField, Select, QuestionAnswer, SectionNavigator, Section, ErrorModal, QuestionPeekModal } from '../../components';
 import { useAuth, useModal } from "../../hooks";
 import { questionService } from '../../services';
 import { enumToArray, SwitchCamelCaseToHuman } from '../../utils';
@@ -88,6 +88,10 @@ const EditQuestion: React.FC = () => {
         setQuestion({ ...question });
     };
 
+    const previewQuestion = () => {
+        openModal(QuestionPeekModal, { question });
+    }
+
     return (
         <form onSubmit={onSubmit} noValidate className="edit-question__form">
             <SectionNavigator>
@@ -140,26 +144,29 @@ const EditQuestion: React.FC = () => {
                 <Section label="Question answers">
                     <div className="container">
                         <Row>
-                        {question.answers.map(({ content, correct }, i) =>
-                            <QuestionAnswer
-                                key={i}
-                                questionType={question.type}
-                                content={content}
-                                answerIndex={i}
-                                mode={{ isEditMode: true, onContentChange: e => onContentChange(e, i) }}
-                                selected={correct}
-                                onSelectionChange={e => onSelectionChanged(e, i)}
-                            />
-                        )}
+                            {question.answers.map(({ content, correct }, i) =>
+                                <QuestionAnswer
+                                    key={i}
+                                    questionType={question.type}
+                                    content={content}
+                                    answerIndex={i}
+                                    mode={{ isEditMode: true, onContentChange: e => onContentChange(e, i) }}
+                                    selected={correct}
+                                    onSelectionChange={e => onSelectionChanged(e, i)}
+                                />
+                            )}
                         </Row>
                     </div>
                 </Section>
             </SectionNavigator>
             <div>
-            <AppButton disabled={isInvalid} type="submit" className="edit-question__form">
+                <AppButton disabled={isInvalid} type="submit" className="edit-question__form">
                     Submit
-            </AppButton>
-                </div>
+                </AppButton>
+                <AppButton disabled={isInvalid} type="button" varaiety="secondary" className="edit-question__form" onClick={() => previewQuestion()}>
+                    Preview
+                </AppButton>
+            </div>
         </form >
     )
 }
