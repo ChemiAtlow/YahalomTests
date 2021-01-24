@@ -1,4 +1,4 @@
-import { emailService, authService } from "../services";
+import { authService } from "../services";
 import { Request, Response } from "express";
 import { HTTPStatuses } from "../constants";
 
