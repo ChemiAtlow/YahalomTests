@@ -1,0 +1,6 @@
+.edit-question__form {
+    display: grid;
+    grid-template-rows: 1fr $header-height;
+    overflow: hidden;
+    height: 100%;
+}

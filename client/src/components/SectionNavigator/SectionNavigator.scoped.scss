@@ -1,6 +1,8 @@
 .section {
     display: grid;
     grid-template-rows: $header-height 1fr;
+    height: 100%;
+    overflow: hidden;
     &-links {
         display: flex;
         background: $grayish-blue;
