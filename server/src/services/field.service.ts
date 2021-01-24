@@ -2,6 +2,12 @@ import { models } from "@yahalom-tests/common";
 import { studyFieldRepository } from "../DAL";
 import { ItemNotInDbError } from "../errors";
 
+export const getStudyFieldsBaseDataByIds = async (ids: models.classes.guid[]) => {
+    const fields = await studyFieldRepository.getAll();
+    const filteredById = fields.filter(fld => ids.includes(fld.id!));
+    return filteredById.map(({ name, id }) => ({ name, id }));
+};
+
 export const getStudyFieldById = async (id: models.classes.guid) => {
     const field = await studyFieldRepository.getItemById(id);
     if (!field) {
