@@ -4,5 +4,5 @@ import { StudyField } from "./StudyField";
 export interface OrganizationBaseInfo {
 	id: guid;
 	name: string;
-	fields: StudyField[];
+	fields: Pick<StudyField, "id" | "name">[];
 }
