@@ -1,14 +1,16 @@
 import { models } from '@yahalom-tests/common';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useRouteMatch } from 'react-router-dom';
 import { AppButton, SectionNavigator, Section, ErrorModal, QuestionPeekModal } from '../../components';
 import { useAuth, useModal } from "../../hooks";
 import { questionService } from '../../services';
 import "./EditQuestion.scoped.scss";
 import { QuestionDetails, QuestionDetailsKeys, QuestionAnswers } from './QuestionForm';
 
-// interface EditParams {
-//     questionId?: models.classes.guid;
-// }
+interface EditParams {
+    questionId?: models.classes.guid;
+}
+
 const EditQuestion: React.FC = () => {
     const [question, setQuestion] = useState<models.dtos.QuestionDto>({
         title: "",
@@ -18,21 +20,31 @@ const EditQuestion: React.FC = () => {
         label: "",
         alignment: models.enums.Alignment.Vertical,
     });
-    
+
     const { activeStudyField, buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
+    const { state } = useLocation<{ question: models.dtos.QuestionDto }>();
+    const { params } = useRouteMatch<EditParams>();
 
-    const isInvalid = false;
+    useEffect(() => {
+        if (params.questionId && state?.question) {
+            setQuestion(state.question);
+        } else if (params.questionId) {
+            console.log("Got Question ID to edit, no question.")
+        }
+    }, [state, params,setQuestion])
+    const isInvalid = true;
     // Boolean(
     //     titleError || additionalContentError || labelError ||
     //     question.answers.length < 2
     // );
-    const onChange = (e: Partial<QuestionDetailsKeys>) => {
-        setQuestion({ ...question, ...e });
-    }
+    const onChange = (e: Partial<QuestionDetailsKeys>) => setQuestion({ ...question, ...e });
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (isInvalid) {
+            return;
+        }
         try {
             const questionClone = { ...question };
             const { answers } = questionClone;
@@ -54,7 +66,7 @@ const EditQuestion: React.FC = () => {
         <form onSubmit={onSubmit} noValidate className="edit-question__form">
             <SectionNavigator>
                 <Section label="Question Details">
-                    <QuestionDetails question={question} fieldName={activeStudyField?.name || ""} onChange={onChange}  />
+                    <QuestionDetails question={question} fieldName={activeStudyField?.name || ""} onChange={onChange} />
                 </Section>
                 <Section label="Question answers">
                     <QuestionAnswers question={question} onChange={onChange} />
