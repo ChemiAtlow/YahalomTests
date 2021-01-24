@@ -1,29 +1,38 @@
 import { models } from "@yahalom-tests/common";
 import React, { useEffect, useState } from "react";
-import { Switch, useHistory, useRouteMatch } from "react-router-dom";
+import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import {
     Ellipsis,
     AppButton,
     DataTable,
     Column,
-    ProtectedRoute,
     Icon,
     Tooltip,
+    ErrorModal,
 } from "../../components";
 import { questionService } from "../../services";
-import { useAuth } from "../../hooks";
+import { useAuth, useModal } from "../../hooks";
 import EditQuestion from "./EditQuestion";
 
 const Questions: React.FC = () => {
     const [questions, setQuestions] = useState<models.interfaces.Question[]>([]);
     const { path } = useRouteMatch();
     const { push } = useHistory();
+    const { openModal } = useModal();
     const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
-    const removeQuestion = (id: models.classes.guid) => {
-        console.log("I have to remove ");
+    const removeQuestion = async (id: models.classes.guid) => {
+        try {
+            const { data } = await questionService.deleteQuestion(buildAuthRequestData(), id);
+            setQuestions(questions.filter(q => q.id !== data.id));
+        } catch (err) {
+            openModal(ErrorModal, {
+                title: "Delete failure!",
+                body: `Delete has failed: ${err.message}`,
+            });
+        }
     };
-    const goToEditQuestion = (id: models.classes.guid) =>
-        push(getOrganizationAndFieldUrl("questions", "edit", id));
+    const goToEditQuestion = (question: models.interfaces.Question) =>
+        push(getOrganizationAndFieldUrl("questions", "edit", question.id!), { question });
     const columns: Column[] = [
         {
             label: "Title",
@@ -74,7 +83,7 @@ const Questions: React.FC = () => {
         {
             label: "",
             isFromData: true,
-            key: "id",
+            key: "*",
             sortable: false,
             smallColumn: true,
             template: ({ data }) => (
@@ -92,7 +101,7 @@ const Questions: React.FC = () => {
     }, [setQuestions, buildAuthRequestData]);
     return (
         <Switch>
-            <ProtectedRoute requiresField path={path} exact>
+            <Route path={path} exact>
                 <div>
                     <h1>Questions</h1>
                     <AppButton
@@ -101,10 +110,10 @@ const Questions: React.FC = () => {
                     </AppButton>
                     <DataTable data={questions} columns={columns} />
                 </div>
-            </ProtectedRoute>
-            <ProtectedRoute requiresField path={`${path}/edit/:questionId?`}>
+            </Route>
+            <Route path={`${path}/edit/:questionId?`}>
                 <EditQuestion />
-            </ProtectedRoute>
+            </Route>
         </Switch>
     );
 };
