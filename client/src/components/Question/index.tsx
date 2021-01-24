@@ -1,5 +1,5 @@
 import { models } from "@yahalom-tests/common";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import QuestionAnswer from "../QuestionAnswer";
 import "./Question.scoped.scss";
 
@@ -8,7 +8,9 @@ interface QuestionProps {
 }
 
 const Question: React.FC<QuestionProps> = ({ question }) => {
-    const [selection, setSelection] = useState<boolean[]>(Array(question.answers.length).fill(false));
+    const [selection, setSelection] = useState<boolean[]>(
+        Array(question.answers.length).fill(false)
+    );
     const onSelectionChange = (index: number) => {
         let cloned;
         if (question.type === models.enums.QuestionType.MultiChoice) {
@@ -19,7 +21,7 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
             cloned[index] = true;
         }
         setSelection(cloned);
-    }
+    };
     return (
         <div className="question-item">
             <p className="question-item__title">{question.title}</p>
