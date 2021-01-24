@@ -3,9 +3,9 @@ import cors from "cors";
 import compression from "compression";
 import { json } from "body-parser";
 import { patchRouterParamForAsyncHandling } from "./utils";
-import { questionsRouter, authRouter } from "./routes";
+import { questionsRouter, authRouter, testRoutes } from "./routes";
 import { constants } from "@yahalom-tests/common";
-import { errorMiddleware, notFoundMiddleware } from "./middleware";
+import { authMiddleware, errorMiddleware, notFoundMiddleware } from "./middleware";
 import "reflect-metadata";
 
 patchRouterParamForAsyncHandling();
@@ -17,6 +17,7 @@ app.use(compression());
 
 app.use("/questions", questionsRouter);
 app.use("/auth", authRouter);
+app.use("/test", authMiddleware, testRoutes);
 app.use("*", notFoundMiddleware);
 app.use(errorMiddleware);
 
