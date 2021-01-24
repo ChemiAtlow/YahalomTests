@@ -28,3 +28,16 @@ export const addQuestion = async (
     const field = await getStudyFieldById(fieldId);
     studyFieldRepository.updateItem(fieldId, { questions: [...field.questions, questionId] });
 };
+
+export const addTest = async (fieldId: models.classes.guid, testId: models.classes.guid) => {
+    const field = await getStudyFieldById(fieldId);
+    studyFieldRepository.updateItem(fieldId, { tests: [...field.tests, testId] });
+};
+
+export const isTestConnectedToField = async (
+    fieldId: models.classes.guid,
+    testId: models.classes.guid
+) => {
+    const field = await getStudyFieldById(fieldId);
+    return field.tests.includes(testId);
+};

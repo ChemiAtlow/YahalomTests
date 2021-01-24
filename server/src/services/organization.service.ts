@@ -4,7 +4,7 @@ import { ItemNotInDbError } from "../errors";
 
 export const getAllOrganizations = async () => {
     return await organizationRepository.getAll();
-}
+};
 
 export const getOrganizationById = async (id: models.classes.guid) => {
     const organization = await organizationRepository.getItemById(id);
