@@ -4,6 +4,7 @@ import { Row, AppButton, FormField, Select, QuestionAnswer, SectionNavigator, Se
 import { useAuth, useModal } from "../../hooks";
 import { questionService } from '../../services';
 import { enumToArray, SwitchCamelCaseToHuman } from '../../utils';
+import "./EditQuestion.scoped.scss";
 
 // interface EditParams {
 //     questionId?: models.classes.guid;
@@ -88,7 +89,7 @@ const EditQuestion: React.FC = () => {
     };
 
     return (
-        <form onSubmit={onSubmit} noValidate>
+        <form onSubmit={onSubmit} noValidate className="edit-question__form">
             <SectionNavigator>
                 <Section label="Question Details">
                     <div className="container">
@@ -138,6 +139,7 @@ const EditQuestion: React.FC = () => {
                 </Section>
                 <Section label="Question answers">
                     <div className="container">
+                        <Row>
                         {question.answers.map(({ content, correct }, i) =>
                             <QuestionAnswer
                                 key={i}
@@ -149,12 +151,15 @@ const EditQuestion: React.FC = () => {
                                 onSelectionChange={e => onSelectionChanged(e, i)}
                             />
                         )}
+                        </Row>
                     </div>
                 </Section>
             </SectionNavigator>
-            <AppButton disabled={isInvalid} type="submit">
-                Submit
+            <div>
+            <AppButton disabled={isInvalid} type="submit" className="edit-question__form">
+                    Submit
             </AppButton>
+                </div>
         </form >
     )
 }

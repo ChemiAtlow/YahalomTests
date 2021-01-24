@@ -27,7 +27,13 @@ export const BaseModal: React.FC<ModalProps> = ({
     return (
         <div ref={dialogRef} className="modal">
             <header className="modal-header">
-                <div className="modal-header__title">{title}</div>
+                <div className="modal-header__title">
+                    {typeof title !== "string" ? (
+                        title
+                    ) : (
+                        <div className="modal-header__title-wrapper">{title}</div>
+                    )}
+                </div>
                 <div className="modal-header__close" onClick={() => close(false)}>
                     <Icon icon="close" />
                 </div>
