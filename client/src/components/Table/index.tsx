@@ -46,7 +46,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
             <Header columns={columns} sortedColumn={sortedColumn} onSort={sortColumn} />
             <div className="body">
                 {!filteredData.length ? (
-                    <div className="row row-full">No Records to show.</div>
+                    <div className="row-empty">No Records to show.</div>
                 ) : (
                     filteredData.map((record, rowInd) => (
                         <Row columns={columns} record={record} key={`row-${rowInd}`} />

@@ -2,4 +2,8 @@
 	margin: 1em;
 	display: flex;
 	flex-direction: column;
+	.row-empty {
+		padding: 0.7rem 0;
+		background-color: $gray;
+	}
 }
