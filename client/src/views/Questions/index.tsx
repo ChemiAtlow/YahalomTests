@@ -103,7 +103,8 @@ const Questions: React.FC = () => {
                 </div>
             </ProtectedRoute>
             <ProtectedRoute requiresField path={`${path}/edit/:questionId?`}>
-                <EditQuestion />
+                {/* Add callback props to edit/add question */}
+                <EditQuestion /> 
             </ProtectedRoute>
         </Switch>
     );
