@@ -5,21 +5,25 @@
     overflow: hidden;
     &-links {
         display: flex;
-        background: $gray;
+        background: $light;
+        border-top: 1px solid $deep-blue;
+        box-shadow: 0 1px 5px $deep-blue;
         &__item {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: bold;
+            font-size: 1.1rem;
             transition: all 400ms ease-in-out;
             &:not(:last-of-type) {
-                border-right: 1px solid $primary;
+                border-right: 1px solid $deep-blue;
             }
             &.active,
             &:hover {
-                background: $grayish-blue;
-                text-shadow: 0 0 2px $secondary;
+                background: $gray;
+                font-size: 1.2rem;
+                color: $deep-blue;
             }
         }
     }
