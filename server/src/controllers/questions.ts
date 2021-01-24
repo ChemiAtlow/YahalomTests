@@ -1,7 +1,7 @@
 import { models } from "@yahalom-tests/common";
 import { Request, Response } from "express";
 import { HTTPStatuses } from "../constants";
-import { HttpError, UnauthorizedError } from "../errors";
+import { BadRequestError, HttpError, UnauthorizedError } from "../errors";
 import { organizationService, questionService } from "../services";
 
 // Get Questions
@@ -81,10 +81,14 @@ export const editQuestion = async (req: Request, res: Response) => {
 
 export const deleteQuestion = async (req: Request, res: Response) => {
     const organizationId = req.headers.organization as models.classes.guid;
+    const fieldId = req.headers.field as models.classes.guid;
     const questionId = req.params.id as models.classes.guid;
     try {
         if (!organizationService.isQuestionConnectedToOrganization(organizationId, questionId)) {
             throw new UnauthorizedError(false);
+        }
+        if (questionService.isQuestionActive(req.params.id, fieldId)) {
+            throw new BadRequestError("Active questions cannot be deleted!");
         }
         const data = await questionService.deleteQuestion(req.params.id);
         res.status(HTTPStatuses.ok).send(data);
