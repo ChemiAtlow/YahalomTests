@@ -1,0 +1,7 @@
+.question-item__questions {
+    display: flex;
+    flex-direction: column;
+    &.horizontal {
+        flex-direction: row;
+    }
+}
