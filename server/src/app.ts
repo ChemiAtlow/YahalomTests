@@ -15,7 +15,7 @@ app.use(cors());
 app.use(json());
 app.use(compression());
 
-app.use("/questions", questionsRouter);
+app.use("/questions", authMiddleware, questionsRouter);
 app.use("/auth", authRouter);
 app.use("/test", authMiddleware, testRoutes);
 app.use("*", notFoundMiddleware);

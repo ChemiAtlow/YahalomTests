@@ -8,7 +8,7 @@ import { HTTPStatuses, TIME, general } from "../constants";
 import { emailService, fieldService, organizationService } from ".";
 
 export const signup = async ({ email, password }: models.dtos.UserDto) => {
-    if (await userRepository.getUserByEmail(email)) {
+    if (await getUserByEmail(email)) {
         throw new EmailTakenError(email);
     }
     const hashedPassword = await hash(password, 12);
@@ -22,7 +22,7 @@ export const signup = async ({ email, password }: models.dtos.UserDto) => {
 
 export const login = async ({ email, password }: models.dtos.UserDto) => {
     //check if user exist
-    const userFromDb = await userRepository.getUserByEmail(email);
+    const userFromDb = await getUserByEmail(email);
     if (!userFromDb) {
         throw new AuthError();
     }
@@ -39,7 +39,7 @@ export const login = async ({ email, password }: models.dtos.UserDto) => {
 
 export const requestPasswordReset = async ({ email }: models.dtos.RequestPasswordResetDto) => {
     //check if user exist
-    const userFromDb = await userRepository.getUserByEmail(email);
+    const userFromDb = await getUserByEmail(email);
     if (!userFromDb) {
         throw new AuthError();
     }
@@ -61,7 +61,7 @@ export const requestPasswordReset = async ({ email }: models.dtos.RequestPasswor
 
 export const resetPassword = async (token: string, { password }: models.dtos.ResetPasswordDto) => {
     //check if user exist
-    const userFromDb = await userRepository.getUserWithResetToken(token);
+    const userFromDb = await getUserWithResetToken(token);
     if (!userFromDb) {
         throw new AuthError();
     }
@@ -89,6 +89,21 @@ const buildUserOrganizationAndStudyFieldData = async (userId: models.classes.gui
             }
         )
     );
+};
+
+const getUserByEmail = async (email: string) => {
+    const users = await userRepository.getAll();
+    const user = users.find(u => u.email === email);
+    return user;
+};
+
+const getUserWithResetToken = async (token: string) => {
+    const users = await userRepository.getAll();
+		const user = users.find(u => u.resetToken === token);
+		if ((user?.resetTokenExpiration || 0) < Date.now()) {
+			return undefined;
+		}
+		return user;
 };
 
 //creats json web token
