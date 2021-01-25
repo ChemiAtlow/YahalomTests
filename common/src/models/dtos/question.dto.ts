@@ -19,7 +19,7 @@ import "reflect-metadata";
 
 export class QuestionDto {
     @IsOptional()
-    @IsUUID("4")
+    @IsUUID("all")
     public id?: guid;
     @IsString()
     @IsNotEmpty()
