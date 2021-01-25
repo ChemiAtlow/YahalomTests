@@ -1,7 +1,7 @@
 import { models } from '@yahalom-tests/common';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useRouteMatch } from 'react-router-dom';
-import { AppButton, SectionNavigator, Section, ErrorModal, QuestionPeekModal } from '../../components';
+import { AppButton, SectionNavigator, Section, ErrorModal, QuestionPeekModal, WarningModal } from '../../components';
 import { QuestionDetails, QuestionDetailsKeys, QuestionAnswers } from './QuestionForm';
 import { useAuth, useModal } from "../../hooks";
 import { questionService } from '../../services';
@@ -61,6 +61,18 @@ const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) 
         e.preventDefault();
         if (isInvalid) {
             return;
+        }
+        //Show warning if multi choice has only one correct answer
+        if (question.type === models.enums.QuestionType.MultiChoice && question.answers.filter(({ correct }) => correct).length === 1) {
+            const warning = await openModal(WarningModal, {
+                title: "Warning",
+                cancelText: "Send anyway",
+                okText: "Fix",
+                body: "This question was marked as a multi choice question, but only one answer is marked as true.\nAre you sure you want to procced?"
+            }).promise;
+            if (warning) {
+                return;
+            }
         }
         try {
             const questionToSend = buildQuestionForSendOrPreview();
