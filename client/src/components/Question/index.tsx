@@ -25,6 +25,7 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
     return (
         <div className="question-item">
             <p className="question-item__title">{question.title}</p>
+            {question.additionalContent && <p className="question-item__additional">{question.additionalContent}</p>}
             <div
                 className={`question-item__questions ${
                     question.alignment === models.enums.Alignment.Horizontal ? "horizontal" : ""

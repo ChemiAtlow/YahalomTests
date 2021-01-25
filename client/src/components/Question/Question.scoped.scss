@@ -1,7 +1,12 @@
-.question-item__questions {
-    display: flex;
-    flex-direction: column;
-    &.horizontal {
-        flex-direction: row;
+.question-item {
+    &__title {
+        white-space: pre-wrap;
+    }
+    &__questions {
+        display: flex;
+        flex-direction: column;
+        &.horizontal {
+            flex-direction: row;
+        }
     }
 }
