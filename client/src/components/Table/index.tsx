@@ -19,9 +19,10 @@ export type Column = {
 interface DataTableProps {
     data: ArrayItem[];
     columns: Column[];
+    onRowClick?: (data: any) => void;
 }
 
-export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
+export const DataTable: React.FC<DataTableProps> = ({ data, columns, onRowClick }) => {
     const { data: filteredData, sort } = useSearchAndSort(data);
     const [sortedColumn, setSortedColumn] = useState<SortedColumn>();
 
@@ -48,10 +49,10 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
                 {!filteredData.length ? (
                     <div className="row-empty">No Records to show.</div>
                 ) : (
-                    filteredData.map((record, rowInd) => (
-                        <Row columns={columns} record={record} key={`row-${rowInd}`} />
-                    ))
-                )}
+                        filteredData.map((record, rowInd) => (
+                            <Row onRowClicked={() => onRowClick?.(record)} columns={columns} record={record} key={`row-${rowInd}`} />
+                        ))
+                    )}
             </div>
         </div>
     );
