@@ -20,7 +20,8 @@ const EditQuestion: React.FC = () => {
         label: "",
         alignment: models.enums.Alignment.Vertical,
     });
-
+    const [detailsError, setDetailsError] = useState("");
+    const [answersError, setAnswersError] = useState("");
     const { activeStudyField, buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
     const { state } = useLocation<{ question: models.dtos.QuestionDto }>();
@@ -32,12 +33,8 @@ const EditQuestion: React.FC = () => {
         } else if (params.questionId) {
             console.log("Got Question ID to edit, no question.")
         }
-    }, [state, params,setQuestion])
-    const isInvalid = true;
-    // Boolean(
-    //     titleError || additionalContentError || labelError ||
-    //     question.answers.length < 2
-    // );
+    }, [state, params, setQuestion])
+    const isInvalid = !question.title || !question.label || Boolean(detailsError) || question.answers.length < 2 || Boolean(answersError);
     const onChange = (e: Partial<QuestionDetailsKeys>) => setQuestion({ ...question, ...e });
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -65,11 +62,15 @@ const EditQuestion: React.FC = () => {
     return (
         <form onSubmit={onSubmit} noValidate className="edit-question__form">
             <SectionNavigator>
-                <Section label="Question Details">
-                    <QuestionDetails question={question} fieldName={activeStudyField?.name || ""} onChange={onChange} />
+                <Section label="Question Details" isValid={!detailsError} errMsg={detailsError}>
+                    <QuestionDetails
+                        question={question}
+                        fieldName={activeStudyField?.name || ""}
+                        onChange={onChange}
+                        onValidityChange={setDetailsError} />
                 </Section>
-                <Section label="Question answers">
-                    <QuestionAnswers question={question} onChange={onChange} />
+                <Section label="Question answers" isValid={!answersError} errMsg={answersError}>
+                    <QuestionAnswers question={question} onChange={onChange} onValidityChange={setAnswersError} />
                 </Section>
             </SectionNavigator>
             <div>
