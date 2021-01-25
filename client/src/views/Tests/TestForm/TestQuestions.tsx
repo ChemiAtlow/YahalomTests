@@ -1,71 +1,69 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from "../../../hooks";
+import { useAuth, useModal } from "../../../hooks";
 import { models } from '@yahalom-tests/common';
-import { QuestionAnswer, Row } from '../../../components';
+import { Column, DataTable, Ellipsis, Icon, QuestionPeekModal, Row } from '../../../components';
 import { questionService } from '../../../services';
 
-export const TestQuestions: React.FC<models.dtos.TestDto> = (testProp) => {
-    //set test prop as component state.
-    const [test, setTest] = useState<models.dtos.TestDto>({ ...testProp });
-    const { buildAuthRequestData } = useAuth();
-    const [questions, setQuestions] = useState<models.dtos.QuestionDto[]>([]);
+export type TestQuestionsKeys = Pick<models.dtos.TestDto, "questions">;
+interface TestQuestionsProps {
+    test: TestQuestionsKeys;
+    onChange: (change: Partial<TestQuestionsKeys>) => void;
+    onValidityChange: (change: string) => void;
+}
 
-    //get test questions.
-    //test state has questionsIds.
-    //should think about getQuestionsByTest method..
+export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, onValidityChange }) => {
+    //set test prop as component state.
+    const { buildAuthRequestData } = useAuth();
+    const { openModal } = useModal();
+    const [questions, setQuestions] = useState<models.dtos.QuestionDto[]>([]);
+    const previewQuestion = (question: models.interfaces.Question) =>
+        openModal(QuestionPeekModal, { question });
+    const columns: Column[] = [
+        {
+            label: "Title",
+            isFromData: true,
+            key: "title",
+            sortable: true,
+            template: ({ data }) => <Ellipsis data={data} maxLength={10} direction="right" />,
+        },
+        {
+            label: "Labels",
+            isFromData: true,
+            key: "label",
+            sortable: true,
+            largeColumn: true,
+            template: ({ data }) => <span>{data}</span>,
+        },
+        {
+            label: "",
+            isFromData: true,
+            key: "*",
+            sortable: false,
+            smallColumn: true,
+            template: ({ data }) => <Icon icon="preview" onClick={() => previewQuestion(data)} />,
+        }
+    ];
+
+    //get field questions.
     useEffect(() => {
         questionService
             .getAllQuestions(buildAuthRequestData())
-            .then(({ data }) => setQuestions([...data]));
+            .then(({ data }) => setQuestions(data));
     }, [setQuestions, buildAuthRequestData]);
 
-    const onContentChange = (e: React.ChangeEvent<HTMLInputElement>, answerIndex: number, questionIndex: number) => {
-        const { answers } = questions[questionIndex];
-        const { value } = e.target;
-        answers[answerIndex].content = value;
-        //check automatocaly add new answer
-        if (answers.length < 10 && answerIndex === answers.length - 1 && value) {
-            answers.push({ content: "", correct: false });
-        } else if (answerIndex === answers.length - 2 && !value && !answers?.[answerIndex + 1]?.content) {
-            answers.pop();
+    const onRowClicked = (question: models.interfaces.Question) => {
+        const questionIndex = test.questions.findIndex(qId => qId === question.id);
+        if (questionIndex < 0) {
+            test.questions.push(question.id!);
+        } else {
+            test.questions.splice(questionIndex, 1);
         }
-        setQuestions([...questions]);
-    };
-    const onSelectionChanged = (e: React.ChangeEvent<HTMLInputElement>, index: number, questionIndex: number) => {
-        //check if question is singlechoice
-        const { type, answers } = questions[questionIndex];
-        if (type === models.enums.QuestionType.SingleChoice) {
-            answers.forEach((answer, i) => {
-                answer.correct = index === i;
-            })
-        }
-        else {
-            answers[index].correct = e.target.checked;
-        }
-        setQuestions([...questions]);
+        onChange({ questions: test.questions });
     };
 
     return (
         <div className="container">
-            <Row>
-                {test.questions.length > 0 ?
-                    //render test questions
-                    (<h1>test questions</h1>)
-                    :
-                    //test has no question. need to choose from existing questions.
-                    questions.map(
-                        (q, questionIndex) => q.answers.map(({ content, correct, }, answerIndex) =>
-                            <QuestionAnswer
-                                key={answerIndex}
-                                questionType={q.type}
-                                content={content}
-                                answerIndex={answerIndex}
-                                mode={{ isEditMode: true, onContentChange: e => onContentChange(e, answerIndex, questionIndex) }}
-                                selected={correct}
-                                onSelectionChange={e => onSelectionChanged(e, answerIndex, questionIndex)}
-                            />
-                        ))}
-            </Row>
+            <DataTable columns={columns} data={questions} onRowClick={onRowClicked} />
         </div>
     )
 }

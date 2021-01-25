@@ -18,6 +18,18 @@ const EditTest: React.FC = () => {
         failureEmail: { body: "", subject: "" },
     });
 
+    const onChange = ({ questions }: Partial<Pick<models.dtos.TestDto, "questions">>) => {
+        ///questions are not undefined or empty
+        if (!questions || !(questions?.length > 0)) {
+            console.log("empty questions");
+        } else {
+            test.questions = questions!;
+            setTest({ ...test });
+            console.log(test.questions); //temporary - verify test contains the questions.
+        }
+    };
+    const validityChange = () => { };
+
     /* prop to all - test */
     /* Test form */
     return (
@@ -30,7 +42,7 @@ const EditTest: React.FC = () => {
                     <TestEmails {...test} />
                 </Section>
                 <Section label="Test Questions">
-                    <TestQuestions {...test} />
+                    <TestQuestions test={test} onChange={e => onChange(e)} onValidityChange={validityChange} />
                 </Section>
             </SectionNavigator>
         </form>
