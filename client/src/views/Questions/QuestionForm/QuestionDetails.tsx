@@ -1,5 +1,5 @@
 import { models } from "@yahalom-tests/common";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormField, Select, Row } from "../../../components";
 import { enumToArray, SwitchCamelCaseToHuman } from "../../../utils";
 
@@ -14,12 +14,14 @@ interface QuestionDetailsProps {
     fieldName: string;
     question: QuestionDetailsKeys;
     onChange: (change: Partial<QuestionDetailsKeys>) => void;
+    onValidityChange: (change: string) => void;
 }
 
 export const QuestionDetails: React.FC<QuestionDetailsProps> = ({
     fieldName,
     question,
     onChange,
+    onValidityChange
 }) => {
     const [titleError, setTitleError] = useState("");
     const [labelError, setLabelError] = useState("");
@@ -35,7 +37,7 @@ export const QuestionDetails: React.FC<QuestionDetailsProps> = ({
         setTitleError("");
         const { value } = e.target;
         if (!value.trim()) {
-            setTitleError("Title is required!")
+            setTitleError("Title is required")
         }
         onChange({ title: value });
     };
@@ -43,12 +45,23 @@ export const QuestionDetails: React.FC<QuestionDetailsProps> = ({
         setLabelError("");
         const { value } = e.target;
         if (!value.trim()) {
-            setLabelError("Label is required!");
+            setLabelError("Label is required");
         } else if (!/(\w+)(,\s*\w+)*/.test(value)) {
-            setLabelError("Label must be a comma seperated string!")
+            setLabelError("Label must be a comma seperated string")
         }
         onChange({ label: e.target.value });
     };
+    useEffect(() => {
+        let errorStr = "";
+        if (titleError || labelError) {
+            if (titleError && labelError) {
+                errorStr = `Errors: ${titleError}, ${labelError}`
+            } else {
+                errorStr = `Error: ${titleError || labelError}`
+            }
+        }
+        onValidityChange(errorStr)
+    }, [titleError, labelError, onValidityChange])
 
     return (
         <div className="container">
