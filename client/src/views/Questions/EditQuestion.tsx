@@ -37,25 +37,33 @@ const EditQuestion: React.FC = () => {
     const isInvalid = !question.title || !question.label || Boolean(detailsError) || question.answers.length < 2 || Boolean(answersError);
     const onChange = (e: Partial<QuestionDetailsKeys>) => setQuestion({ ...question, ...e });
 
+    const buildQuestionForSendOrPreview = () => {
+        const questionClone = { ...question };
+        const { answers, label, title, additionalContent } = questionClone;
+        questionClone.label = label.trim();
+        questionClone.title = title.trim();
+        questionClone.additionalContent = additionalContent?.trim();
+        if (!answers[answers.length - 1]?.content.trim()) {
+            answers.pop();
+        }
+        answers.forEach(ans => ans.content = ans.content.trim())
+        return questionClone;
+    }
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (isInvalid) {
             return;
         }
         try {
-            const questionClone = { ...question };
-            const { answers } = questionClone;
-            if (!answers[answers.length - 1]?.content.trim()) {
-                answers.pop();
-            }
-            await questionService.addQuestion(buildAuthRequestData(), questionClone);
+            const questionToSend = buildQuestionForSendOrPreview();
+            await questionService.addQuestion(buildAuthRequestData(), questionToSend);
         } catch (err) {
             openModal(ErrorModal, { title: "Add question failed", body: err.message });
         }
     };
 
-
     const previewQuestion = () => {
+        const question = buildQuestionForSendOrPreview();
         openModal(QuestionPeekModal, { question });
     }
 
