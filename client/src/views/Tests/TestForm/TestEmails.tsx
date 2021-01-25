@@ -14,7 +14,7 @@ export const TestEmails: React.FC<models.dtos.TestDto> = (testProp) => {
     const onFailureMessageChanged = (e: React.ChangeEvent<HTMLInputElement>) => { };
     const onFailureMailChange = (e: React.ChangeEvent<models.dtos.EmailDto>) => { };
     return (
-        <div>
+        <>
             <FormField label="Seccess message"
                 type="textarea"
                 required
@@ -29,7 +29,7 @@ export const TestEmails: React.FC<models.dtos.TestDto> = (testProp) => {
                 onChange={onFailureMessageChanged}
             />
             <EmailForm email={test.successEmail} onChange={onFailureMailChange} />
-        </div >
+        </>
     )
 }
 
