@@ -22,7 +22,7 @@ export const SectionNavigator: React.FC<SectionNavigatorProps> = ({ children }) 
                             key={i}
                             attachToChild={true}
                             direction="bottom"
-                            value={isSectionInvalid ? "Section has errors,\nplease check it out." : ""}>
+                            value={isSectionInvalid ? s.props.errMsg || "Section has errors,\nplease check it out." : ""}>
                             <span
                                 className={`section-links__item ${current === i ? "active" : ""}`}
                                 onClick={() => setCurrent(i)}>
