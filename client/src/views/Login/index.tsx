@@ -54,7 +54,7 @@ const Login: React.FC = () => {
 		push(isLogin ? "/signup" : "/login", state);
 	};
 	const onForgotPassword = () => {
-		push("/restore");
+		push("/reset");
 	};
 
 	return (
