@@ -1,35 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { constants } from "@yahalom-tests/common";
-import { AppButton, FormField } from "../../components";
-import { useAuth } from "../../hooks/auth.hook";
+import { AppButton, ErrorModal, FormField, MessageModal } from "../../components";
+import { useAuth, useModal } from "../../hooks";
 import "./Login.scoped.scss";
+const { emailRegex, passwordDescription, passwordRegex } = constants.validations;
 
 const Login: React.FC = () => {
 	const { replace, push } = useHistory(); //replace doesnt make any affect on user pages history
 	const { state, pathname } = useLocation<any>();
 	const isLogin = /login/i.test(pathname);
 	const { signin, signup } = useAuth();
+	const { openModal } = useModal();
 	const [tmpUser, setTmpUser] = useState({ email: "", password: "" });
 	const [emailError, setEmailError] = useState("");
 	const [passwordError, setPasswordError] = useState("");
-	const isValid = Boolean(
+	const isInvalid = Boolean(
 		emailError || passwordError || !tmpUser.email || !tmpUser.password
 	);
-	useEffect(() => {
-		const isValidEmail = constants.validations.emailRegex.test(
-			tmpUser.email
-		);
-		setEmailError(isValidEmail ? "" : "Please enter a valid email");
-	}, [tmpUser.email, setEmailError]);
-	useEffect(() => {
-		const isValidPassword = constants.validations.passwordRegex.test(
-			tmpUser.password
-		);
-		setPasswordError(
-			isValidPassword ? "" : constants.validations.passwordDescription
-		);
-	}, [tmpUser.password, setPasswordError]);
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (isLogin) {
@@ -37,23 +25,36 @@ const Login: React.FC = () => {
 				replace(state?.from?.pathname || "/");
 			}
 			else {
-				console.warn("login failed!");
-				//error component;
+				openModal(ErrorModal, { title: "Login has failed!", body: "Please check your credentials and try again." });
 			}
 		}
 		else {
 			if (await signup(tmpUser)) {
 				// display success message
+				openModal(MessageModal, { children: <p>Signup completed successfully.<br />A validation email was sent.</p>, title: "Success!", okText: "OK" })
 				push("/login")
 			}
 			else {
-				//display failure message
+				openModal(ErrorModal, { title: "Signup has failed!", body: "Please try again." })
 			}
 		}
 	};
+	const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { value } = e.target;
+		setEmailError(emailRegex.test(value) ? "" : "Please enter a valid email")
+		setTmpUser({ ...tmpUser, email: value });
+	}
+	const onPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { value } = e.target;
+		setPasswordError(passwordRegex.test(value) ? "" : passwordDescription)
+		setTmpUser({ ...tmpUser, password: value });
+	}
 
 	const onPageChangeRequest = () => {
 		push(isLogin ? "/signup" : "/login", state);
+	};
+	const onForgotPassword = () => {
+		push("/reset");
 	};
 
 	return (
@@ -65,7 +66,7 @@ const Login: React.FC = () => {
 					type="text"
 					autoComplete="username"
 					value={tmpUser.email}
-					onChange={e => setTmpUser({ ...tmpUser, email: e.target.value.trim() })}
+					onChange={onEmailChange}
 					error={emailError}
 				/>
 				<FormField
@@ -73,21 +74,19 @@ const Login: React.FC = () => {
 					type="password"
 					autoComplete={isLogin ? "current-password" : "new-password"}
 					value={tmpUser.password}
-					onChange={e =>
-						setTmpUser({
-							...tmpUser,
-							password: e.target.value.trim(),
-						})
-					}
+					onChange={onPasswordChange}
 					error={passwordError}
 				/>
-				<AppButton disabled={isValid} type="submit">
+				<AppButton disabled={isInvalid} type="submit">
 					Submit
                 </AppButton>
 			</form>
 
-			<AppButton onClick={onPageChangeRequest} type="button">
+			<AppButton onClick={onPageChangeRequest} type="button" varaiety="secondary">
 				{isLogin ? "Not registered? Signup!" : "Have an account? Login!"}
+			</AppButton>
+			<AppButton onClick={onForgotPassword} type="button" varaiety="secondary">
+				Forgot your password?
 			</AppButton>
 		</div>
 	);

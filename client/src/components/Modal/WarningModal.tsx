@@ -23,13 +23,13 @@ export const WarningModal: React.FC<ErrorModalProps> = ({
             {okText && (
                 <AppButton
                     onClick={() => {
-                        close(true);
+                        close(false);
                     }}>
                     {okText}
                 </AppButton>
             )}
             {cancelText && (
-                <AppButton varaiety="secondary" color="error" onClick={() => close(false)}>
+                <AppButton varaiety="secondary" color="error" onClick={() => close(true)}>
                     {cancelText}
                 </AppButton>
             )}
