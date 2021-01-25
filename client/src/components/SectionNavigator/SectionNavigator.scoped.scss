@@ -13,6 +13,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
             font-weight: bold;
             font-size: 1.1rem;
             transition: all 400ms ease-in-out;
@@ -24,6 +25,10 @@
                 background: $gray;
                 font-size: 1.2rem;
                 color: $deep-blue;
+            }
+            &-error {
+                position: absolute;
+                right: 0.8rem;
             }
         }
     }

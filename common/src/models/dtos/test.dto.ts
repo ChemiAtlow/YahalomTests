@@ -22,7 +22,7 @@ import { EmailDto } from "./email.dto";
 
 export class TestDto {
 	@IsOptional()
-	@IsUUID("4")
+	@IsUUID("all")
 	id?: guid;
 	@IsString()
     @IsNotEmpty()
