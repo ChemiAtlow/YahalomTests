@@ -25,7 +25,7 @@ const Login: React.FC = () => {
 				replace(state?.from?.pathname || "/");
 			}
 			else {
-				openModal(ErrorModal, { title: "Login has failed!", body:"Please check your credentials and try again." });
+				openModal(ErrorModal, { title: "Login has failed!", body: "Please check your credentials and try again." });
 			}
 		}
 		else {
@@ -35,18 +35,18 @@ const Login: React.FC = () => {
 				push("/login")
 			}
 			else {
-				openModal(ErrorModal, { title: "Signup has failed!", body:"Please try again." })
+				openModal(ErrorModal, { title: "Signup has failed!", body: "Please try again." })
 			}
 		}
 	};
 	const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target;
-			setEmailError(emailRegex.test(value) ? "" : "Please enter a valid email")
+		setEmailError(emailRegex.test(value) ? "" : "Please enter a valid email")
 		setTmpUser({ ...tmpUser, email: value });
 	}
 	const onPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target;
-			setPasswordError(passwordRegex.test(value) ? "" : passwordDescription)
+		setPasswordError(passwordRegex.test(value) ? "" : passwordDescription)
 		setTmpUser({ ...tmpUser, password: value });
 	}
 
