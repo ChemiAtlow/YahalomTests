@@ -35,7 +35,7 @@ export async function addQuestion(authReqData: AuthRequest, question: models.dto
 }
 export async function deleteQuestion(authReqData: AuthRequest, id: models.classes.guid) {
     return await http.delete<models.interfaces.Question>(
-        `questionRoute${id}`,
+        `${questionRoute}${id}`,
         authRequestToHeaders(authReqData)
     );
 }
