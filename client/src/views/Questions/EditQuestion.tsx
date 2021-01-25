@@ -1,7 +1,7 @@
 import { models } from '@yahalom-tests/common';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useRouteMatch } from 'react-router-dom';
-import { AppButton, SectionNavigator, Section, ErrorModal, QuestionPeekModal, WarningModal } from '../../components';
+import { AppButton, SectionNavigator, Section, ErrorModal, QuestionPeekModal, WarningModal, MessageModal } from '../../components';
 import { QuestionDetails, QuestionDetailsKeys, QuestionAnswers } from './QuestionForm';
 import { useAuth, useModal } from "../../hooks";
 import { questionService } from '../../services';
@@ -70,7 +70,7 @@ const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) 
                 okText: "Fix",
                 body: "This question was marked as a multi choice question, but only one answer is marked as true.\nAre you sure you want to procced?"
             }).promise;
-            if (warning) {
+            if (!warning) {
                 return;
             }
         }
@@ -85,6 +85,7 @@ const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) 
                 const { data } = await questionService.addQuestion(authData, questionToSend);
                 savedQuestion = data;
             }
+            openModal(MessageModal, { title: "Success!", children: `Question ${questionToSend.id ? "edited":"created"} successfully.`, okText: "OK" })
             onQuestionAddedOrEdited(savedQuestion)
         } catch (err) {
             openModal(ErrorModal, { title: "Saving question failed", body: err.message });
