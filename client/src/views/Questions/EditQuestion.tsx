@@ -1,17 +1,20 @@
 import { models } from '@yahalom-tests/common';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useRouteMatch } from 'react-router-dom';
-import { AppButton, SectionNavigator, Section, ErrorModal, QuestionPeekModal } from '../../components';
+import { AppButton, SectionNavigator, Section, ErrorModal, QuestionPeekModal, WarningModal } from '../../components';
+import { QuestionDetails, QuestionDetailsKeys, QuestionAnswers } from './QuestionForm';
 import { useAuth, useModal } from "../../hooks";
 import { questionService } from '../../services';
 import "./EditQuestion.scoped.scss";
-import { QuestionDetails, QuestionDetailsKeys, QuestionAnswers } from './QuestionForm';
 
 interface EditParams {
     questionId?: models.classes.guid;
 }
+interface EditQuestionProps {
+    onQuestionAddedOrEdited: (question: models.interfaces.Question) => void;
+}
 
-const EditQuestion: React.FC = () => {
+const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) => {
     const [question, setQuestion] = useState<models.dtos.QuestionDto>({
         title: "",
         additionalContent: "",
@@ -24,16 +27,21 @@ const EditQuestion: React.FC = () => {
     const [answersError, setAnswersError] = useState("");
     const { activeStudyField, buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
-    const { state } = useLocation<{ question: models.dtos.QuestionDto }>();
+    const { state } = useLocation<{ question?: models.dtos.QuestionDto }>();
     const { params } = useRouteMatch<EditParams>();
 
     useEffect(() => {
         if (params.questionId && state?.question) {
             setQuestion(state.question);
-        } else if (params.questionId) {
-            console.log("Got Question ID to edit, no question.")
+        } else if (params.questionId && !state?.question) {
+            questionService.getQuestion(buildAuthRequestData(), params.questionId)
+                .then(({ data }) => setQuestion(data))
+                .catch(err => openModal(ErrorModal, {
+                    title: "Error loading question",
+                    body: `An error occoured while loading the question for editing:\n${err?.message || ""}`
+                }))
         }
-    }, [state, params, setQuestion])
+    }, [state, params, setQuestion, buildAuthRequestData, openModal])
     const isInvalid = !question.title || !question.label || Boolean(detailsError) || question.answers.length < 2 || Boolean(answersError);
     const onChange = (e: Partial<QuestionDetailsKeys>) => setQuestion({ ...question, ...e });
 
@@ -54,11 +62,32 @@ const EditQuestion: React.FC = () => {
         if (isInvalid) {
             return;
         }
+        //Show warning if multi choice has only one correct answer
+        if (question.type === models.enums.QuestionType.MultiChoice && question.answers.filter(({ correct }) => correct).length === 1) {
+            const warning = await openModal(WarningModal, {
+                title: "Warning",
+                cancelText: "Send anyway",
+                okText: "Fix",
+                body: "This question was marked as a multi choice question, but only one answer is marked as true.\nAre you sure you want to procced?"
+            }).promise;
+            if (warning) {
+                return;
+            }
+        }
         try {
             const questionToSend = buildQuestionForSendOrPreview();
-            await questionService.addQuestion(buildAuthRequestData(), questionToSend);
+            const authData = buildAuthRequestData();
+            let savedQuestion: models.interfaces.Question;
+            if (questionToSend.id) {
+                const { data } = await questionService.editQuestion(authData, questionToSend.id, questionToSend)
+                savedQuestion = data;
+            } else {
+                const { data } = await questionService.addQuestion(authData, questionToSend);
+                savedQuestion = data;
+            }
+            onQuestionAddedOrEdited(savedQuestion)
         } catch (err) {
-            openModal(ErrorModal, { title: "Add question failed", body: err.message });
+            openModal(ErrorModal, { title: "Saving question failed", body: err.message });
         }
     };
 
@@ -83,7 +112,7 @@ const EditQuestion: React.FC = () => {
             </SectionNavigator>
             <div>
                 <AppButton disabled={isInvalid} type="submit" className="edit-question__form">
-                    Submit
+                    {question.id ? "Edit" : "Create"}
                 </AppButton>
                 <AppButton disabled={isInvalid} type="button" varaiety="secondary" className="edit-question__form" onClick={() => previewQuestion()}>
                     Preview

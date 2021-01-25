@@ -1,13 +1,11 @@
 import React from "react";
 import { ModalInstance, useClickOutside } from "../../hooks";
-import { AppButton } from "../Forms";
 import Icon from "../Icon";
 import "./Modal.scoped.scss";
 
 export interface ModalProps extends ModalInstance<boolean> {
     title?: React.ReactNode;
-    okText?: string;
-    cancelText?: string;
+    footer?: React.ReactNode;
     children: React.ReactNode;
     closeOnClickOutside?: boolean;
 }
@@ -17,8 +15,7 @@ export const BaseModal: React.FC<ModalProps> = ({
     children,
     close,
     closeOnClickOutside = true,
-    cancelText,
-    okText,
+    footer,
 }) => {
     const dialogRef = useClickOutside<HTMLDivElement>({
         callback: () => close(false),
@@ -39,23 +36,7 @@ export const BaseModal: React.FC<ModalProps> = ({
                 </div>
             </header>
             <main className="modal-body">{children}</main>
-            {(okText || cancelText) && (
-                <footer className="modal-actions">
-                    {okText && (
-                        <AppButton
-                            onClick={() => {
-                                close(true);
-                            }}>
-                            {okText}
-                        </AppButton>
-                    )}
-                    {cancelText && (
-                        <AppButton varaiety="secondary" onClick={() => close(false)}>
-                            {cancelText}
-                        </AppButton>
-                    )}
-                </footer>
-            )}
+            {footer && <footer className="modal-actions">{footer}</footer>}
         </div>
     );
 };

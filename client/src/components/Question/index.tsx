@@ -32,6 +32,7 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
                 }`}>
                 {question.answers.map((ans, i) => (
                     <QuestionAnswer
+                        key={i}
                         answerIndex={i}
                         mode={{ isEditMode: false, alignment: question.alignment }}
                         questionType={question.type}
