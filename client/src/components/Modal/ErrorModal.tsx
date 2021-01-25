@@ -12,7 +12,7 @@ interface ErrorModalProps extends ModalInstance {
 const errorTitle = (title: string) => (
     <div className="error-modal__title">
         <div className="error-modal__title-icon">
-            <Icon icon="error" color="red" size={25} />
+            <Icon icon="error" color="#ac0f1d" size={25} />
         </div>
         <span>{title}</span>
     </div>
