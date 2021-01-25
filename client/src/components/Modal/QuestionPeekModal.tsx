@@ -2,7 +2,7 @@ import { models } from "@yahalom-tests/common";
 import React from "react";
 import { ModalInstance } from "../../hooks";
 import Question from "../Question";
-import { BaseModal } from "./BaseModal";
+import { MessageModal } from "./MessageModal";
 
 interface QuestionPeekModalProps extends ModalInstance {
     question: models.dtos.QuestionDto;
@@ -10,8 +10,8 @@ interface QuestionPeekModalProps extends ModalInstance {
 
 export const QuestionPeekModal: React.FC<QuestionPeekModalProps> = ({ question, close }) => {
     return (
-        <BaseModal close={close} okText="Close" title="Preview question">
+        <MessageModal close={close} okText="Close" title="Preview question">
             <Question question={question} />
-        </BaseModal>
+        </MessageModal>
     );
 };
