@@ -2,12 +2,13 @@ import { models } from "@yahalom-tests/common";
 import { studyFieldRepository } from "../DAL";
 import { ItemNotInDbError } from "../errors";
 
+type FieldBaseInfo = models.interfaces.OrganizationBaseInfo["fields"][0];
+
 export const getStudyFieldsBaseDataByIds = async (ids: models.classes.guid[]) => {
     const fields = await studyFieldRepository.getAll();
     const filteredBaseData = fields.reduce(
-        (previous, { name, id }) =>
-            ids.includes(id || "") ? [...previous, { name, id }] : previous,
-        Array<models.interfaces.OrganizationBaseInfo["fields"][0]>()
+        (previous, { name, id }) => ids.includes(id || "") ? [...previous, { name, id }] : previous,
+        Array<FieldBaseInfo>()
     );
     return filteredBaseData;
 };
