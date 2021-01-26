@@ -12,12 +12,8 @@ const App: React.FC = () => {
                     <NavBar />
                     <main className="app">
                         <Switch>
-                            <ProtectedRoute onlyNonAuth path={["/login", "/signup"]}>
-                                <Login />
-                            </ProtectedRoute>
-                            <ProtectedRoute onlyNonAuth path="/reset/:token?">
-                                <Restore />
-                            </ProtectedRoute>
+                            <ProtectedRoute onlyNonAuth path={["/login", "/signup"]} component={Login} />
+                            <ProtectedRoute onlyNonAuth path="/reset/:token?" component={Restore} />
                             <ProtectedRoute requiresField path="/:organizationId/:fieldId">
                                 <NestedRoutes>
                                     <Route requiresField path="/questions" component={Questions} />
@@ -25,9 +21,7 @@ const App: React.FC = () => {
                                     <Route requiresField path="/reports" component={Reports} />
                                 </NestedRoutes>
                             </ProtectedRoute>
-                            <ProtectedRoute path="/">
-                                <Home />
-                            </ProtectedRoute>
+                            <ProtectedRoute path="/" component={Home} />
                         </Switch>
                     </main>
                 </BrowserRouter>
