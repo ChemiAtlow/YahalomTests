@@ -11,4 +11,5 @@ export interface Exam {
     student: string; //the email of student, which is the unique key
     completed: boolean;
     questions: AnsweredQuestion[];
+    timeStarted: number;
 }
