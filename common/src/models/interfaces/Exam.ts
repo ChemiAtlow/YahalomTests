@@ -1,8 +1,9 @@
 import { guid } from "../classes";
 import { Language } from "../enums";
 import { AnsweredQuestion } from "./AnsweredQuestion";
+import { HasId } from "./HasId";
 
-export interface Exam {
+export interface Exam extends HasId {
     id: guid;
     test: guid;
     language: Language;
