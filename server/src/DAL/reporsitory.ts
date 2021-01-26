@@ -64,8 +64,6 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 
 	async deleteItem(id: models.classes.guid) {
 		const removed = await this.updateItem(id, { archived: true } as any);
-		await this.writeToFile();
-		this.filterArchived();
 		return removed;
 	}
 
