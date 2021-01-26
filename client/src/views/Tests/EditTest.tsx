@@ -17,26 +17,35 @@ const EditTest: React.FC = () => {
         successEmail: { body: "", subject: "" },
         failureEmail: { body: "", subject: "" },
     });
+    //#region test details callbacks
+    const detailsValidityChanged = () => { };
+    const onDetailsChange = (changed: Partial<models.dtos.TestDto>) => { };
+    //#endregion
 
-    const onChange = (changed: Partial<models.dtos.TestDto>) => {
+    //#region test questions callbacks
+    const onQuestionsChange = (changed: Partial<models.dtos.TestDto>) => {
         setTest({ ...test, ...changed });
         console.log(test.questions); //temporary - verify test contains the questions.
     };
-    const validityChange = () => { };
+    const questionsValidityChange = () => { };
+    //#endregion
 
-    /* prop to all - test */
-    /* Test form */
+    //#region test emails callbacks
+    const emailsValidityChanged = () => { };
+    const onEmailsChange = (changed: Partial<models.dtos.TestDto>) => { };
+    //#endregion
+
     return (
         <form>
             <SectionNavigator>
                 <Section label="Test Details">
-                    <TestDetails {...test} />
+                    <TestDetails test={test} onChange={e => onDetailsChange(e)} onValidityChange={detailsValidityChanged} />
                 </Section>
                 <Section label="Test Complition">
-                    <TestEmails {...test} />
+                    <TestEmails test={test} onChange={e => onEmailsChange(e)} onValidityChange={emailsValidityChanged} />
                 </Section>
                 <Section label="Test Questions">
-                    <TestQuestions test={test} onChange={e => onChange(e)} onValidityChange={validityChange} />
+                    <TestQuestions test={test} onChange={e => onQuestionsChange(e)} onValidityChange={questionsValidityChange} />
                 </Section>
             </SectionNavigator>
         </form>
