@@ -4,8 +4,12 @@ import { ItemNotInDbError } from "../errors";
 
 export const getStudyFieldsBaseDataByIds = async (ids: models.classes.guid[]) => {
     const fields = await studyFieldRepository.getAll();
-    const filteredById = fields.filter(fld => ids.includes(fld.id!));
-    return filteredById.map(({ name, id }) => ({ name, id }));
+    const filteredBaseData = fields.reduce(
+        (previous, { name, id }) =>
+            ids.includes(id || "") ? [...previous, { name, id }] : previous,
+        Array<models.interfaces.OrganizationBaseInfo["fields"][0]>()
+    );
+    return filteredBaseData;
 };
 
 export const getStudyFieldById = async (id: models.classes.guid) => {
