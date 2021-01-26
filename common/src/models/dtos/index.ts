@@ -5,3 +5,4 @@ export * from "./requestResetPasswod.dto";
 export * from "./resetPassword.dto";
 export * from "./email.dto";
 export * from "./test.dto";
+export * from "./student.dto";
