@@ -1,23 +1,9 @@
 import { models } from "@yahalom-tests/common";
-import { AxiosRequestConfig } from "axios";
 import { AuthRequest } from "../models";
-import http from "./httpService";
+import http, { authRequestToHeaders } from "./httpService";
 
 const questionRoute = "/questions/";
 
-const authRequestToHeaders: (authReqData: AuthRequest) => AxiosRequestConfig = ({
-    jwt,
-    organizationId,
-    studyFieldId,
-}) => {
-    return {
-        headers: {
-            Authorization: `Bearer ${jwt}`,
-            Organization: organizationId,
-            Field: studyFieldId,
-        },
-    };
-};
 
 export async function getAllQuestions(authReqData: AuthRequest) {
     return await http.get<models.interfaces.Question[]>(
