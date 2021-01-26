@@ -1,9 +1,8 @@
 import { models } from "@yahalom-tests/common";
-import React, { useEffect, useRef } from "react";
+import React, { createElement, useEffect, useRef } from "react";
 import {
 	Redirect,
 	Route,
-	RouteComponentProps,
 	RouteProps,
 	useParams,
 } from "react-router-dom";
@@ -19,6 +18,7 @@ interface ProtectedRouteParamsProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+	component,
 	children,
 	requiresField,
 	onlyNonAuth,
@@ -56,20 +56,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
 	const isNonAuthAllowed = onlyNonAuth && !jwt;
 	const isAuthAllowed = !onlyNonAuth && Boolean(jwt) && isFieldAllowed;
-
-	const redirection = ({ location }: RouteComponentProps) =>
-		onlyNonAuth ? (
-			<Redirect to={{ pathname: "/" }} />
-		) : (
-				<Redirect to={{ pathname: "/login", state: { from: location } }} />
-			);
+	const isAllowed = isNonAuthAllowed || isAuthAllowed;
 	return (
 		<Route
 			{...rest}
-			render={route =>
-				isNonAuthAllowed || isAuthAllowed
-					? children
-					: redirection(route)
+			render={({ location }) =>
+				isAllowed
+					? (component ? createElement(component) : children)
+					: <Redirect to={{ pathname: onlyNonAuth ? "/" : "/login", state: { from: location || "" } }} />
 			}
 		/>
 	);
