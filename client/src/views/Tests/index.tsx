@@ -77,7 +77,6 @@ const Tests: React.FC = () => {
                 </Route>
                 <Route requiresField path={`${path}/edit/:testId?`}>
                     <EditTest />
-                    {/* <p>Edit / Create test page</p> */}
                     {/* <EditQuestion /> */}
                 </Route>
             </Switch>
