@@ -1,5 +1,6 @@
 import { models } from "@yahalom-tests/common";
 import React, { useState, useContext, createContext } from "react";
+import { useHistory } from "react-router-dom";
 import { AuthRequest } from "../models";
 import { authService } from "../services";
 
@@ -44,6 +45,7 @@ export const useAuth = () => {
 };
 
 function useProvideAuth(): providerFn {
+	const { replace } = useHistory();
 	const [jwt, setJwt] = useState<string>();
 	const [organizationBaseInfo, setOrganizationBaseInfo] = useState<
 		models.interfaces.OrganizationBaseInfo[]
@@ -74,7 +76,9 @@ function useProvideAuth(): providerFn {
 	};
 
 	const signout = () => {
+		replace("/")
 		setJwt(undefined);
+		setOrganizationBaseInfo(undefined);
 	};
 
 	const getOrganizationAndFieldUrl = (...params: string[]) => {

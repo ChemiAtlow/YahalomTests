@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { constants } from "@yahalom-tests/common";
 import { AppButton, ErrorModal, FormField, MessageModal } from "../../components";
@@ -10,7 +10,7 @@ const Login: React.FC = () => {
 	const { replace, push } = useHistory(); //replace doesnt make any affect on user pages history
 	const { state, pathname } = useLocation<any>();
 	const isLogin = /login/i.test(pathname);
-	const { signin, signup } = useAuth();
+	const { signin, signup, organizationBaseInfo } = useAuth();
 	const { openModal } = useModal();
 	const [tmpUser, setTmpUser] = useState({ email: "", password: "" });
 	const [emailError, setEmailError] = useState("");
@@ -18,17 +18,17 @@ const Login: React.FC = () => {
 	const isInvalid = Boolean(
 		emailError || passwordError || !tmpUser.email || !tmpUser.password
 	);
+	useEffect(() => {
+		if (organizationBaseInfo) {
+			replace(state?.from?.pathname || "/");
+		}
+	}, [organizationBaseInfo, state, replace]);
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (isLogin) {
-			if (await signin(tmpUser)) {
-				replace(state?.from?.pathname || "/");
-			}
-			else {
-				openModal(ErrorModal, { title: "Login has failed!", body: "Please check your credentials and try again." });
-			}
+		if (isLogin && !await signin(tmpUser)) {
+			openModal(ErrorModal, { title: "Login has failed!", body: "Please check your credentials and try again." });
 		}
-		else {
+		else if (!isLogin) {
 			if (await signup(tmpUser)) {
 				// display success message
 				openModal(MessageModal, { children: <p>Signup completed successfully.<br />A validation email was sent.</p>, title: "Success!", okText: "OK" })
