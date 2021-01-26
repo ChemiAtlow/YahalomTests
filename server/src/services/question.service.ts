@@ -57,7 +57,7 @@ export const isQuestionActive = async (
     fieldId: models.classes.guid
 ) => {
     const tests = await testService.getAllTestsByField(fieldId);
-    const useCount = tests.filter(test => test.id === questionId);
+    const useCount = tests.filter(test => test.questions.includes(questionId));
     return useCount.length > 0;
 };
 
