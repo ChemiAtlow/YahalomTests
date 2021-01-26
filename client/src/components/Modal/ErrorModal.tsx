@@ -1,7 +1,7 @@
 import React from "react";
 import { ModalInstance } from "../../hooks";
 import Icon from "../Icon";
-import { BaseModal } from "./BaseModal";
+import { MessageModal } from "./MessageModal";
 import "./ErrorModal.scoped.scss";
 
 interface ErrorModalProps extends ModalInstance {
@@ -20,8 +20,8 @@ const errorTitle = (title: string) => (
 
 export const ErrorModal: React.FC<ErrorModalProps> = ({ body, close, title }) => {
     return (
-        <BaseModal close={close} okText="OK" title={errorTitle(title)}>
+        <MessageModal close={close} okText="OK" title={errorTitle(title)}>
             {body}
-        </BaseModal>
+        </MessageModal>
     );
 };

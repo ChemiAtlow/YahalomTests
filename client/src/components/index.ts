@@ -6,6 +6,7 @@ export { default as NestedRoutes } from "./NestedRoutes";
 export { default as QuestionAnswer } from "./QuestionAnswer";
 export { default as Icon } from "./Icon";
 export { default as Backdrop } from "./Backdrop";
+export * from "./Accordion";
 export * from "./Modal";
 export * from "./Tooltip";
 export * from "./Table";

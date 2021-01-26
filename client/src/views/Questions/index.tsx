@@ -93,7 +93,15 @@ const Questions: React.FC = () => {
             ),
         },
     ];
-
+    const onQuestionAddedOrEdited = (question: models.interfaces.Question) => {
+        const existingQuestionIndex = questions.findIndex(q => q.id === question.id);
+        if (existingQuestionIndex >= 0) {
+            questions[existingQuestionIndex] = { ...questions[existingQuestionIndex], ...question };
+        } else {
+            questions.push({ ...question, active: false, testCount: 0 });
+        }
+        setQuestions(questions);
+    };
     useEffect(() => {
         questionService
             .getAllQuestions(buildAuthRequestData())
@@ -112,7 +120,7 @@ const Questions: React.FC = () => {
                 </div>
             </Route>
             <Route path={`${path}/edit/:questionId?`}>
-                <EditQuestion />
+                <EditQuestion onQuestionAddedOrEdited={onQuestionAddedOrEdited} />
             </Route>
         </Switch>
     );

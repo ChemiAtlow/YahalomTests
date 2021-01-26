@@ -33,10 +33,17 @@ const QuestionAnswer: React.FC<QuestionAnswerProps> = ({
     const selectionType =
         questionType === models.enums.QuestionType.MultiChoice ? "checkbox" : "radio";
     return (
-        <div className="question__answer">
+        <div className={`question__answer ${mode.isEditMode ? "edit-mode" : "exam-mode"}`}>
             <div className="question__answer-selection">
                 <input type={selectionType} checked={selected} onChange={onSelectionChange} />
-                {mode.isEditMode && <Icon icon="close" color="#969696" size={22} onClick={mode.onAnswerRemove} />}
+                {mode.isEditMode && (
+                    <Icon
+                        icon="close"
+                        color="#969696"
+                        size={22}
+                        onClick={mode.onAnswerRemove}
+                    />
+                )}
             </div>
             <div className="question__answer-content">
                 {mode.isEditMode ? (
