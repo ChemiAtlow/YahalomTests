@@ -1,23 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { models } from '@yahalom-tests/common';
 import { Row, FormField, Select } from '../../../components';
 import { useAuth } from "../../../hooks";
 import { enumToArray, SwitchCamelCaseToHuman } from '../../../utils';
 
 const languages = enumToArray(models.enums.Language).map(SwitchCamelCaseToHuman);
+export type TestDetailsKeys = Pick<models.dtos.TestDto,
+    "language" | "intro" | "minPassGrade" | "title">;
 
+interface TestDetailsProps {
+    test: TestDetailsKeys;
+    onChange: (change: Partial<TestDetailsKeys>) => void;
+    onValidityChange: (change: string) => void;
+};
 
-export const TestDetails: React.FC<models.dtos.TestDto> = (testProp) => {
-    const { activeStudyField, buildAuthRequestData } = useAuth();
-    //set test prop as component state.
-    const [test, setTest] = useState<models.dtos.TestDto>({ ...testProp });
+export const TestDetails: React.FC<TestDetailsProps> = ({ test, onValidityChange, onChange }) => {
+    const { activeStudyField } = useAuth();
 
     const onLanguageSelected = (e: React.ChangeEvent<HTMLSelectElement>) => { };
     const onTitleChanged = (e: React.ChangeEvent<HTMLInputElement>) => { };
     const onPassingGradeChange = (e: React.ChangeEvent<HTMLInputElement>) => { };
     const onReviewedChanged = (e: React.ChangeEvent<HTMLInputElement>) => { };
     const onIntroChanged = (e: React.ChangeEvent<HTMLInputElement>) => { };
-  
+
     return (
         <div>
             <div className="container">

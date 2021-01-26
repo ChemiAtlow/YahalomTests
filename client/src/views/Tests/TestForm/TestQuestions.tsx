@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth, useModal } from "../../../hooks";
 import { models } from '@yahalom-tests/common';
-import { Column, DataTable, Ellipsis, Icon, QuestionPeekModal, Row } from '../../../components';
+import { Column, DataTable, Ellipsis, Icon, QuestionPeekModal } from '../../../components';
 import { questionService } from '../../../services';
 
 export type TestQuestionsKeys = Pick<models.dtos.TestDto, "questions">;
