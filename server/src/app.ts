@@ -17,7 +17,7 @@ app.use(compression());
 
 app.use("/questions", authMiddleware, questionsRoutes);
 app.use("/auth", authRoutes);
-app.use("/test", authMiddleware, testRoutes);
+app.use("/tests", authMiddleware, testRoutes);
 app.use("/reports", authMiddleware, reportRoutes);
 app.use("/exam", examRoutes);
 app.use("*", notFoundMiddleware);
