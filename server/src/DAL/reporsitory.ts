@@ -56,7 +56,7 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 
 	async updateItem(id: models.classes.guid, entity: Partial<EntityType>) {
 		let index = this.findIndexById(id);
-		this.fullData![index] = { ...this.data![index], ...entity, id };
+		this.fullData![index] = { ...this.fullData![index], ...entity, id };
 		await this.writeToFile();
 		this.filterArchived();
 		return this.fullData![index];
@@ -70,12 +70,12 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 	}
 
 	private filterArchived() {
-		this.data = (this.fullData || []).filter(d => !d.archived);
+		this.data = (this.fullData || []).filter(entity => !entity.archived);
 	}
 
 	private findIndexById(id: models.classes.guid) {
-		let index = (this.data || []).findIndex(q => q.id === id);
-		if (!this.data || index < 0) {
+		let index = (this.fullData || []).findIndex(entity => entity.id === id);
+		if (index < 0) {
 			throw new ItemNotInDbError(id, this.entityName);
 		}
 		return index;
@@ -83,7 +83,7 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 
 	private async writeToFile() {
 		try {
-			const data = JSON.stringify(this.data || []);
+			const data = JSON.stringify(this.fullData || []);
 			await fsPromises.writeFile(this.fileName, data);
 		} catch (err) {
 			console.log("Writing to DB error", err);
