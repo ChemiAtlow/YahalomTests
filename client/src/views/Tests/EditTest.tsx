@@ -19,7 +19,7 @@ const EditTest: React.FC = () => {
     });
 
     const onChange = (changed: Partial<models.dtos.TestDto>) => {
-        setTest({ ...test. ...changed });
+        setTest({ ...test, ...changed });
         console.log(test.questions); //temporary - verify test contains the questions.
     };
     const validityChange = () => { };
