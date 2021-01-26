@@ -9,5 +9,6 @@ export interface Exam {
     title: string;
     intro: string;
     student: string; //the email of student, which is the unique key
+    completed: boolean;
     questions: AnsweredQuestion[];
 }
