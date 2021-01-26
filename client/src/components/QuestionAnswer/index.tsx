@@ -9,21 +9,24 @@ type EditMode = {
     onContentChange: React.ChangeEventHandler<HTMLInputElement>;
     onAnswerRemove: React.MouseEventHandler<SVGElement>;
 };
-type ExamMode = {
+type ExamAndReviewMode = {
     isEditMode?: false;
     alignment: models.enums.Alignment;
+    isReview?: boolean;
 };
 type QuestionAnswerProps = {
     content: string;
+    correct?: boolean;
     selected: boolean;
     answerIndex: number;
     questionType: models.enums.QuestionType;
-    mode: EditMode | ExamMode;
+    mode: EditMode | ExamAndReviewMode;
     onSelectionChange: React.ChangeEventHandler<HTMLInputElement>;
 };
 
 const QuestionAnswer: React.FC<QuestionAnswerProps> = ({
     content,
+    correct,
     selected,
     answerIndex,
     questionType,
@@ -54,7 +57,7 @@ const QuestionAnswer: React.FC<QuestionAnswerProps> = ({
                         onChange={mode.onContentChange}
                     />
                 ) : (
-                    <p>{content}</p>
+                    <p className={(mode.isReview && correct) ? "correct" : ""}>{content}</p>
                 )}
             </div>
         </div>

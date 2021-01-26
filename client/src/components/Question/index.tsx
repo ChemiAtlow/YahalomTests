@@ -5,9 +5,10 @@ import "./Question.scoped.scss";
 
 interface QuestionProps {
     question: models.dtos.QuestionDto;
+    mode: "review" | "test"
 }
 
-const Question: React.FC<QuestionProps> = ({ question }) => {
+const Question: React.FC<QuestionProps> = ({ question, mode }) => {
     const [selection, setSelection] = useState<boolean[]>(
         Array(question.answers.length).fill(false)
     );
@@ -34,9 +35,9 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
                     <QuestionAnswer
                         key={i}
                         answerIndex={i}
-                        mode={{ isEditMode: false, alignment: question.alignment }}
+                        mode={{ isEditMode: false, alignment: question.alignment, isReview: mode === "review" }}
                         questionType={question.type}
-                        content={ans.content}
+                        {...ans}
                         selected={selection[i]}
                         onSelectionChange={() => onSelectionChange(i)}
                     />

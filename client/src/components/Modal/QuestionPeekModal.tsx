@@ -11,7 +11,7 @@ interface QuestionPeekModalProps extends ModalInstance {
 export const QuestionPeekModal: React.FC<QuestionPeekModalProps> = ({ question, close }) => {
     return (
         <MessageModal close={close} okText="Close" title="Preview question">
-            <Question question={question} />
+            <Question question={question} mode="review" />
         </MessageModal>
     );
 };

@@ -76,5 +76,13 @@
     &-content {
         flex: 1;
         white-space: pre-wrap;
+        p {
+            padding: 0.4rem 0.2rem;
+            &.correct {
+                background-color: rgba($color: $light-green, $alpha: 0.4);
+                box-shadow: 0 0 4px 1.5px $dark-green;
+                border-radius: 0.4rem;
+            }
+        }
     }
 }
