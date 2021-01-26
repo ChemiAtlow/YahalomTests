@@ -3,4 +3,5 @@ export interface Student {
     firstName: string;
     lastName: string;
     phone: string;
+    lastActivity: number;
 }
