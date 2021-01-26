@@ -1,17 +1,49 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { models } from '@yahalom-tests/common';
 import { FormField } from '../../../components';
 
+export type TestEmailsKeys = Pick<models.dtos.EmailDto, "body" | "subject">;
+
 interface EmailFormProps {
     email: models.dtos.EmailDto;
-    onChange: React.ChangeEventHandler<models.dtos.EmailDto>;
+    onChange: (change: Partial<TestEmailsKeys>) => void;
+    errMsg?: string;
+    onValidityChange: (change: string) => void;
 }
 
-export const EmailForm: React.FC<EmailFormProps> = ({ email, onChange }) => {
-    const onSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        //will call to onCHange callback};
+export const EmailForm: React.FC<EmailFormProps> = ({ email, onChange, onValidityChange }) => {
+    const [subjectError, setSubjectError] = useState("");
+    const [bodyError, setBodyError] = useState("");
+
+    useEffect(() => {
+        let errorStr = "";
+        if (subjectError || bodyError) {
+            if (subjectError && bodyError) {
+                errorStr = `Errors: ${subjectError}, ${bodyError}`;
+            } else {
+                errorStr = `Errors: ${subjectError || bodyError}`;
+            }
+        }
+        onValidityChange(errorStr);
+    }, [subjectError, bodyError, onValidityChange]);
+
+    const stringPropsErrorValidate = (value: string, propName: string) => {
+        propName === "subject" ? setSubjectError("") : setBodyError("");
+        if (!value.trim()) {
+            propName === "subject" ? setSubjectError(`${propName} is required!`) : setBodyError(`${propName} is required!`);
+        }
     };
-    const onBodyChange = (e: React.ChangeEvent<HTMLInputElement>) => { };
+
+    const onSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+        stringPropsErrorValidate(value, "subject");
+        onChange({ subject: value });
+    };
+    const onBodyChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+        stringPropsErrorValidate(value, "body");
+        onChange({ body: value });
+    };
 
     return (
         <>
@@ -20,12 +52,14 @@ export const EmailForm: React.FC<EmailFormProps> = ({ email, onChange }) => {
                 required
                 value={email?.subject}
                 onChange={onSubjectChange}
+                error={subjectError}
             />
             <FormField label="Mail body"
                 type="text"
                 required
                 value={email?.body}
-                onChange={onBodyChange}
+                onChange={onBodyChanged}
+                error={bodyError}
             />
         </>
     )
