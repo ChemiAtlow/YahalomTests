@@ -7,31 +7,25 @@ import { ModalProvider } from "./hooks";
 const App: React.FC = () => {
     return (
         <ModalProvider>
-            <ProvideAuth>
-                <BrowserRouter>
+            <BrowserRouter>
+                <ProvideAuth>
                     <NavBar />
                     <main className="app">
                         <Switch>
-                            <ProtectedRoute onlyNonAuth path={["/login", "/signup"]}>
-                                <Login />
-                            </ProtectedRoute>
-                            <ProtectedRoute onlyNonAuth path="/reset/:token?">
-                                <Restore />
-                            </ProtectedRoute>
-                            <ProtectedRoute requiresField path="/:organizationId/:fieldId">
+                            <Route path={["/login", "/signup"]} component={Login} />
+                            <Route path="/reset/:token?" component={Restore} />
+                            <ProtectedRoute setsField path="/:organizationId/:fieldId">
                                 <NestedRoutes>
-                                    <Route requiresField path="/questions" component={Questions} />
-                                    <Route requiresField path="/tests" component={Tests} />
-                                    <Route requiresField path="/reports" component={Reports} />
+                                    <ProtectedRoute requiresField path="/questions" component={Questions} />
+                                    <ProtectedRoute requiresField path="/tests" component={Tests} />
+                                    <ProtectedRoute requiresField path="/reports" component={Reports} />
                                 </NestedRoutes>
                             </ProtectedRoute>
-                            <ProtectedRoute path="/">
-                                <Home />
-                            </ProtectedRoute>
+                            <ProtectedRoute path="/" component={Home} />
                         </Switch>
                     </main>
-                </BrowserRouter>
-            </ProvideAuth>
+                </ProvideAuth>
+            </BrowserRouter>
         </ModalProvider>
     );
 };
