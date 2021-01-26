@@ -3,6 +3,6 @@ import { reportController } from "../controllers";
 
 export const router = Router();
 
-router.post("/test/:id", reportController.getTestReport);
+router.get("/test/:id", reportController.getTestReport);
 
-router.post("/student/:id", reportController.getStudentReport);
+router.get("/student/:id", reportController.getStudentReport);
