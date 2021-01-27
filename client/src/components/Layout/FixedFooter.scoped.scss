@@ -3,4 +3,10 @@
     grid-template-rows: 1fr $header-height;
     overflow: hidden;
     height: 100%;
+    > :first-child {
+        overflow: hidden;
+    }
+    > :last-child {
+        align-self: center;
+    }
 }
