@@ -1,0 +1,18 @@
+pre {
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: $gray;
+    border-radius: 0.4rem;
+    display: grid;
+    grid-template-columns: 1fr 24px;
+    align-items: center;
+    font-size: 1.1rem;
+    transition: background-color 400ms ease-in-out;
+    &:hover {
+        background-color: darken($color: $gray, $amount: 10);
+    }
+    span {
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}
