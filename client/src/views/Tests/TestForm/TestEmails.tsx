@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { models } from '@yahalom-tests/common';
-import { FormField } from '../../../components';
-import { EmailForm } from "./EmailForm"
+import React, { useEffect, useState } from "react";
+import { models } from "@yahalom-tests/common";
+import { Accordion, AccordionSection, Container, FormField } from "../../../components";
+import { EmailForm } from "./EmailForm";
 
-export type TestEmailsKeys = Pick<models.dtos.TestDto,
-    "failureEmail" | "successEmail" | "failureMessage" | "successMessage">;
+export type TestEmailsKeys = Pick<
+    models.dtos.TestDto,
+    "failureEmail" | "successEmail" | "failureMessage" | "successMessage"
+>;
 
 interface TestEmailsProps {
     test: TestEmailsKeys;
     onChange: (change: Partial<TestEmailsKeys>) => void;
     onValidityChange: (change: string) => void;
-};
+}
 
 export const TestEmails: React.FC<TestEmailsProps> = ({ test, onChange, onValidityChange }) => {
     const [successMsgError, setSuccessMsgError] = useState("");
@@ -38,10 +40,15 @@ export const TestEmails: React.FC<TestEmailsProps> = ({ test, onChange, onValidi
         onChange({ failureEmail: { ...test.failureEmail, ...changed } });
     };
 
-    const stringPropsErrorValidate = (value: string, propName: "Success message" | "Failure message") => {
+    const stringPropsErrorValidate = (
+        value: string,
+        propName: "Success message" | "Failure message"
+    ) => {
         propName === "Success message" ? setSuccessMsgError("") : setFailureMsgError("");
         if (!value.trim()) {
-            propName === "Success message" ? setSuccessMsgError(`${propName} is required`) : setFailureMsgError(`${propName} is required`);
+            propName === "Success message"
+                ? setSuccessMsgError(`${propName} is required`)
+                : setFailureMsgError(`${propName} is required`);
         }
     };
 
@@ -54,7 +61,9 @@ export const TestEmails: React.FC<TestEmailsProps> = ({ test, onChange, onValidi
             } else {
                 errorStr = `Errors: `;
                 errors.forEach(err => {
-                    if (err) { errorStr += `${err},`; }
+                    if (err) {
+                        errorStr += `${err},`;
+                    }
                 });
                 errorStr.slice(0, -1);
             }
@@ -62,26 +71,40 @@ export const TestEmails: React.FC<TestEmailsProps> = ({ test, onChange, onValidi
         onValidityChange(errorStr);
     }, [successMsgError, failureMsgError, successEmailError, failureEmailError, onValidityChange]);
 
-
     return (
-        <>
-            <FormField label="Seccess message"
-                type="textarea"
-                required
-                value={test.successMessage}
-                onChange={onSuccessMessageChanged}
-                error={successMsgError}
-            />
-            <EmailForm email={test.successEmail} onChange={onSuccessMailChange} onValidityChange={setSuccessEmailError} />
-            <FormField label="Failure message"
-                type="textarea"
-                required
-                value={test.failureMessage}
-                onChange={onFailureMessageChanged}
-                error={failureMsgError}
-            />
-            <EmailForm email={test.failureEmail} onChange={onFailureMailChange} onValidityChange={setFaliureEmailError} />
-        </>
-    )
-}
-
+        <Container>
+            <Accordion>
+                <AccordionSection title="Success messages">
+                    <FormField
+                        label="Success message"
+                        type="textarea"
+                        required
+                        value={test.successMessage}
+                        onChange={onSuccessMessageChanged}
+                        error={successMsgError}
+                    />
+                    <EmailForm
+                        email={test.successEmail}
+                        onChange={onSuccessMailChange}
+                        onValidityChange={setSuccessEmailError}
+                    />
+                </AccordionSection>
+                <AccordionSection title="Failure message">
+                    <FormField
+                        label="Failure message"
+                        type="textarea"
+                        required
+                        value={test.failureMessage}
+                        onChange={onFailureMessageChanged}
+                        error={failureMsgError}
+                    />
+                    <EmailForm
+                        email={test.failureEmail}
+                        onChange={onFailureMailChange}
+                        onValidityChange={setFaliureEmailError}
+                    />
+                </AccordionSection>
+            </Accordion>
+        </Container>
+    );
+};
