@@ -15,9 +15,8 @@ export type Column = {
     largeColumn?: boolean;
     sortable: boolean;
 } & (
-        { key: "*" | string; template?: React.ComponentType<{ data?: any }>; } |
-        { key: undefined; template: React.ComponentType }
-    );
+    | { key: "*" | string; template?: React.ComponentType<{ data?: any }> }
+    | { key: undefined; template: React.ComponentType });
 interface DataTableProps {
     data: ArrayItem[];
     columns: Column[];
@@ -25,12 +24,22 @@ interface DataTableProps {
     searchKeys?: string[];
     activeRows?: { key: string; rows: any[] };
     onRowClick?: (data: any) => void;
+    onDataFiltered?: (filteredData: any[]) => void;
 }
 
-export const DataTable: React.FC<DataTableProps> = ({ data, columns, onRowClick, searchKeys, searchTerm, activeRows }) => {
+export const DataTable: React.FC<DataTableProps> = ({
+    data,
+    columns,
+    onRowClick,
+    onDataFiltered,
+    searchKeys,
+    searchTerm,
+    activeRows,
+}) => {
     const { data: filteredData, sort, search } = useSearchAndSort(data, searchKeys);
     const [sortedColumn, setSortedColumn] = useState<SortedColumn>();
     useEffect(() => search(searchTerm || ""), [search, searchTerm]);
+    useEffect(() => onDataFiltered?.(filteredData), [filteredData, onDataFiltered]);
 
     const sortColumn = (col: Column) => {
         if (!col.key || !col.sortable) {
@@ -55,11 +64,19 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns, onRowClick,
                 {!filteredData.length ? (
                     <div className="row-empty">No Records to show.</div>
                 ) : (
-                        filteredData.map((record, rowInd) => {
-                            const isActive = activeRows?.rows.includes(record[activeRows.key] || "");
-                            return < Row onRowClicked = {() => onRowClick?.(record)} columns={columns} record={record} key={`row-${rowInd}`} isActive={isActive} />
-                        })
-                    )}
+                    filteredData.map((record, rowInd) => {
+                        const isActive = activeRows?.rows.includes(record[activeRows.key] || "");
+                        return (
+                            <Row
+                                onRowClicked={() => onRowClick?.(record)}
+                                columns={columns}
+                                record={record}
+                                key={`row-${rowInd}`}
+                                isActive={isActive}
+                            />
+                        );
+                    })
+                )}
             </div>
         </div>
     );
