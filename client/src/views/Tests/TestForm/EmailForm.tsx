@@ -54,7 +54,7 @@ export const EmailForm: React.FC<EmailFormProps> = ({ email, onChange, onValidit
                 error={subjectError}
             />
             <FormField label="Mail body"
-                type="text"
+                type="textarea"
                 required
                 value={email?.body}
                 onChange={onBodyChanged}
