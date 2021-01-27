@@ -6,4 +6,5 @@ export interface Organization {
 	fields: guid[];
 	users: guid[];
 	questions: guid[];
+	students: string[];
 }

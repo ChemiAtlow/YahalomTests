@@ -2,10 +2,15 @@ import { models } from "@yahalom-tests/common";
 import { studyFieldRepository } from "../DAL";
 import { ItemNotInDbError } from "../errors";
 
+type FieldBaseInfo = models.interfaces.OrganizationBaseInfo["fields"][0];
+
 export const getStudyFieldsBaseDataByIds = async (ids: models.classes.guid[]) => {
     const fields = await studyFieldRepository.getAll();
-    const filteredById = fields.filter(fld => ids.includes(fld.id!));
-    return filteredById.map(({ name, id }) => ({ name, id }));
+    const filteredBaseData = fields.reduce(
+        (previous, { name, id }) => ids.includes(id || "") ? [...previous, { name, id }] : previous,
+        Array<FieldBaseInfo>()
+    );
+    return filteredBaseData;
 };
 
 export const getStudyFieldById = async (id: models.classes.guid) => {
@@ -26,12 +31,12 @@ export const addQuestion = async (
     questionId: models.classes.guid
 ) => {
     const field = await getStudyFieldById(fieldId);
-    studyFieldRepository.updateItem(fieldId, { questions: [...field.questions, questionId] });
+    await studyFieldRepository.updateItem(fieldId, { questions: [...field.questions, questionId] });
 };
 
 export const addTest = async (fieldId: models.classes.guid, testId: models.classes.guid) => {
     const field = await getStudyFieldById(fieldId);
-    studyFieldRepository.updateItem(fieldId, { tests: [...field.tests, testId] });
+    await studyFieldRepository.updateItem(fieldId, { tests: [...field.tests, testId] });
 };
 
 export const isTestConnectedToField = async (

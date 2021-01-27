@@ -10,7 +10,7 @@ const signatureHeight = 390;
 export function createCertificate({
     firstName,
     lastName,
-}: Omit<models.interfaces.Student, "email">) {
+}: Pick<models.interfaces.Student, "firstName" | "lastName">) {
     const studentName = `${firstName} ${lastName}`;
     const doc = new PDFDocument({
         layout: "landscape",

@@ -24,6 +24,13 @@ export const addQuestion = async (
     });
 };
 
+export const addStudent = async (organizationId: models.classes.guid, studentEmail: string) => {
+    const organization = await getOrganizationById(organizationId);
+    organizationRepository.updateItem(organizationId, {
+        students: [...organization.students, studentEmail],
+    });
+};
+
 export const isFieldConnectedToOrganization = async (
     organizationId: models.classes.guid,
     fieldId: models.classes.guid
@@ -38,6 +45,14 @@ export const isUserConnectedToOrganization = async (
 ) => {
     const organization = await getOrganizationById(organizationId);
     return organization.users.includes(userdId);
+};
+
+export const isStudentConnectedToOrganization = async (
+    organizationId: models.classes.guid,
+    studentEmail: string
+) => {
+    const organization = await getOrganizationById(organizationId);
+    return organization.students.includes(studentEmail);
 };
 
 export const isQuestionConnectedToOrganization = async (
