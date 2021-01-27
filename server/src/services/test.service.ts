@@ -17,8 +17,8 @@ export const getTestsById = async (testId: models.classes.guid) => {
     return test;
 };
 
-export const addTest = async (test: models.dtos.TestDto, fieldId: models.classes.guid) => {
-    const newTest = await testRepository.addItem({ ...test, lastUpdate: Date.now() });
+export const addTest = async (test: models.dtos.TestDto, teacherEmail: string, fieldId: models.classes.guid) => {
+    const newTest = await testRepository.addItem({ ...test, teacherEmail, lastUpdate: Date.now() });
     await fieldService.addTest(fieldId, newTest.id!);
     return newTest;
 };

@@ -31,12 +31,12 @@ export const addQuestion = async (
     questionId: models.classes.guid
 ) => {
     const field = await getStudyFieldById(fieldId);
-    studyFieldRepository.updateItem(fieldId, { questions: [...field.questions, questionId] });
+    await studyFieldRepository.updateItem(fieldId, { questions: [...field.questions, questionId] });
 };
 
 export const addTest = async (fieldId: models.classes.guid, testId: models.classes.guid) => {
     const field = await getStudyFieldById(fieldId);
-    studyFieldRepository.updateItem(fieldId, { tests: [...field.tests, testId] });
+    await studyFieldRepository.updateItem(fieldId, { tests: [...field.tests, testId] });
 };
 
 export const isTestConnectedToField = async (
