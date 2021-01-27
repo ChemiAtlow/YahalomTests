@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { AppButton, Select } from "../../components";
+import { AppButton, Container, Select } from "../../components";
 import { useAuth } from "../../hooks";
 
 const buildItemsForSelect = (arr: { id?: string, name: string }[]) =>
@@ -46,7 +46,7 @@ const Home: React.FC = () => {
 	};
 
 	return (
-		<div className="container">
+		<Container>
 			<span>
 				In order to continue, select organization and field to work on.
 			</span>
@@ -72,7 +72,7 @@ const Home: React.FC = () => {
 					{activeOrganization && activeStudyField && <AppButton onClick={handleClick}>Continue</AppButton>}
 				</>
 			}
-		</div>
+		</Container>
 	);
 };
 

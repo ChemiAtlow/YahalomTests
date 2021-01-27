@@ -1,6 +1,6 @@
 import { models } from "@yahalom-tests/common";
 import React from "react";
-import { Row, QuestionAnswer, AppButton } from "../../../components";
+import { Row, QuestionAnswer, AppButton, Container } from "../../../components";
 
 
 export type QuestionAnswersKeys = Pick<models.interfaces.Question, "type" | "answers">;
@@ -83,7 +83,7 @@ export const QuestionAnswers: React.FC<QuestionAnswersProps> = ({ question, onCh
         onValidityChange(errMsg)
     }
     return (
-        <div className="container">
+        <Container>
             <Row>
                 {question.answers.map(({ content, correct }, i) => (
                     <QuestionAnswer
@@ -102,6 +102,6 @@ export const QuestionAnswers: React.FC<QuestionAnswersProps> = ({ question, onCh
                 ))}
                 {question.answers.length < 10 && <AppButton type="button" onClick={onAnswerAdd}>Add answer</AppButton>}
             </Row>
-        </div>
+        </Container>
     );
 };
