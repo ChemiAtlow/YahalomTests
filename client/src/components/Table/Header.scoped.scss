@@ -18,7 +18,7 @@
             &.header__large {
                 flex: 2;
             }
-            &:hover:not(.header__small), &.sorted {
+            &.sortable:hover, &.sorted {
                 background-color: $deep-blue;
             }
 		}
