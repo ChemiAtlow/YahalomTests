@@ -104,7 +104,7 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
                 <Section label="Test Details" errMsg={detailsError} isValid={!detailsError}>
                     <TestDetails test={test} onChange={onChange} onValidityChange={setDetailsError} />
                 </Section>
-                <Section label="Test Complition" errMsg={emailsError} isValid={!emailsError}>
+                <Section label="Completion messages" errMsg={emailsError} isValid={!emailsError}>
                     <TestEmails test={test} onChange={onChange} onValidityChange={setEmailsError} />
                 </Section>
                 <Section label="Test Questions" errMsg={questionsError} isValid={!questionsError}>
