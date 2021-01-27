@@ -1,7 +1,7 @@
 import { models } from '@yahalom-tests/common';
 import React, { useEffect, useState } from 'react'
 import { useLocation, useRouteMatch } from 'react-router-dom';
-import { SectionNavigator, Section, AppButton, ErrorModal, MessageModal } from '../../components'
+import { SectionNavigator, Section, AppButton, ErrorModal, MessageModal, FixedFooter } from '../../components'
 import { useAuth, useModal } from '../../hooks';
 import { testService } from '../../services';
 import { TestDetails, TestEmails, TestQuestions } from "./TestForm";
@@ -98,6 +98,7 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
     }, [state, params, setTest, buildAuthRequestData, openModal]);
 
     return (
+        <FixedFooter>
         <form onSubmit={onSubmit} >
             <SectionNavigator>
                 <Section label="Test Details" errMsg={detailsError} isValid={!detailsError}>
@@ -110,10 +111,13 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
                     <TestQuestions test={test} onChange={onChange} onValidityChange={setQuestionsError} />
                 </Section>
             </SectionNavigator>
-            <AppButton disabled={isInvalid} type="submit" className="edit-question__form">
-                {test.id ? "Edit" : "Create"}
-            </AppButton>
-        </form>
+            </form>
+            <div>
+                <AppButton disabled={isInvalid} type="submit" form="edit-question__form">
+                    {test.id ? "Edit" : "Create"}
+                </AppButton>
+            </div>
+        </FixedFooter>
     )
 }
 

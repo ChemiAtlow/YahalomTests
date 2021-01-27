@@ -111,33 +111,31 @@ const Tests: React.FC = () => {
     }, [setTests, buildAuthRequestData]);
 
     return (
-        <div>
-            <Switch>
-                <Route path={path} exact>
-                    <Container>
-                        <h1>Tests</h1>
-                        <SearchRow>
-                            <AppButton
-                                onClick={() => push(getOrganizationAndFieldUrl("tests", "edit"))}>
-                                Add new test
-                            </AppButton>
+        <Switch>
+            <Route path={path} exact>
+                <Container>
+                    <h1>Tests</h1>
+                    <SearchRow>
+                        <AppButton
+                            onClick={() => push(getOrganizationAndFieldUrl("tests", "edit"))}>
+                            Add new test
+                        </AppButton>
 
-                            <FormField
-                                label="Search by title"
-                                type="text"
-                                search
-                                value={search}
-                                onChange={e => setSearch(e.target.value)}
-                            />
-                        </SearchRow>
-                        <DataTable data={tests} columns={columns} searchTerm={search} />
-                    </Container>
-                </Route>
-                <Route requiresField path={`${path}/edit/:testId?`}>
-                    <EditTest onTestAddedOrEdited={onTestChanged} />
-                </Route>
-            </Switch>
-        </div>
+                        <FormField
+                            label="Search by title"
+                            type="text"
+                            search
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                        />
+                    </SearchRow>
+                    <DataTable data={tests} columns={columns} searchTerm={search} />
+                </Container>
+            </Route>
+            <Route requiresField path={`${path}/edit/:testId?`}>
+                <EditTest onTestAddedOrEdited={onTestChanged} />
+            </Route>
+        </Switch>
     );
 };
 
