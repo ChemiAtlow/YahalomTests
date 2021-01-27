@@ -5,12 +5,13 @@ import "./Row.scoped.scss";
 interface RowProps {
     columns: Column[];
     record: { [key: string]: any };
+    isActive?: boolean;
     onRowClicked?: React.MouseEventHandler<HTMLDivElement>;
-};
+}
 
-const Row: React.FC<RowProps> = ({ record, columns, onRowClicked }) => {
+const Row: React.FC<RowProps> = ({ record, columns, onRowClicked, isActive }) => {
     return (
-        <div className="table-row" onClick={onRowClicked}>
+        <div className={`table-row ${isActive ? "active" : ""}`} onClick={onRowClicked}>
             {columns.map((col, colInd) => (
                 <div
                     className={`col ${col.smallColumn ? "col__small" : ""} ${

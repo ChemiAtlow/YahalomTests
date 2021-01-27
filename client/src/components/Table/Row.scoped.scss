@@ -15,4 +15,7 @@
     &:nth-child(even) {
         background-color: $gray;
     }
+    &.active {
+        background-color: rgba($color: $light-green, $alpha: 0.6);
+    }
 }

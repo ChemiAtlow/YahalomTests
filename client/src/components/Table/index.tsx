@@ -23,10 +23,11 @@ interface DataTableProps {
     columns: Column[];
     searchTerm?: string;
     searchKeys?: string[];
+    activeRows?: { key: string; rows: any[] };
     onRowClick?: (data: any) => void;
 }
 
-export const DataTable: React.FC<DataTableProps> = ({ data, columns, onRowClick, searchKeys, searchTerm }) => {
+export const DataTable: React.FC<DataTableProps> = ({ data, columns, onRowClick, searchKeys, searchTerm, activeRows }) => {
     const { data: filteredData, sort, search } = useSearchAndSort(data, searchKeys);
     const [sortedColumn, setSortedColumn] = useState<SortedColumn>();
     useEffect(() => search(searchTerm || ""), [search, searchTerm]);
@@ -54,9 +55,10 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns, onRowClick,
                 {!filteredData.length ? (
                     <div className="row-empty">No Records to show.</div>
                 ) : (
-                        filteredData.map((record, rowInd) => (
-                            <Row onRowClicked={() => onRowClick?.(record)} columns={columns} record={record} key={`row-${rowInd}`} />
-                        ))
+                        filteredData.map((record, rowInd) => {
+                            const isActive = activeRows?.rows.includes(record[activeRows.key] || "");
+                            return < Row onRowClicked = {() => onRowClick?.(record)} columns={columns} record={record} key={`row-${rowInd}`} isActive={isActive} />
+                        })
                     )}
             </div>
         </div>
