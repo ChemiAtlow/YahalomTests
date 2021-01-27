@@ -30,6 +30,7 @@ $animation-duration: 0.4s;
             margin: 0;
             padding: 18px 0 0;
             transition: all $animation-duration;
+            user-select: none;
             width: 100%;
         }
         &-input {
