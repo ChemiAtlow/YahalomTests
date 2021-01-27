@@ -99,7 +99,7 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
 
     return (
         <FixedFooter>
-        <form onSubmit={onSubmit} >
+        <form onSubmit={onSubmit} id="edit-test__form">
             <SectionNavigator>
                 <Section label="Test Details" errMsg={detailsError} isValid={!detailsError}>
                     <TestDetails test={test} onChange={onChange} onValidityChange={setDetailsError} />
@@ -113,7 +113,7 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
             </SectionNavigator>
             </form>
             <div>
-                <AppButton disabled={isInvalid} type="submit" form="edit-question__form">
+                <AppButton disabled={isInvalid} type="submit" form="edit-test__form">
                     {test.id ? "Edit" : "Create"}
                 </AppButton>
             </div>

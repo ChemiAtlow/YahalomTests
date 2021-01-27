@@ -55,8 +55,11 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
 
     const clearAllSelected = () => {
         onChange({ questions: [] });
-    }
-    const selectAllVisible = () => {}
+    };
+    const selectAllVisible = () => {
+        // const visibleQuestionsIds = filteredQuestions.map(q => q.id!);
+        // onChange({ questions: visibleQuestionsIds });
+    };
 
     const onRowClicked = (question: models.interfaces.Question) => {
         const questionIndex = test.questions.findIndex(qId => qId === question.id);
@@ -72,11 +75,11 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
             <p>Total questions selected for the test: {test.questions.length}</p>
             <SearchRow>
                 <div>
-                    <AppButton type="button" onClick={clearAllSelected}>
+                    <AppButton color="error" type="button" onClick={clearAllSelected}>
                         Clear all
                     </AppButton>
                     <AppButton type="button" onClick={selectAllVisible}>
-                        Clear all
+                        Select all visible
                     </AppButton>
                 </div>
                 <FormField
@@ -91,6 +94,7 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
                 columns={columns}
                 data={questions}
                 onRowClick={onRowClicked}
+                // onDataFiltered={setFilteredQuestions}
                 searchKeys={["label"]}
                 searchTerm={search}
                 activeRows={activeRows}
