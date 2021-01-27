@@ -1,5 +1,5 @@
 $animation-duration: 0.4s;
-
+$top-padding: 18px;
 @mixin label-inactive() {
     font-size: 1.2rem;
     transform: translateY(0);
@@ -28,8 +28,9 @@ $animation-duration: 0.4s;
             top: 0;
             left: 0;
             margin: 0;
-            padding: 18px 0 0;
+            padding: $top-padding 0 0;
             transition: all $animation-duration;
+            user-select: none;
             width: 100%;
         }
         &-input {
@@ -43,6 +44,9 @@ $animation-duration: 0.4s;
             margin-top: 24px;
             padding: 0 12px 10px 12px;
             width: 100%;
+            .search & {
+                padding: 0 26px 10px 12px;
+            }
             @at-root {
                 textarea#{&} {
                     height: 150px;
@@ -80,6 +84,12 @@ $animation-duration: 0.4s;
             transform: scaleX(0);
             transition: all $animation-duration;
             width: 1%;
+        }
+        &-icon {
+            position: absolute;
+            top: $top-padding;
+            right: 0;
+            margin: 0;
         }
     }
     &.error {

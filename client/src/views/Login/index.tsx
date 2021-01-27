@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { constants } from "@yahalom-tests/common";
-import { AppButton, ErrorModal, FormField, MessageModal } from "../../components";
+import { AppButton, Container, ErrorModal, FormField, MessageModal } from "../../components";
 import { useAuth, useModal } from "../../hooks";
 import "./Login.scoped.scss";
 const { emailRegex, passwordDescription, passwordRegex } = constants.validations;
@@ -58,37 +58,39 @@ const Login: React.FC = () => {
 	};
 
 	return (
-		<div className="login__dialog container">
-			<h1 className="login__dialog-title">{isLogin ? "Login" : "Sign up"}</h1>
-			<form onSubmit={onSubmit}>
-				<FormField
-					label="Email"
-					type="text"
-					autoComplete="username"
-					value={tmpUser.email}
-					onChange={onEmailChange}
-					error={emailError}
-				/>
-				<FormField
-					label="Password"
-					type="password"
-					autoComplete={isLogin ? "current-password" : "new-password"}
-					value={tmpUser.password}
-					onChange={onPasswordChange}
-					error={passwordError}
-				/>
-				<AppButton disabled={isInvalid} type="submit">
-					Submit
-                </AppButton>
-			</form>
+		<Container>
+			<div className="login__dialog">
+				<h1 className="login__dialog-title">{isLogin ? "Login" : "Sign up"}</h1>
+				<form onSubmit={onSubmit}>
+					<FormField
+						label="Email"
+						type="text"
+						autoComplete="username"
+						value={tmpUser.email}
+						onChange={onEmailChange}
+						error={emailError}
+					/>
+					<FormField
+						label="Password"
+						type="password"
+						autoComplete={isLogin ? "current-password" : "new-password"}
+						value={tmpUser.password}
+						onChange={onPasswordChange}
+						error={passwordError}
+					/>
+					<AppButton disabled={isInvalid} type="submit">
+						Submit
+					</AppButton>
+				</form>
 
-			<AppButton onClick={onPageChangeRequest} type="button" varaiety="secondary">
-				{isLogin ? "Not registered? Signup!" : "Have an account? Login!"}
-			</AppButton>
-			<AppButton onClick={onForgotPassword} type="button" varaiety="secondary">
-				Forgot your password?
-			</AppButton>
-		</div>
+				<AppButton onClick={onPageChangeRequest} type="button" varaiety="secondary">
+					{isLogin ? "Not registered? Signup!" : "Have an account? Login!"}
+				</AppButton>
+				<AppButton onClick={onForgotPassword} type="button" varaiety="secondary">
+					Forgot your password?
+				</AppButton>
+				</div>
+			</Container>
 	);
 };
 
