@@ -10,9 +10,10 @@ import {
     FormField,
     Icon,
     SearchRow,
+    TestLinkModal,
     Tooltip,
 } from "../../components";
-import { useAuth } from "../../hooks";
+import { useAuth, useModal } from "../../hooks";
 import { testService } from "../../services";
 import EditTest from "./EditTest";
 
@@ -22,9 +23,16 @@ const Tests: React.FC = () => {
     const [tests, setTests] = useState<models.interfaces.Test[]>([]);
     const [search, setSearch] = useState("");
     const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
+    const { openModal } = useModal();
 
     const goToEditTest = (test: models.interfaces.Test) =>
         push(getOrganizationAndFieldUrl("tests", "edit", test.id!), { test });
+    const goToTestStatitistics = (test: models.interfaces.Test) =>
+        console.warn("Statistics page is not yet implemented!", test);
+    const showLinkToTest = ({ title, id }: models.interfaces.Test) => {
+        openModal(TestLinkModal, { title, id: id! })
+    }
+    
 
     const columns: Column[] = [
         {
@@ -61,18 +69,35 @@ const Tests: React.FC = () => {
             isFromData: true,
             key: "*",
             sortable: false,
+            smallColumn: true,
             template: ({ data }) => (
-                <div>
-                    <Tooltip value="Click to view test statistics." direction="left">
-                        <Icon icon="statistics" onClick={() => goToEditTest(data)} />
-                    </Tooltip>
-                    <Tooltip value="Click to edit the test." direction="left">
-                        <Icon icon="edit" onClick={() => goToEditTest(data)} />
-                    </Tooltip>
-                    <Tooltip value="Click to get link to the test." direction="left">
-                        <Icon icon="link" onClick={() => goToEditTest(data)} />
-                    </Tooltip>
-                </div>
+                <Tooltip value="Click to view test statistics." direction="left">
+                    <Icon icon="statistics" onClick={() => goToTestStatitistics(data)} />
+                </Tooltip>
+            ),
+        },
+        {
+            label: "",
+            isFromData: true,
+            key: "*",
+            sortable: false,
+            smallColumn: true,
+            template: ({ data }) => (
+                <Tooltip value="Click to edit the test." direction="left">
+                    <Icon icon="edit" onClick={() => goToEditTest(data)} />
+                </Tooltip>
+            ),
+        },
+        {
+            label: "",
+            isFromData: true,
+            key: "*",
+            sortable: false,
+            smallColumn: true,
+            template: ({ data }) => (
+                <Tooltip value="Click to get link to the test." direction="left">
+                    <Icon icon="link" onClick={() => showLinkToTest(data)} />
+                </Tooltip>
             ),
         },
     ];
