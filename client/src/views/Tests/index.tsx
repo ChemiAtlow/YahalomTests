@@ -1,7 +1,17 @@
 import { models } from "@yahalom-tests/common";
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
-import { AppButton, Column, DataTable, Ellipsis, Icon, Tooltip } from "../../components";
+import {
+    AppButton,
+    Column,
+    Container,
+    DataTable,
+    Ellipsis,
+    FormField,
+    Icon,
+    SearchRow,
+    Tooltip,
+} from "../../components";
 import { useAuth } from "../../hooks";
 import { testService } from "../../services";
 import EditTest from "./EditTest";
@@ -10,6 +20,7 @@ const Tests: React.FC = () => {
     const { path } = useRouteMatch();
     const { push } = useHistory();
     const [tests, setTests] = useState<models.interfaces.Test[]>([]);
+    const [search, setSearch] = useState("");
     const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
 
     const goToEditTest = (test: models.interfaces.Test) =>
@@ -77,23 +88,31 @@ const Tests: React.FC = () => {
     };
 
     useEffect(() => {
-        testService
-            .getAllTests(buildAuthRequestData())
-            .then(({ data }) => setTests(data));
+        testService.getAllTests(buildAuthRequestData()).then(({ data }) => setTests(data));
     }, [setTests, buildAuthRequestData]);
 
     return (
         <div>
             <Switch>
                 <Route path={path} exact>
-                    <div>
+                    <Container>
                         <h1>Tests</h1>
-                        <AppButton
-                            onClick={() => push(getOrganizationAndFieldUrl("tests", "edit"))}>
-                            Add new test
-                        </AppButton>
-                        <DataTable data={tests} columns={columns} />
-                    </div>
+                        <SearchRow>
+                            <AppButton
+                                onClick={() => push(getOrganizationAndFieldUrl("tests", "edit"))}>
+                                Add new test
+                            </AppButton>
+
+                            <FormField
+                                label="Search by title"
+                                type="text"
+                                search
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                            />
+                        </SearchRow>
+                        <DataTable data={tests} columns={columns} searchTerm={search} />
+                    </Container>
                 </Route>
                 <Route requiresField path={`${path}/edit/:testId?`}>
                     <EditTest onTestAddedOrEdited={onTestChanged} />
