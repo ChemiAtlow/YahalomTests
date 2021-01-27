@@ -1,0 +1,6 @@
+.fixed-footer {
+    display: grid;
+    grid-template-rows: 1fr $header-height;
+    overflow: hidden;
+    height: 100%;
+}
