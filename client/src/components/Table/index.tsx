@@ -20,10 +20,11 @@ interface DataTableProps {
     data: ArrayItem[];
     columns: Column[];
     searchTerm?: string;
+    searchKeys?: string[];
 }
 
-export const DataTable: React.FC<DataTableProps> = ({ data, columns, searchTerm }) => {
-    const { data: filteredData, sort, search } = useSearchAndSort(data);
+export const DataTable: React.FC<DataTableProps> = ({ data, columns, searchTerm, searchKeys }) => {
+    const { data: filteredData, sort, search } = useSearchAndSort(data, searchKeys);
     const [sortedColumn, setSortedColumn] = useState<SortedColumn>();
     useEffect(() => search(searchTerm || ""), [search, searchTerm]);
 
