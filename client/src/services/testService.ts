@@ -2,7 +2,7 @@ import { models } from "@yahalom-tests/common";
 import { AuthRequest } from "../models";
 import http, { authRequestToHeaders } from "./httpService";
 
-const testsRoute = "/test/";
+const testsRoute = "/tests/";
 
 export async function getAllTests(authReqData: AuthRequest) {
     return await http.get<models.interfaces.Test[]>(testsRoute, authRequestToHeaders(authReqData));
