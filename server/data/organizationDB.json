@@ -8,7 +8,8 @@
             "4f813076-a0f3-f53a-7e64-7db4f41b479f"
         ],
         "users": ["50c6d0af-dea3-a8be-a6f5-35637e5c780a"],
-        "questions": []
+        "questions": [],
+        "students": []
     },
     {
         "id": "9b80ea52-8e5c-6f6f-1ddb-0553f402b184",
@@ -22,7 +23,8 @@
         "questions": [
             "c080b9e6-44fc-a20e-126e-12c9eac0c3a4",
             "68ec38ad-2f95-645c-2be7-2ff702723d78"
-        ]
+        ],
+        "students": []
     },
     {
         "id": "bf720591-3ee8-15c4-f07d-f5400e547496",
@@ -33,6 +35,7 @@
             "48b47e0d-9c4b-e9b7-1ad9-f96011411494"
         ],
         "users": [],
-        "questions": []
+        "questions": [],
+        "students": []
     }
 ]

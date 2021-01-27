@@ -25,7 +25,7 @@ export const getTestById = async (req: types.RequestWithId, res: Response) => {
     const { field } = req.headers as types.AuthenticatedRequestHeaders;
     const { id: questionId } = req.params;
     try {
-        if (!fieldService.isTestConnectedToField(field, questionId)) {
+        if (!await fieldService.isTestConnectedToField(field, questionId)) {
             throw new UnauthorizedError(false);
         }
         const data = await testService.getTestsById(questionId);
@@ -56,7 +56,7 @@ export const editTest = async (req: types.RequestWithId<any, models.dtos.TestDto
     const { field } = req.headers as types.AuthenticatedRequestHeaders;
     const { id: testId } = req.params;
     try {
-        if (!fieldService.isTestConnectedToField(field, testId)) {
+        if (!await fieldService.isTestConnectedToField(field, testId)) {
             throw new UnauthorizedError(false);
         }
         const data = await testService.editTest(testId, req.body);

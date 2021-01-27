@@ -8,3 +8,5 @@ export * from "./User";
 export * from "./Email";
 export * from "./Test";
 export * from "./Student";
+export * from "./AnsweredQuestion";
+export * from "./Exam";

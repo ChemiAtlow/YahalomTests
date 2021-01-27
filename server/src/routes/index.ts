@@ -1,3 +1,5 @@
-export { router as questionsRouter } from "./question.routes";
-export { router as authRouter } from "./auth.routes";
+export { router as questionsRoutes } from "./question.routes";
+export { router as authRoutes } from "./auth.routes";
 export { router as testRoutes } from "./test.routes";
+export { router as reportRoutes } from "./report.routes";
+export { router as examRoutes } from "./exam.routes";

@@ -1,18 +1,20 @@
 import { models } from '@yahalom-tests/common';
-import React, { useState, useEffect } from 'react';
-import { Row, AppButton, FormField, Select, QuestionAnswer, SectionNavigator, Section, ErrorModal } from '../../components';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useRouteMatch } from 'react-router-dom';
+import { AppButton, SectionNavigator, Section, ErrorModal, QuestionPeekModal, WarningModal, MessageModal } from '../../components';
+import { QuestionDetails, QuestionDetailsKeys, QuestionAnswers } from './QuestionForm';
 import { useAuth, useModal } from "../../hooks";
 import { questionService } from '../../services';
-import { enumToArray, SwitchCamelCaseToHuman } from '../../utils';
 import "./EditQuestion.scoped.scss";
 
-// interface EditParams {
-//     questionId?: models.classes.guid;
-// }
-const types = enumToArray(models.enums.QuestionType).map(SwitchCamelCaseToHuman);
-const alignments = enumToArray(models.enums.Alignment).map(SwitchCamelCaseToHuman);
+interface EditParams {
+    questionId?: models.classes.guid;
+}
+interface EditQuestionProps {
+    onQuestionAddedOrEdited: (question: models.interfaces.Question) => void;
+}
 
-const EditQuestion: React.FC = () => {
+const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) => {
     const [question, setQuestion] = useState<models.dtos.QuestionDto>({
         title: "",
         additionalContent: "",
@@ -21,145 +23,102 @@ const EditQuestion: React.FC = () => {
         label: "",
         alignment: models.enums.Alignment.Vertical,
     });
-    const [titleError, setTitleError] = useState("");
-    const [additionalContentError, setAdditionalContentError] = useState("");
-    const [labelError, setLabelError] = useState("");
+    const [detailsError, setDetailsError] = useState("");
+    const [answersError, setAnswersError] = useState("");
     const { activeStudyField, buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
+    const { state } = useLocation<{ question?: models.dtos.QuestionDto }>();
+    const { params } = useRouteMatch<EditParams>();
 
-    const isInvalid = Boolean(
-        titleError || additionalContentError || labelError ||
-        question.answers.length < 2
-    );
     useEffect(() => {
-        question.title ? setTitleError("") : setTitleError("Question must have title!");
-    }, [question.title, setTitleError]);
-    useEffect(() => {
-        question.label ? setLabelError("") : setLabelError("Question must have label!");
-    }, [question.label, setLabelError]);
-    useEffect(() => {
-        question.additionalContent ? setAdditionalContentError("") : setAdditionalContentError("Question must have additional content!");
-    }, [question.additionalContent, setAdditionalContentError]);
-
-    const onTypeSelected = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setQuestion({ ...question, type: e.target.selectedIndex - 1 });
-    };
-    const onAlignmentSelected = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setQuestion({ ...question, alignment: e.target.selectedIndex - 1 });
-    };
-
-    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        try {
-            const questionClone = { ...question };
-            const { answers } = questionClone;
-            if (!answers[answers.length - 1]?.content.trim()) {
-                answers.pop();
-            }
-            await questionService.addQuestion(buildAuthRequestData(), questionClone);
-        } catch (err) {
-            openModal(ErrorModal, { title: "Add question failed", body: err.message });
+        if (params.questionId && state?.question) {
+            setQuestion(state.question);
+        } else if (params.questionId && !state?.question) {
+            questionService.getQuestion(buildAuthRequestData(), params.questionId)
+                .then(({ data }) => setQuestion(data))
+                .catch(err => openModal(ErrorModal, {
+                    title: "Error loading question",
+                    body: `An error occoured while loading the question for editing:\n${err?.message || ""}`
+                }))
         }
-    };
+    }, [state, params, setQuestion, buildAuthRequestData, openModal])
+    const isInvalid = !question.title || !question.label || Boolean(detailsError) || question.answers.length < 2 || Boolean(answersError);
+    const onChange = (e: Partial<QuestionDetailsKeys>) => setQuestion({ ...question, ...e });
 
-    const onSelectionChanged = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        //check if question is singlechoice
-        if (question.type === models.enums.QuestionType.SingleChoice) {
-            question.answers.forEach((answer, i) => {
-                answer.correct = index === i;
-            })
-        }
-        else {
-            question.answers[index].correct = e.target.checked;
-        }
-        setQuestion({ ...question });
-    };
-    //needs to add new answer to existing question
-    const onContentChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        const { answers } = question;
-        const { value } = e.target;
-        answers[index].content = value;
-        //check automatocaly add new answer
-        if (answers.length < 10 && index === answers.length - 1 && value) {
-            answers.push({ content: "", correct: false });
-        } else if (index === answers.length - 2 && !value && !answers?.[index + 1]?.content) {
+    const buildQuestionForSendOrPreview = () => {
+        const questionClone = { ...question };
+        const { answers, label, title, additionalContent } = questionClone;
+        questionClone.label = label.trim();
+        questionClone.title = title.trim();
+        questionClone.additionalContent = additionalContent?.trim();
+        if (!answers[answers.length - 1]?.content.trim()) {
             answers.pop();
         }
-        setQuestion({ ...question });
+        answers.forEach(ans => ans.content = ans.content.trim())
+        return questionClone;
+    }
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (isInvalid) {
+            return;
+        }
+        //Show warning if multi choice has only one correct answer
+        if (question.type === models.enums.QuestionType.MultiChoice && question.answers.filter(({ correct }) => correct).length === 1) {
+            const warning = await openModal(WarningModal, {
+                title: "Warning",
+                cancelText: "Send anyway",
+                okText: "Fix",
+                body: "This question was marked as a multi choice question, but only one answer is marked as true.\nAre you sure you want to procced?"
+            }).promise;
+            if (!warning) {
+                return;
+            }
+        }
+        try {
+            const questionToSend = buildQuestionForSendOrPreview();
+            const authData = buildAuthRequestData();
+            let savedQuestion: models.interfaces.Question;
+            if (questionToSend.id) {
+                const { data } = await questionService.editQuestion(authData, questionToSend.id, questionToSend)
+                savedQuestion = data;
+            } else {
+                const { data } = await questionService.addQuestion(authData, questionToSend);
+                savedQuestion = data;
+            }
+            openModal(MessageModal, { title: "Success!", children: `Question ${questionToSend.id ? "edited":"created"} successfully.`, okText: "OK" })
+            onQuestionAddedOrEdited(savedQuestion)
+        } catch (err) {
+            openModal(ErrorModal, { title: "Saving question failed", body: err.message });
+        }
     };
+
+    const previewQuestion = () => {
+        const question = buildQuestionForSendOrPreview();
+        openModal(QuestionPeekModal, { question });
+    }
 
     return (
         <form onSubmit={onSubmit} noValidate className="edit-question__form">
             <SectionNavigator>
-                <Section label="Question Details">
-                    <div className="container">
-                        <p>Field: <b>{activeStudyField?.name}</b></p>
-                        <Row>
-                            <Select label="Question type"
-                                required
-                                value={question.type}
-                                onChange={onTypeSelected}
-                                options={types} />
-                            <Select label="Answer layout"
-                                required
-                                value={question.alignment}
-                                onChange={onAlignmentSelected}
-                                options={alignments} />
-                        </Row>
-                        <FormField
-                            label="Title"
-                            type="text"
-                            required
-                            value={question.title}
-                            onChange={e =>
-                                setQuestion({ ...question, title: e.target.value.trim() })
-                            }
-                            error={titleError}
-                        />
-                        <FormField
-                            label="Aditional content"
-                            type="textarea"
-                            value={question.additionalContent}
-                            onChange={e =>
-                                setQuestion({ ...question, additionalContent: e.target.value })
-                            }
-                            error={additionalContentError}
-                        />
-                        <FormField
-                            label="Tags"
-                            required
-                            type="text"
-                            value={question.label}
-                            onChange={e =>
-                                setQuestion({ ...question, label: e.target.value.trim() })
-                            }
-                            error={labelError}
-                        />
-                    </div>
+                <Section label="Question Details" isValid={!detailsError} errMsg={detailsError}>
+                    <QuestionDetails
+                        question={question}
+                        fieldName={activeStudyField?.name || ""}
+                        onChange={onChange}
+                        onValidityChange={setDetailsError} />
                 </Section>
-                <Section label="Question answers">
-                    <div className="container">
-                        <Row>
-                        {question.answers.map(({ content, correct }, i) =>
-                            <QuestionAnswer
-                                key={i}
-                                questionType={question.type}
-                                content={content}
-                                answerIndex={i}
-                                mode={{ isEditMode: true, onContentChange: e => onContentChange(e, i) }}
-                                selected={correct}
-                                onSelectionChange={e => onSelectionChanged(e, i)}
-                            />
-                        )}
-                        </Row>
-                    </div>
+                <Section label="Question answers" isValid={!answersError} errMsg={answersError}>
+                    <QuestionAnswers question={question} onChange={onChange} onValidityChange={setAnswersError} />
                 </Section>
             </SectionNavigator>
             <div>
-            <AppButton disabled={isInvalid} type="submit" className="edit-question__form">
-                    Submit
-            </AppButton>
-                </div>
+                <AppButton disabled={isInvalid} type="submit" className="edit-question__form">
+                    {question.id ? "Edit" : "Create"}
+                </AppButton>
+                <AppButton disabled={isInvalid} type="button" varaiety="secondary" className="edit-question__form" onClick={() => previewQuestion()}>
+                    Preview
+                </AppButton>
+            </div>
         </form >
     )
 }

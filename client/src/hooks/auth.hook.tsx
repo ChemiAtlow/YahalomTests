@@ -1,5 +1,6 @@
 import { models } from "@yahalom-tests/common";
 import React, { useState, useContext, createContext } from "react";
+import { useHistory } from "react-router-dom";
 import { AuthRequest } from "../models";
 import { authService } from "../services";
 
@@ -16,8 +17,6 @@ type providerFn = {
 	setActiveOrganization: (
 		val?: models.interfaces.OrganizationBaseInfo
 	) => void;
-	sendPasswordResetEmail: (email: string) => boolean;
-	confirmPasswordReset: (code: string, password: string) => boolean;
 	buildAuthRequestData: () => AuthRequest
 };
 type ActiveItem = { name: string; id?: models.classes.guid };
@@ -27,8 +26,6 @@ const authContext = createContext<providerFn>({
 	getOrganizationAndFieldUrl: () => "",
 	setActiveOrganization: () => { },
 	setActiveStudyField: () => { },
-	confirmPasswordReset: () => false,
-	sendPasswordResetEmail: () => false,
 	signin: async () => false,
 	signout: () => { },
 	signup: async () => false,
@@ -48,6 +45,7 @@ export const useAuth = () => {
 };
 
 function useProvideAuth(): providerFn {
+	const { replace } = useHistory();
 	const [jwt, setJwt] = useState<string>();
 	const [organizationBaseInfo, setOrganizationBaseInfo] = useState<
 		models.interfaces.OrganizationBaseInfo[]
@@ -69,10 +67,8 @@ function useProvideAuth(): providerFn {
 	};
 
 	const signup = async (user: models.interfaces.User) => {
-		//DO async signup
 		try {
 			await authService.signup(user);
-			//TODO: let user know he was signed up.
 			return true;
 		} catch (error) {
 			return false;
@@ -80,15 +76,9 @@ function useProvideAuth(): providerFn {
 	};
 
 	const signout = () => {
+		replace("/")
 		setJwt(undefined);
-	};
-
-	const sendPasswordResetEmail = (email: string) => {
-		return true;
-	};
-
-	const confirmPasswordReset = (code: string, password: string) => {
-		return true;
+		setOrganizationBaseInfo(undefined);
 	};
 
 	const getOrganizationAndFieldUrl = (...params: string[]) => {
@@ -119,9 +109,7 @@ function useProvideAuth(): providerFn {
 		activeOrganization,
 		setActiveOrganization,
 		organizationBaseInfo,
-		sendPasswordResetEmail,
 		buildAuthRequestData,
-		confirmPasswordReset,
 		getOrganizationAndFieldUrl,
 	};
 }

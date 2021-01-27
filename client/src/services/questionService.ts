@@ -26,6 +26,13 @@ export async function getAllQuestions(authReqData: AuthRequest) {
     );
 }
 
+export async function getQuestion(authReqData: AuthRequest, id: models.classes.guid) {
+    return await http.get<models.interfaces.Question>(
+        `${questionRoute}${id}`,
+        authRequestToHeaders(authReqData)
+    );
+}
+
 export async function addQuestion(authReqData: AuthRequest, question: models.dtos.QuestionDto) {
     return await http.post<models.interfaces.Question>(
         questionRoute,
@@ -33,9 +40,18 @@ export async function addQuestion(authReqData: AuthRequest, question: models.dto
         authRequestToHeaders(authReqData)
     );
 }
+
+export async function editQuestion(authReqData: AuthRequest, id: models.classes.guid, question: models.dtos.QuestionDto) {
+    return await http.put<models.interfaces.Question>(
+        `${questionRoute}${id}`,
+        question,
+        authRequestToHeaders(authReqData)
+    );
+}
+
 export async function deleteQuestion(authReqData: AuthRequest, id: models.classes.guid) {
     return await http.delete<models.interfaces.Question>(
-        `questionRoute${id}`,
+        `${questionRoute}${id}`,
         authRequestToHeaders(authReqData)
     );
 }
