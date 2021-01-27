@@ -121,9 +121,9 @@ const Questions: React.FC = () => {
                             onClick={() => push(getOrganizationAndFieldUrl("questions", "edit"))}>
                             Add new question
                         </AppButton>
-                        <FormField label="Search" type="text" search value={search} onChange={e => setSearch(e.target.value)} />
+                        <FormField label="Search by title" type="text" search value={search} onChange={e => setSearch(e.target.value)} />
                     </SearchRow>
-                    <DataTable data={questions} columns={columns} searchTerm={search} />
+                    <DataTable data={questions} columns={columns} searchTerm={search} searchKeys={["title"]} />
                 </Container>
             </Route>
             <Route path={`${path}/edit/:questionId?`}>

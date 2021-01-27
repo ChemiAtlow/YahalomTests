@@ -1,9 +1,0 @@
-.search-row {
-    display: grid;
-    grid-auto-flow: column;
-    align-items: center;
-    grid-template-columns: 2fr 1fr;
-    :first-child {
-        justify-self: start;
-    }
-}
