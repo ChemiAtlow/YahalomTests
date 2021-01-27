@@ -74,7 +74,7 @@ export const TestEmails: React.FC<TestEmailsProps> = ({ test, onChange, onValidi
     return (
         <Container>
             <Accordion>
-                <AccordionSection title="Success messages">
+                <AccordionSection title="After test messages">
                     <FormField
                         label="Success message"
                         type="textarea"
@@ -83,21 +83,23 @@ export const TestEmails: React.FC<TestEmailsProps> = ({ test, onChange, onValidi
                         onChange={onSuccessMessageChanged}
                         error={successMsgError}
                     />
+                        <FormField
+                            label="Failure message"
+                            type="textarea"
+                            required
+                            value={test.failureMessage}
+                            onChange={onFailureMessageChanged}
+                            error={failureMsgError}
+                        />
+                </AccordionSection>
+                <AccordionSection title="Success Email">
                     <EmailForm
                         email={test.successEmail}
                         onChange={onSuccessMailChange}
                         onValidityChange={setSuccessEmailError}
                     />
                 </AccordionSection>
-                <AccordionSection title="Failure message">
-                    <FormField
-                        label="Failure message"
-                        type="textarea"
-                        required
-                        value={test.failureMessage}
-                        onChange={onFailureMessageChanged}
-                        error={failureMsgError}
-                    />
+                <AccordionSection title="Failure Email">
                     <EmailForm
                         email={test.failureEmail}
                         onChange={onFailureMailChange}
