@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { models } from '@yahalom-tests/common';
 import { FormField } from '../../../components';
 import { EmailForm } from "./EmailForm"
@@ -15,11 +15,8 @@ interface TestEmailsProps {
 export const TestEmails: React.FC<TestEmailsProps> = ({ test, onChange, onValidityChange }) => {
     const [successMsgError, setSuccessMsgError] = useState("");
     const [failureMsgError, setFailureMsgError] = useState("");
-    const [successBodyError, setSuccessBodyError] = useState("");
-    const [failureBodyError, setFaliureBodyError] = useState("");
-
-    const successEmailValidity = () => { };
-    const failureEmailValidity = () => { };
+    const [successEmailError, setSuccessEmailError] = useState("");
+    const [failureEmailError, setFaliureEmailError] = useState("");
 
     const onSuccessMessageChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
@@ -33,19 +30,38 @@ export const TestEmails: React.FC<TestEmailsProps> = ({ test, onChange, onValidi
         onChange({ failureMessage: value });
     };
 
-    const onSuccessMailChange = (changed: Partial<models.dtos.EmailDto>) => { };
+    const onSuccessMailChange = (changed: Partial<models.dtos.EmailDto>) => {
+        onChange({ successEmail: { ...test.successEmail, ...changed } });
+    };
 
     const onFailureMailChange = (changed: Partial<models.dtos.EmailDto>) => {
-        onChange({ failureEmail: changed.subject as string, failureMessage: changed.body });
-        console.log(changed);
+        onChange({ failureEmail: { ...test.failureEmail, ...changed } });
     };
 
-    const stringPropsErrorValidate = (value: string, propName: string) => {
+    const stringPropsErrorValidate = (value: string, propName: "Success message" | "Failure message") => {
         propName === "Success message" ? setSuccessMsgError("") : setFailureMsgError("");
         if (!value.trim()) {
-            propName === "Success message" ? setSuccessMsgError(`${propName} is required!`) : setFailureMsgError(`${propName} is required!`);
+            propName === "Success message" ? setSuccessMsgError(`${propName} is required`) : setFailureMsgError(`${propName} is required`);
         }
     };
+
+    useEffect(() => {
+        let errorStr = "";
+        const errors = [successMsgError, failureMsgError, successEmailError, failureEmailError];
+        if (successMsgError || failureMsgError || successEmailError || failureEmailError) {
+            if (successMsgError && failureMsgError && successEmailError && failureEmailError) {
+                errorStr = `Errors: ${successMsgError}, ${failureMsgError},${successEmailError},${failureEmailError}`;
+            } else {
+                errorStr = `Errors: `;
+                errors.forEach(err => {
+                    if (err) { errorStr += `${err},`; }
+                });
+                errorStr.slice(0, -1);
+            }
+        }
+        onValidityChange(errorStr);
+    }, [successMsgError, failureMsgError, successEmailError, failureEmailError, onValidityChange]);
+
 
     return (
         <>
@@ -56,7 +72,7 @@ export const TestEmails: React.FC<TestEmailsProps> = ({ test, onChange, onValidi
                 onChange={onSuccessMessageChanged}
                 error={successMsgError}
             />
-            <EmailForm email={test.successEmail} onChange={onSuccessMailChange} onValidityChange={successEmailValidity} />
+            <EmailForm email={test.successEmail} onChange={onSuccessMailChange} onValidityChange={setSuccessEmailError} />
             <FormField label="Failure message"
                 type="textarea"
                 required
@@ -64,7 +80,7 @@ export const TestEmails: React.FC<TestEmailsProps> = ({ test, onChange, onValidi
                 onChange={onFailureMessageChanged}
                 error={failureMsgError}
             />
-            <EmailForm email={test.successEmail} onChange={onFailureMailChange} onValidityChange={failureEmailValidity} />
+            <EmailForm email={test.failureEmail} onChange={onFailureMailChange} onValidityChange={setFaliureEmailError} />
         </>
     )
 }

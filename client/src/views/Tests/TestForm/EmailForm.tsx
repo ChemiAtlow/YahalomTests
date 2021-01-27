@@ -7,7 +7,6 @@ export type TestEmailsKeys = Pick<models.dtos.EmailDto, "body" | "subject">;
 interface EmailFormProps {
     email: models.dtos.EmailDto;
     onChange: (change: Partial<TestEmailsKeys>) => void;
-    errMsg?: string;
     onValidityChange: (change: string) => void;
 }
 
@@ -21,7 +20,7 @@ export const EmailForm: React.FC<EmailFormProps> = ({ email, onChange, onValidit
             if (subjectError && bodyError) {
                 errorStr = `Errors: ${subjectError}, ${bodyError}`;
             } else {
-                errorStr = `Errors: ${subjectError || bodyError}`;
+                errorStr = `Error: ${subjectError || bodyError}`;
             }
         }
         onValidityChange(errorStr);

@@ -40,7 +40,7 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
             key: "*",
             sortable: false,
             smallColumn: true,
-            template: ({ data }) => <Icon icon="preview" onClick={() => previewQuestion(data)} />,
+            template: ({ data }) => <Icon icon="preview" onClick={(e) => { e.stopPropagation(); previewQuestion(data) }} />,
         }
     ];
 

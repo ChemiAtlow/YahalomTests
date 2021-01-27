@@ -1,15 +1,20 @@
 import { models } from '@yahalom-tests/common';
 import React, { useState } from 'react'
-import { SectionNavigator, Section, AppButton } from '../../components'
+import { SectionNavigator, Section, AppButton, ErrorModal, MessageModal } from '../../components'
+import { useAuth, useModal } from '../../hooks';
+import { testService } from '../../services';
 import { TestDetails, TestEmails, TestQuestions } from "./TestForm";
 
-const EditTest: React.FC = () => {
+interface EditTestProps {
+    onTestAddedOrEdited: (test: models.interfaces.Test) => void;
+}
+
+const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
     const [test, setTest] = useState<models.dtos.TestDto>({
         title: "",
         intro: "",
         questions: [],
         language: models.enums.Language.Hebrew,
-        teacherEmail: "",
         minPassGrade: 55,
         isReviewEnabled: true,
         successMessage: "",
@@ -17,36 +22,76 @@ const EditTest: React.FC = () => {
         successEmail: { body: "", subject: "" },
         failureEmail: { body: "", subject: "" },
     });
-
+    const { openModal } = useModal();
+    const { buildAuthRequestData } = useAuth();
     const [detailsError, setDetailsError] = useState("");
     const [emailsError, setEmailsError] = useState("");
     const [questionsError, setQuestionsError] = useState("");
-    const isInvalid = Boolean(emailsError) || Boolean(questionsError) || Boolean(detailsError);
+    const isInvalid =
+        //check for errors from components
+        Boolean(emailsError) || Boolean(questionsError) || Boolean(detailsError) ||
+        //check validate in case the user didn't write and make a errorChange.
+        !Boolean(test.title)
+        || !Boolean(test.successMessage)
+        || !Boolean(test.successEmail) || !Boolean(test.questions?.length > 0) || !Boolean(test.minPassGrade)
+        || !Boolean(test.intro) || !Boolean(test.failureMessage) || !Boolean(test.failureEmail);
 
-    const detailsValidityChanged = () => { };
     const onChange = (changed: Partial<models.dtos.TestDto>) => {
-        console.log(test);
         setTest({ ...test, ...changed });
+        console.log({ ...test, ...changed });
     };
-
-    const questionsValidityChange = () => { };
-
-    const emailsValidityChanged = () => { };
-
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (isInvalid) {
+            return;
+        }
+        try {
+            const testToSend = buildTestForSend();
+            const authData = buildAuthRequestData();
+            let savedTest: models.interfaces.Test;
+            if (testToSend.id) { //check weather add test or edit
+                const { data } = await testService.editTest(authData, testToSend.id, testToSend);
+                savedTest = data;
+            } else {
+                const { data } = await testService.addTest(authData, testToSend);
+                savedTest = data;
+            }
+            openModal(MessageModal, { title: "Success!", children: `Test ${testToSend.id ? "edited" : "created"} successfully.`, okText: "OK" })
+            onTestAddedOrEdited(savedTest)
+        } catch (err) {
+            openModal(ErrorModal, { title: "Saving question failed", body: err.message });
+        }
+    };
+    const buildTestForSend = () => {
+        const { title, intro, successMessage, failureMessage,
+            successEmail: { body: successBody, subject: successSubject },
+            failureEmail: { body: failureBody, subject: failureSubject } } = test;
+        const testClone: models.dtos.TestDto = {
+            ...test,
+            successMessage: successMessage.trim(),
+            failureMessage: failureMessage.trim(),
+            title: title.trim(),
+            intro: intro.trim(),
+            successEmail: { body: successBody.trim(), subject: successSubject.trim() },
+            failureEmail: { body: failureBody.trim(), subject: failureSubject.trim() }
+        };
+        return testClone;
+    }
+    //const onSubmit = (e: React.FormEvent) => { e.preventDefault(); };
     return (
-        <form>
+        <form onSubmit={onSubmit} >
             <SectionNavigator>
-                <Section label="Test Details" errMsg={detailsError}>
-                    <TestDetails test={test} onChange={e => onChange(e)} onValidityChange={detailsValidityChanged} />
+                <Section label="Test Details" errMsg={detailsError} isValid={!detailsError}>
+                    <TestDetails test={test} onChange={onChange} onValidityChange={setDetailsError} />
                 </Section>
-                <Section label="Test Complition" errMsg={emailsError}>
-                    <TestEmails test={test} onChange={e => onChange(e)} onValidityChange={emailsValidityChanged} />
+                <Section label="Test Complition" errMsg={emailsError} isValid={!emailsError}>
+                    <TestEmails test={test} onChange={onChange} onValidityChange={setEmailsError} />
                 </Section>
-                <Section label="Test Questions" errMsg={questionsError}>
-                    <TestQuestions test={test} onChange={e => onChange(e)} onValidityChange={questionsValidityChange} />
+                <Section label="Test Questions" errMsg={questionsError} isValid={!questionsError}>
+                    <TestQuestions test={test} onChange={onChange} onValidityChange={setQuestionsError} />
                 </Section>
             </SectionNavigator>
-            <AppButton disabled={!isInvalid} type="submit" className="edit-question__form">
+            <AppButton disabled={isInvalid} type="submit" className="edit-question__form">
                 {test.id ? "Edit" : "Create"}
             </AppButton>
         </form>

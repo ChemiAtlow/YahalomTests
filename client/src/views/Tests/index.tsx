@@ -1,5 +1,5 @@
 import { models } from "@yahalom-tests/common";
-import React from "react";
+import React, { useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import { AppButton, Column, DataTable, Ellipsis, Icon, Tooltip } from "../../components";
 import { useAuth } from "../../hooks";
@@ -8,6 +8,7 @@ import EditTest from "./EditTest";
 const Tests: React.FC = () => {
     const { path } = useRouteMatch();
     const { push } = useHistory();
+    const [tests, setTests] = useState<models.interfaces.Test[]>([]);
     const { getOrganizationAndFieldUrl } = useAuth();
     const goToEditTest = (id: models.classes.guid) =>
         push(getOrganizationAndFieldUrl("tests", "edit", id));
@@ -62,6 +63,16 @@ const Tests: React.FC = () => {
             ),
         },
     ];
+    const onTestChanged = (test: models.interfaces.Test) => {
+        const existingTestIndex = tests.findIndex(t => t.id === test.id);
+        if (existingTestIndex >= 0) {
+            tests[existingTestIndex] = { ...tests[existingTestIndex], ...test };
+        } else {
+            tests.push(test);
+        }
+        setTests(tests);
+        console.log(test);
+    };
     return (
         <div>
             <Switch>
@@ -72,12 +83,11 @@ const Tests: React.FC = () => {
                             onClick={() => push(getOrganizationAndFieldUrl("tests", "edit"))}>
                             Add new test
                         </AppButton>
-                        <DataTable data={[]} columns={columns} />
+                        <DataTable data={tests} columns={columns} />
                     </div>
                 </Route>
                 <Route requiresField path={`${path}/edit/:testId?`}>
-                    <EditTest />
-                    {/* <EditQuestion /> */}
+                    <EditTest onTestAddedOrEdited={onTestChanged} />
                 </Route>
             </Switch>
         </div>

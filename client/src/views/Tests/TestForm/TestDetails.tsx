@@ -34,8 +34,9 @@ export const TestDetails: React.FC<TestDetailsProps> = ({ test, onValidityChange
                 errorStr.slice(0, -1);
             }
         }
+        console.log(errorStr);
         onValidityChange(errorStr);
-    }, [titleError, introError,gradeError, onValidityChange]);
+    }, [titleError, introError, gradeError, onValidityChange]);
 
     const onLanguageSelected = (e: React.ChangeEvent<HTMLSelectElement>) => { onChange({ language: e.target.selectedIndex - 1 }); };
 
@@ -52,7 +53,7 @@ export const TestDetails: React.FC<TestDetailsProps> = ({ test, onValidityChange
         if (!(grade > 1) || !(grade < 99)) {
             setGradeError("Passing grade must be between 1-99 ");
         }
-        onChange({ minPassGrade: e.target.value as unknown as number });
+        onChange({ minPassGrade: grade });
     };
     const onReviewedChanged = (e: React.ChangeEvent<HTMLInputElement>) => { onChange({ isReviewEnabled: e.target.checked }) };
 
@@ -65,7 +66,7 @@ export const TestDetails: React.FC<TestDetailsProps> = ({ test, onValidityChange
     const stringPropsErrorValidate = (value: string, propName: string) => {
         propName === "Intro" ? setIntroError("") : setTitleError("");
         if (!value.trim()) {
-            propName === "intro" ? setIntroError(`${propName} is required!`) : setTitleError(`${propName} is required!`);
+            propName === "intro" ? setIntroError(`${propName} is required`) : setTitleError(`${propName} is required`);
         }
     };
 
