@@ -27,7 +27,7 @@ export const getQuestionById = async (req: types.RequestWithId, res: Response) =
     const { organization } = req.headers as types.AuthenticatedRequestHeaders;
     const { id: questionId } = req.params;
     try {
-        if (!organizationService.isQuestionConnectedToOrganization(organization, questionId)) {
+        if (!await organizationService.isQuestionConnectedToOrganization(organization, questionId)) {
             throw new UnauthorizedError(false);
         }
         const data = await questionService.getQuestionById(questionId);
@@ -64,7 +64,7 @@ export const editQuestion = async (req: types.RequestWithId, res: Response) => {
     const { organization } = req.headers as types.AuthenticatedRequestHeaders;
     const { id: questionId } = req.params;
     try {
-        if (!organizationService.isQuestionConnectedToOrganization(organization, questionId)) {
+        if (!await organizationService.isQuestionConnectedToOrganization(organization, questionId)) {
             throw new UnauthorizedError(false);
         }
         const data = await questionService.editQuestion(questionId, req.body);
@@ -84,10 +84,10 @@ export const deleteQuestion = async (req: types.RequestWithId, res: Response) =>
     const { organization, field } = req.headers as types.AuthenticatedRequestHeaders;
     const { id: questionId } = req.params;
     try {
-        if (!organizationService.isQuestionConnectedToOrganization(organization, questionId)) {
+        if (!await organizationService.isQuestionConnectedToOrganization(organization, questionId)) {
             throw new UnauthorizedError(false);
         }
-        if (questionService.isQuestionActive(questionId, field)) {
+        if (await questionService.isQuestionActive(questionId, field)) {
             throw new BadRequestError("Active questions cannot be deleted!");
         }
         const data = await questionService.deleteQuestion(questionId);
