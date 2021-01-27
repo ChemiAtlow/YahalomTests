@@ -37,7 +37,6 @@ const Tests: React.FC = () => {
     const columns: Column[] = [
         {
             label: "Test name",
-            isFromData: true,
             key: "title",
             sortable: true,
             largeColumn: true,
@@ -45,14 +44,12 @@ const Tests: React.FC = () => {
         },
         {
             label: "Question count",
-            isFromData: true,
             key: "questions",
             sortable: true,
             template: ({ data }) => <span>{data.length}</span>,
         },
         {
             label: "Last Update",
-            isFromData: true,
             key: "lastUpdate",
             sortable: true,
             template: ({ data }) => {
@@ -66,7 +63,6 @@ const Tests: React.FC = () => {
         },
         {
             label: "",
-            isFromData: true,
             key: "*",
             sortable: false,
             smallColumn: true,
@@ -78,7 +74,6 @@ const Tests: React.FC = () => {
         },
         {
             label: "",
-            isFromData: true,
             key: "*",
             sortable: false,
             smallColumn: true,
@@ -90,7 +85,6 @@ const Tests: React.FC = () => {
         },
         {
             label: "",
-            isFromData: true,
             key: "*",
             sortable: false,
             smallColumn: true,

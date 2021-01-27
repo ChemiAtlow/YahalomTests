@@ -13,9 +13,11 @@ export type Column = {
     label: string;
     smallColumn?: boolean;
     largeColumn?: boolean;
-    template?: React.ComponentType<{ data?: any }>;
     sortable: boolean;
-} & ({ isFromData: true; key: string } | { isFromData: false; template: React.ComponentType });
+} & (
+        { key: "*" | string; template?: React.ComponentType<{ data?: any }>; } |
+        { key: undefined; template: React.ComponentType }
+    );
 interface DataTableProps {
     data: ArrayItem[];
     columns: Column[];
@@ -30,7 +32,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns, onRowClick,
     useEffect(() => search(searchTerm || ""), [search, searchTerm]);
 
     const sortColumn = (col: Column) => {
-        if (!col.isFromData || !col.sortable) {
+        if (!col.key || !col.sortable) {
             return;
         }
         if (!sortedColumn || sortedColumn.col !== col) {

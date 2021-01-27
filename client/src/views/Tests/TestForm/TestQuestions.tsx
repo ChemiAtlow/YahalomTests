@@ -21,14 +21,12 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
     const columns: Column[] = [
         {
             label: "Title",
-            isFromData: true,
             key: "title",
             sortable: true,
             template: ({ data }) => <Ellipsis data={data} maxLength={10} direction="right" />,
         },
         {
             label: "Labels",
-            isFromData: true,
             key: "label",
             sortable: true,
             largeColumn: true,
@@ -36,7 +34,6 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
         },
         {
             label: "",
-            isFromData: true,
             key: "*",
             sortable: false,
             smallColumn: true,
