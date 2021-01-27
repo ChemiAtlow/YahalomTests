@@ -1,17 +1,19 @@
 import { models } from "@yahalom-tests/common";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import { AppButton, Column, DataTable, Ellipsis, Icon, Tooltip } from "../../components";
 import { useAuth } from "../../hooks";
+import { testService } from "../../services";
 import EditTest from "./EditTest";
 
 const Tests: React.FC = () => {
     const { path } = useRouteMatch();
     const { push } = useHistory();
     const [tests, setTests] = useState<models.interfaces.Test[]>([]);
-    const { getOrganizationAndFieldUrl } = useAuth();
-    const goToEditTest = (id: models.classes.guid) =>
-        push(getOrganizationAndFieldUrl("tests", "edit", id));
+    const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
+
+    const goToEditTest = (test: models.interfaces.Test) =>
+        push(getOrganizationAndFieldUrl("tests", "edit", test.id!), { test });
 
     const columns: Column[] = [
         {
@@ -46,7 +48,7 @@ const Tests: React.FC = () => {
         {
             label: "",
             isFromData: true,
-            key: "id",
+            key: "*",
             sortable: false,
             template: ({ data }) => (
                 <div>
@@ -73,6 +75,13 @@ const Tests: React.FC = () => {
         setTests(tests);
         console.log(test);
     };
+
+    useEffect(() => {
+        testService
+            .getAllTests(buildAuthRequestData())
+            .then(({ data }) => setTests(data));
+    }, [setTests, buildAuthRequestData]);
+
     return (
         <div>
             <Switch>

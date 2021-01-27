@@ -1,5 +1,6 @@
 import { models } from '@yahalom-tests/common';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useLocation, useRouteMatch } from 'react-router-dom';
 import { SectionNavigator, Section, AppButton, ErrorModal, MessageModal } from '../../components'
 import { useAuth, useModal } from '../../hooks';
 import { testService } from '../../services';
@@ -7,6 +8,9 @@ import { TestDetails, TestEmails, TestQuestions } from "./TestForm";
 
 interface EditTestProps {
     onTestAddedOrEdited: (test: models.interfaces.Test) => void;
+}
+interface EditParams {
+    testId?: models.classes.guid;
 }
 
 const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
@@ -27,6 +31,8 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
     const [detailsError, setDetailsError] = useState("");
     const [emailsError, setEmailsError] = useState("");
     const [questionsError, setQuestionsError] = useState("");
+    const { params } = useRouteMatch<EditParams>();
+    const { state } = useLocation<{ test?: models.dtos.TestDto }>();
     const isInvalid =
         //check for errors from components
         Boolean(emailsError) || Boolean(questionsError) || Boolean(detailsError) ||
@@ -76,8 +82,21 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
             failureEmail: { body: failureBody.trim(), subject: failureSubject.trim() }
         };
         return testClone;
-    }
-    //const onSubmit = (e: React.FormEvent) => { e.preventDefault(); };
+    };
+
+    useEffect(() => {
+        if (params.testId && state?.test) {
+            setTest(state.test);
+        } else if (params.testId && !state?.test) {
+            testService.getTest(buildAuthRequestData(), params.testId)
+                .then(({ data }) => setTest(data))
+                .catch(err => openModal(ErrorModal, {
+                    title: "Error loading test",
+                    body: `An error occoured while loading the test for editing:\n${err?.message || ""}`
+                }))
+        }
+    }, [state, params, setTest, buildAuthRequestData, openModal]);
+
     return (
         <form onSubmit={onSubmit} >
             <SectionNavigator>
