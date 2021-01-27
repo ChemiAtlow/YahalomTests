@@ -9,6 +9,9 @@ import {
     Icon,
     Tooltip,
     ErrorModal,
+    FormField,
+    Container,
+    SearchRow
 } from "../../components";
 import { questionService } from "../../services";
 import { useAuth, useModal } from "../../hooks";
@@ -16,6 +19,7 @@ import EditQuestion from "./EditQuestion";
 
 const Questions: React.FC = () => {
     const [questions, setQuestions] = useState<models.interfaces.Question[]>([]);
+    const [search, setSearch] = useState("");
     const { path } = useRouteMatch();
     const { push } = useHistory();
     const { openModal } = useModal();
@@ -110,14 +114,17 @@ const Questions: React.FC = () => {
     return (
         <Switch>
             <Route path={path} exact>
-                <div>
+                <Container>
                     <h1>Questions</h1>
-                    <AppButton
-                        onClick={() => push(getOrganizationAndFieldUrl("questions", "edit"))}>
-                        Add new question
-                    </AppButton>
-                    <DataTable data={questions} columns={columns} />
-                </div>
+                    <SearchRow>
+                        <AppButton
+                            onClick={() => push(getOrganizationAndFieldUrl("questions", "edit"))}>
+                            Add new question
+                        </AppButton>
+                        <FormField label="Search by title" type="text" search value={search} onChange={e => setSearch(e.target.value)} />
+                    </SearchRow>
+                    <DataTable data={questions} columns={columns} searchTerm={search} searchKeys={["title"]} />
+                </Container>
             </Route>
             <Route path={`${path}/edit/:questionId?`}>
                 <EditQuestion onQuestionAddedOrEdited={onQuestionAddedOrEdited} />

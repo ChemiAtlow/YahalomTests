@@ -1,6 +1,6 @@
 import { models } from "@yahalom-tests/common";
 import React, { useEffect, useState } from "react";
-import { FormField, Select, Row } from "../../../components";
+import { FormField, Select, Row, Container } from "../../../components";
 import { enumToArray, SwitchCamelCaseToHuman } from "../../../utils";
 
 const types = enumToArray(models.enums.QuestionType).map(SwitchCamelCaseToHuman);
@@ -64,7 +64,7 @@ export const QuestionDetails: React.FC<QuestionDetailsProps> = ({
     }, [titleError, labelError, onValidityChange])
 
     return (
-        <div className="container">
+        <Container>
             <p>
                 Field: <b>{fieldName}</b>
             </p>
@@ -106,6 +106,6 @@ export const QuestionDetails: React.FC<QuestionDetailsProps> = ({
                 onChange={onTagsChanged}
                 error={labelError}
             />
-        </div>
+        </Container>
     );
 };

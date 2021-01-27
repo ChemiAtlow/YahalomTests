@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchAndSort } from "../../hooks";
 import Header from "./Header";
 import Row from "./Row";
@@ -19,11 +19,14 @@ export type Column = {
 interface DataTableProps {
     data: ArrayItem[];
     columns: Column[];
+    searchTerm?: string;
+    searchKeys?: string[];
 }
 
-export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
-    const { data: filteredData, sort } = useSearchAndSort(data);
+export const DataTable: React.FC<DataTableProps> = ({ data, columns, searchTerm, searchKeys }) => {
+    const { data: filteredData, sort, search } = useSearchAndSort(data, searchKeys);
     const [sortedColumn, setSortedColumn] = useState<SortedColumn>();
+    useEffect(() => search(searchTerm || ""), [search, searchTerm]);
 
     const sortColumn = (col: Column) => {
         if (!col.isFromData || !col.sortable) {

@@ -2,7 +2,10 @@ import { useMemo, useState } from "react";
 
 type SortTerms<T> = { term: keyof T; isDescending: boolean };
 
-export function useSearchAndSort<T extends { [key: string]: any }>(incomingData: T[]) {
+export function useSearchAndSort<T extends { [key: string]: any }>(
+    incomingData: T[],
+    searchableKeys?: (keyof T)[]
+) {
     const [searchTerm, setSearchTerm] = useState("");
     const [data, setData] = useState<T[]>(incomingData);
     const [sortTerms, setSortTerms] = useState<SortTerms<T>>();
@@ -29,11 +32,17 @@ export function useSearchAndSort<T extends { [key: string]: any }>(incomingData:
             arrayCopy.sort((a, b) => compareBy(a, b, sortTerms));
         }
         const regex = new RegExp(searchTerm, "i");
-        const results = arrayCopy.filter(entry =>
-            Object.values(entry).some(val => `${val}`.match(regex))
-        );
+        const results = arrayCopy.filter(entry => {
+            if (searchableKeys && searchableKeys.length > 0) {
+                return Object.entries(entry).some(
+                    ([key, val]) => searchableKeys.includes(key) && `${val}`.match(regex)
+                );
+            } else {
+                return Object.values(entry).some(val => `${val}`.match(regex));
+            }
+        });
         setData(results);
-    }, [incomingData, sortTerms, searchTerm, setData]);
+    }, [incomingData, searchableKeys, sortTerms, searchTerm, setData]);
 
     return {
         data,

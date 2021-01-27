@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { constants } from "@yahalom-tests/common";
-import { AppButton, ErrorModal, FormField, MessageModal } from "../../components";
+import { AppButton, ErrorModal, FormField, MessageModal, Container } from "../../components";
 import { useModal } from "../../hooks";
 import "./Restore.scoped.scss";
 import { authService } from "../../services";
@@ -61,7 +61,8 @@ const Restore: React.FC = () => {
     };
 
     return (
-        <div className="reset__dialog container">
+        <Container>
+        <div className="reset__dialog">
             <h1 className="reset__dialog-title">
                 {params.token ? "Reset password" : "Forgot password"}
             </h1>
@@ -83,6 +84,7 @@ const Restore: React.FC = () => {
                 Return To Login
             </AppButton>
         </div>
+        </Container>
     );
 };
 
