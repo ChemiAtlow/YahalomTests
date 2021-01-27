@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth, useModal } from "../../../hooks";
 import { models } from '@yahalom-tests/common';
-import { Column, DataTable, Ellipsis, Icon, QuestionPeekModal } from '../../../components';
+import { Column, Container, DataTable, Ellipsis, Icon, QuestionPeekModal } from '../../../components';
 import { questionService } from '../../../services';
 
 export type TestQuestionsKeys = Pick<models.dtos.TestDto, "questions">;
@@ -59,8 +59,8 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
     };
 
     return (
-        <div className="container">
+        <Container>
             <DataTable columns={columns} data={questions} onRowClick={onRowClicked} />
-        </div>
+        </Container>
     )
 }
