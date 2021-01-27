@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth, useModal } from "../../../hooks";
 import { models } from '@yahalom-tests/common';
-import { Column, Container, DataTable, Ellipsis, Icon, QuestionPeekModal } from '../../../components';
+import { AppButton, Column, Container, DataTable, Ellipsis, FormField, Icon, QuestionPeekModal, SearchRow } from '../../../components';
 import { questionService } from '../../../services';
 
 export type TestQuestionsKeys = Pick<models.dtos.TestDto, "questions">;
@@ -16,6 +16,8 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
     const { buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
     const [questions, setQuestions] = useState<models.dtos.QuestionDto[]>([]);
+    const [search, setSearch] = useState("");
+    const [activeRows, setActiveRows] = useState<{ key: "id"; rows: models.classes.guid[] }>({ key: "id", rows: test.questions })
     const previewQuestion = (question: models.interfaces.Question) =>
         openModal(QuestionPeekModal, { question });
     const columns: Column[] = [
@@ -47,6 +49,14 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
             .getAllQuestions(buildAuthRequestData())
             .then(({ data }) => setQuestions(data));
     }, [setQuestions, buildAuthRequestData]);
+    useEffect(() => {
+        setActiveRows({ key: "id", rows: test.questions });
+    }, [setActiveRows, test.questions]);
+
+    const clearAllSelected = () => {
+        onChange({ questions: [] });
+    }
+    const selectAllVisible = () => {}
 
     const onRowClicked = (question: models.interfaces.Question) => {
         const questionIndex = test.questions.findIndex(qId => qId === question.id);
@@ -57,10 +67,34 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
         }
         onChange({ questions: test.questions });
     };
-
     return (
         <Container>
-            <DataTable columns={columns} data={questions} onRowClick={onRowClicked} />
+            <p>Total questions selected for the test: {test.questions.length}</p>
+            <SearchRow>
+                <div>
+                    <AppButton type="button" onClick={clearAllSelected}>
+                        Clear all
+                    </AppButton>
+                    <AppButton type="button" onClick={selectAllVisible}>
+                        Clear all
+                    </AppButton>
+                </div>
+                <FormField
+                    label="Search by label"
+                    type="text"
+                    search
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                />
+            </SearchRow>
+            <DataTable
+                columns={columns}
+                data={questions}
+                onRowClick={onRowClicked}
+                searchKeys={["label"]}
+                searchTerm={search}
+                activeRows={activeRows}
+            />
         </Container>
-    )
+    );
 }
