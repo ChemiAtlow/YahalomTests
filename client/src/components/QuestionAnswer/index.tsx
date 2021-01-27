@@ -35,8 +35,9 @@ const QuestionAnswer: React.FC<QuestionAnswerProps> = ({
 }) => {
     const selectionType =
         questionType === models.enums.QuestionType.MultiChoice ? "checkbox" : "radio";
+    const TagName: keyof JSX.IntrinsicElements = mode.isEditMode ? "div" : "label";
     return (
-        <div className={`question__answer ${mode.isEditMode ? "edit-mode" : "exam-mode"}`}>
+        <TagName className={`question__answer ${mode.isEditMode ? "edit-mode" : "exam-mode"}`}>
             <div className="question__answer-selection">
                 <input type={selectionType} checked={selected} onChange={onSelectionChange} />
                 {mode.isEditMode && (
@@ -60,7 +61,7 @@ const QuestionAnswer: React.FC<QuestionAnswerProps> = ({
                     <p className={(mode.isReview && correct) ? "correct" : ""}>{content}</p>
                 )}
             </div>
-        </div>
+        </TagName>
     );
 };
 
