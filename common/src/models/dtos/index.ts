@@ -6,3 +6,4 @@ export * from "./resetPassword.dto";
 export * from "./email.dto";
 export * from "./test.dto";
 export * from "./student.dto";
+export * from "./examChanged.dto";
