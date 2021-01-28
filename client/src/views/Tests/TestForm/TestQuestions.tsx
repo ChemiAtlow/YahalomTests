@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth, useModal } from "../../../hooks";
 import { models } from '@yahalom-tests/common';
 import { AppButton, Column, Container, DataTable, Ellipsis, FormField, Icon, QuestionPeekModal, SearchRow } from '../../../components';
@@ -15,8 +15,9 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
     //set test prop as component state.
     const { buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
-    const [questions, setQuestions] = useState<models.dtos.QuestionDto[]>([]);
+    const [questions, setQuestions] = useState<models.interfaces.Question[]>([]);
     const [search, setSearch] = useState("");
+    const filteredQuestions = useRef<models.interfaces.Question[]>([]);
     const [activeRows, setActiveRows] = useState<{ key: "id"; rows: models.classes.guid[] }>({ key: "id", rows: test.questions })
     const previewQuestion = (question: models.interfaces.Question) =>
         openModal(QuestionPeekModal, { question });
@@ -57,8 +58,8 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
         onChange({ questions: [] });
     };
     const selectAllVisible = () => {
-        // const visibleQuestionsIds = filteredQuestions.map(q => q.id!);
-        // onChange({ questions: visibleQuestionsIds });
+        const visibleQuestionsIds = filteredQuestions.current.map(q => q.id!);
+        onChange({ questions: [...new Set(test.questions.concat(visibleQuestionsIds))] });
     };
 
     const onRowClicked = (question: models.interfaces.Question) => {
@@ -94,7 +95,7 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
                 columns={columns}
                 data={questions}
                 onRowClick={onRowClicked}
-                // onDataFiltered={setFilteredQuestions}
+                onDataFiltered={filtered => filteredQuestions.current = filtered}
                 searchKeys={["label"]}
                 searchTerm={search}
                 activeRows={activeRows}
