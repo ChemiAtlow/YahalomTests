@@ -96,7 +96,7 @@ const Questions: React.FC = () => {
         if (existingQuestionIndex >= 0) {
             questions[existingQuestionIndex] = { ...questions[existingQuestionIndex], ...question };
         } else {
-            questions.push({ ...question, active: false, testCount: 0 });
+            questions.push(question);
         }
         setQuestions(questions);
     };
