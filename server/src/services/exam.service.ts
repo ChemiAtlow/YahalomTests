@@ -12,7 +12,6 @@ export const createNewExam = async (testId: models.classes.guid, studentEmail: m
             id: "",//set by repo
             student: studentEmail,
             test: testId,
-            completed: false,
             timeStarted: Date.now(),
             intro,
             language,
@@ -26,25 +25,6 @@ export const isExamLocked = async (id: models.classes.guid) => {
     const exam = await examRepository.getItemById(id);
     if (!exam) { throw new ItemNotInDbError(id, "Exam"); }
     return exam.completed;
-};
-
-//get test questions and build examQuesions
-const buildAnsweredQuesionsByExam = async (testQuestions: models.classes.guid[]) => {
-    const examQuestions = await Promise.all(
-        testQuestions.map<Promise<models.interfaces.AnsweredQuestion>>(async (qId) => {
-            const { alignment, additionalContent, title, type, answers } = await questionService.getQuestionById(qId);
-            answers.forEach(a => a.correct = false);
-            return { alignment, answers, questionId: qId, title, type, additionalContent };
-        }));
-    return shuffleArray(examQuestions);
-};
-
-const shuffleArray = (arr: any[]) => {
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
 };
 
 export const getExamById = async (id: models.classes.guid) => {
@@ -66,32 +46,12 @@ export const saveExamChanges = async (examId: models.classes.guid, { questionId,
 };
 
 export const lockExam = async (examId: models.classes.guid) => {
-    return await examRepository.updateItem(examId, { completed: true });
+    return await examRepository.updateItem(examId, { completed: Date.now() });
 };
 
 export const getAllExamsOfTest = async (testId: models.classes.guid) => {
     const exams = await examRepository.getAll();
     return exams.filter(ex => ex.test === testId);
-};
-
-//return grade and correct answers count
-const calculateGrade: (
-    answeredQuestions: models.interfaces.AnsweredQuestion[],
-    originalQuestions: models.interfaces.Question[]
-) => [number, number] = (answeredQuestions, originalQuestions) => {
-    let correctQuestionCount = 0;
-    answeredQuestions.forEach(({ answers, questionId }) => {
-        //find the question on the test
-        const { answers: originalAnswers } = originalQuestions.find(q => q.id === questionId)!;
-        //check if user answered write
-        const isQuestionAnsweredCorrect = answers.every((a, i) => a.correct === originalAnswers[i].correct);
-        if (isQuestionAnsweredCorrect) { //counting correct question
-            correctQuestionCount++;
-        }
-    });
-    //calculate grade
-    let grade = Math.ceil((correctQuestionCount / originalQuestions.length) * 100);
-    return [grade, correctQuestionCount];
 };
 
 export const getExamResult = async (examId: models.classes.guid) => {
@@ -115,4 +75,45 @@ export const getExamResult = async (examId: models.classes.guid) => {
         result.answeredQuestions = exam.questions;
     }
     return { result, email: messages.email }; //seperate between UI and server props
+};
+
+
+//get test questions and build examQuesions
+const buildAnsweredQuesionsByExam = async (testQuestions: models.classes.guid[]) => {
+    const examQuestions = await Promise.all(
+        testQuestions.map<Promise<models.interfaces.AnsweredQuestion>>(async (qId) => {
+            const { alignment, additionalContent, title, type, answers } = await questionService.getQuestionById(qId);
+            answers.forEach(a => a.correct = false);
+            return { alignment, answers, questionId: qId, title, type, additionalContent };
+        }));
+    return shuffleArray(examQuestions);
+};
+
+const shuffleArray = (arr: any[]) => {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+};
+
+
+//return grade and correct answers count
+const calculateGrade: (
+    answeredQuestions: models.interfaces.AnsweredQuestion[],
+    originalQuestions: models.interfaces.Question[]
+) => [number, number] = (answeredQuestions, originalQuestions) => {
+    let correctQuestionCount = 0;
+    answeredQuestions.forEach(({ answers, questionId }) => {
+        //find the question on the test
+        const { answers: originalAnswers } = originalQuestions.find(q => q.id === questionId)!;
+        //check if user answered write
+        const isQuestionAnsweredCorrect = answers.every((a, i) => a.correct === originalAnswers[i].correct);
+        if (isQuestionAnsweredCorrect) { //counting correct question
+            correctQuestionCount++;
+        }
+    });
+    //calculate grade
+    let grade = Math.ceil((correctQuestionCount / originalQuestions.length) * 100);
+    return [grade, correctQuestionCount];
 };
