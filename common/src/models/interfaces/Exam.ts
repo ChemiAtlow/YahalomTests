@@ -13,4 +13,6 @@ export interface Exam extends HasId {
     completed?: number; //The date of completion.
     questions: AnsweredQuestion[];
     timeStarted: number;
+    grade?: number;
+    correctAnswersCount?: number; 
 }
