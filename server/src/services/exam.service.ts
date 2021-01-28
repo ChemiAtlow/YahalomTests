@@ -66,6 +66,7 @@ export const getAllExamsOfTest = async (testId: models.classes.guid) => {
 export const getExamResult = async (examId: models.classes.guid) => {
     const exam = await getExamById(examId);
     const {
+        title,
         questions,
         successEmail,
         successMessage,
@@ -102,7 +103,14 @@ export const getExamResult = async (examId: models.classes.guid) => {
         result.originalQuestions = originalQuestions;
         result.answeredQuestions = exam.questions;
     }
-    return { result, email: messages.email, teacherEmail, completionDate: exam.completed }; //seperate between UI and server props
+    return {
+        result, // UI data
+        email: messages.email,
+        teacherEmail,
+        completionDate: exam.completed,
+        title,
+        studentEmail: exam.student,
+    }; //seperate between UI and server props
 };
 
 //get test questions and build examQuesions
