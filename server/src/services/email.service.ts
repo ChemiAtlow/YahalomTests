@@ -5,7 +5,7 @@ const { clientDomain, clientPort } = constants.URLS;
 export const sendTestStatusEmail = async (
     { body, subject }: models.interfaces.Email,
     testName: string,
-    { firstName, lastName, email }: models.interfaces.Student,
+    { firstName, lastName, email }: Pick<models.interfaces.Student, "email" | "firstName" | "lastName">,
     completionDate: number,
     grade: number,
     examId: models.classes.guid,

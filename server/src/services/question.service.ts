@@ -1,18 +1,17 @@
 import { models } from "@yahalom-tests/common";
 import { questionRepository } from "../DAL";
 import { ItemNotInDbError } from "../errors";
-import { fieldService, organizationService, testService } from "../services";
+import { fieldService, organizationService } from "../services";
 
 // Get Questions
 export const getAllQuestionsByField = async (fieldId: models.classes.guid) => {
-    const questionIds = await fieldService.getQuestionIdsByField(fieldId);
-    const tests = await testService.getAllTestsByField(fieldId);
-    const questions = await questionRepository.getAll();
+    const getQuestionsByField = fieldService.getQuestionIdsByField(fieldId);
+    const getAllQuestions = questionRepository.getAll();
+    const [questionIds, questions] = await Promise.all([
+        getQuestionsByField,
+        getAllQuestions,
+    ]);
     const filteredQuestions = questions.filter(q => questionIds.includes(q.id!));
-    filteredQuestions.forEach(q => {
-        q.testCount = tests.filter(t => t.questions.includes(q.id || "")).length;
-        q.active = q.testCount > 0;
-    });
     return filteredQuestions;
 };
 
@@ -34,10 +33,14 @@ export const addQuestion = async (
     const newQuestion = await questionRepository.addItem({
         ...question,
         lastUpdate: Date.now(),
-        active: false,
+        testCount: 0,
     });
-    await organizationService.addQuestion(organizationId, newQuestion.id!);
-    await fieldService.addQuestion(fieldId, newQuestion.id!);
+    const addQuestionToOrganization = organizationService.addQuestion(
+        organizationId,
+        newQuestion.id!
+    );
+    const addQuestionToStudyField = fieldService.addQuestion(fieldId, newQuestion.id!);
+    await Promise.all([addQuestionToOrganization, addQuestionToStudyField]);
     return newQuestion;
 };
 
@@ -47,19 +50,24 @@ export const editQuestion = async (
 ) =>
     await questionRepository.updateItem(id, {
         ...updatedQuestion,
-        active: undefined,
-        testCount: undefined,
         lastUpdate: Date.now(),
     });
 
-export const isQuestionActive = async (
-    questionId: models.classes.guid,
-    fieldId: models.classes.guid
-) => {
-    const tests = await testService.getAllTestsByField(fieldId);
-    const useCount = tests.filter(test => test.questions.includes(questionId));
-    return useCount.length > 0;
+export const isQuestionActive = async (questionId: models.classes.guid) => {
+    const { testCount} = await getQuestionById(questionId);
+    return testCount > 0;
 };
 
 export const deleteQuestion = async (id: models.classes.guid) =>
     await questionRepository.deleteItem(id);
+
+export const updateQuestionUsage = async (
+    questionIds: models.classes.guid[],
+    increment: boolean
+) => {
+    // const allQuestions = await questionRepository.getAll();
+    for await (const qId of questionIds) {
+        const { testCount } = await getQuestionById(qId);
+        await questionRepository.updateItem(qId, { testCount: testCount + (increment ? 1 : -1) });
+    }
+};

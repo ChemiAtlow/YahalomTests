@@ -5,3 +5,5 @@ export * as testService from './test.service';
 export * as questionService from './question.service';
 export * as authService from './auth.service';
 export * as certificationService from './certification.service';
+export * as examService from './exam.service';
+export * as studentService from './student.service';

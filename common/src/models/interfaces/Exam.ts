@@ -10,7 +10,7 @@ export interface Exam extends HasId {
     title: string;
     intro: string;
     student: string; //the email of student, which is the unique key
-    completed: boolean;
+    completed?: number; //The date of completion.
     questions: AnsweredQuestion[];
     timeStarted: number;
 }

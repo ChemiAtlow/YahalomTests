@@ -5,3 +5,4 @@ export * from "./BadRequestError";
 export * from "./ItemNotInDbError";
 export * from "./AuthError";
 export * from "./UnauthorizedError";
+export * from "./ExamLockedError";

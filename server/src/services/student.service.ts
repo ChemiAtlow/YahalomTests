@@ -26,7 +26,7 @@ export const addOrEditStudent = async (
     try {
         return await getUserAndAddToOrganizationIfNeeded(student.email, organizationId);
     } catch (err) {
-        return await addNewStudent({ ...student }, organizationId);
+        return await addNewStudent(student, organizationId);
     }
 };
 

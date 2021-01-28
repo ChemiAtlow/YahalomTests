@@ -1,6 +1,8 @@
 import { models } from "@yahalom-tests/common";
+import { fieldService } from ".";
+import { HTTPStatuses } from "../constants";
 import { organizationRepository } from "../DAL";
-import { ItemNotInDbError } from "../errors";
+import { HttpError, ItemNotInDbError } from "../errors";
 
 export const getAllOrganizations = async () => {
     return await organizationRepository.getAll();
@@ -18,16 +20,28 @@ export const addQuestion = async (
     organizationId: models.classes.guid,
     questionId: models.classes.guid
 ) => {
-    const organization = await getOrganizationById(organizationId);
+    const { questions } = await getOrganizationById(organizationId);
+    const questionsUnique = new Set(questions).add(questionId);
     organizationRepository.updateItem(organizationId, {
-        questions: [...organization.questions, questionId],
+        questions: [...questionsUnique],
+    });
+};
+
+export const removeQuestion = async (
+    organizationId: models.classes.guid,
+    questionId: models.classes.guid
+) => {
+    const {questions} = await getOrganizationById(organizationId);
+    organizationRepository.updateItem(organizationId, {
+        questions: questions.filter(q => q !== questionId),
     });
 };
 
 export const addStudent = async (organizationId: models.classes.guid, studentEmail: string) => {
-    const organization = await getOrganizationById(organizationId);
+    const { students } = await getOrganizationById(organizationId);
+    const studentsUnique = new Set(students).add(studentEmail);
     organizationRepository.updateItem(organizationId, {
-        students: [...organization.students, studentEmail],
+        students: [...studentsUnique],
     });
 };
 
@@ -61,4 +75,16 @@ export const isQuestionConnectedToOrganization = async (
 ) => {
     const organization = await getOrganizationById(organizationId);
     return organization.questions.includes(questionId);
+};
+
+export const getOrganizationByTestId = async (testId: models.classes.guid) => {
+    const organizations = await getAllOrganizations();
+    for await (const org of organizations) { //for on organizations
+        for await (const fieldId of org.fields) { //for on fields in organization
+            const field = await fieldService.getStudyFieldById(fieldId);
+            if (field.tests.includes(testId)) { return org; }
+        }
+    }
+    //testId doesnt exist
+    throw new HttpError(HTTPStatuses.notFound, "No organization contain this test!");
 };
