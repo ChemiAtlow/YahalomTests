@@ -1,4 +1,5 @@
 import { models } from "@yahalom-tests/common";
+import { organizationService } from "server/dist/services";
 import { questionService, testService } from ".";
 import { examRepository } from "../DAL";
 import { BadRequestError, ItemNotInDbError } from "../errors";
@@ -55,7 +56,12 @@ export const saveExamChanges = async (
 };
 
 export const lockExam = async (examId: models.classes.guid) => {
-    return await examRepository.updateItem(examId, { completed: Date.now() });
+    const { questions } = await getExamById(examId);
+    const originalQuestions = await Promise.all(
+        questions.map(async ({ questionId }) => await questionService.getQuestionById(questionId))
+    );
+    const [grade, correctAnswersCount] = calculateGrade(questions, originalQuestions);
+    return await examRepository.updateItem(examId, { completed: Date.now(), grade, correctAnswersCount });
 };
 
 export const getAllExamsOfTest = async (testId: models.classes.guid) => {
@@ -63,8 +69,18 @@ export const getAllExamsOfTest = async (testId: models.classes.guid) => {
     return exams.filter(ex => ex.test === testId);
 };
 
+export const getAllExamsOfStudent = async (email: string, organizationId: models.classes.guid) => {
+    const exams = await examRepository.getAll();
+    const filteredExams = exams.filter(async ({ student, test }) => {
+        student === email &&
+            (await organizationService.getOrganizationByTestId(test)).id === organizationId;
+    });
+    console.log(filteredExams);
+    return filteredExams;
+};
+
 export const getExamResult = async (examId: models.classes.guid) => {
-    const { test, questions, completed: completionDate, student: studentEmail } = await getExamById(
+    const { test, questions, completed: completionDate, student: studentEmail, grade = 0, correctAnswersCount = 0 } = await getExamById(
         examId
     );
     const {
@@ -80,7 +96,6 @@ export const getExamResult = async (examId: models.classes.guid) => {
     const originalQuestions = await Promise.all(
         questions.map(async ({ questionId }) => await questionService.getQuestionById(questionId))
     );
-    const [grade, correctAnswersCount] = calculateGrade(questions, originalQuestions);
     const isGradePassing = grade > minPassGrade;
     const result: models.interfaces.ExamResult = {
         message: isGradePassing ? successMessage : failureMessage,
