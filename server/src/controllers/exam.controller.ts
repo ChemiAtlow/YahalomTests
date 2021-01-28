@@ -41,8 +41,8 @@ export const updateExam = async (req: types.RequestWithId<any, models.dtos.ExamC
 export const submitExam = async (req: types.RequestWithId, res: Response) => {
     const { id: examId } = req.params;
     await examService.lockExam(examId);
-    const { email, result } = await examService.getExamResult(examId);
-    emailService.sendTestStatusEmail(email, "testName", { email: "", firstName: "", lastName: "" }, 0, result.grade, examId, '');
+    const { email, result, teacherEmail, completionDate } = await examService.getExamResult(examId);
+    emailService.sendTestStatusEmail(email, "testName", { email: "", firstName: "", lastName: "" }, completionDate || 0, result.grade, examId, teacherEmail);
     res.status(HTTPStatuses.ok).send(result);
 };
 
