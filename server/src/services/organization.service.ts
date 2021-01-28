@@ -20,16 +20,28 @@ export const addQuestion = async (
     organizationId: models.classes.guid,
     questionId: models.classes.guid
 ) => {
-    const organization = await getOrganizationById(organizationId);
+    const { questions } = await getOrganizationById(organizationId);
+    const questionsUnique = new Set(questions).add(questionId);
     organizationRepository.updateItem(organizationId, {
-        questions: [...organization.questions, questionId],
+        questions: [...questionsUnique],
+    });
+};
+
+export const removeQuestion = async (
+    organizationId: models.classes.guid,
+    questionId: models.classes.guid
+) => {
+    const {questions} = await getOrganizationById(organizationId);
+    organizationRepository.updateItem(organizationId, {
+        questions: questions.filter(q => q !== questionId),
     });
 };
 
 export const addStudent = async (organizationId: models.classes.guid, studentEmail: string) => {
-    const organization = await getOrganizationById(organizationId);
+    const { students } = await getOrganizationById(organizationId);
+    const studentsUnique = new Set(students).add(studentEmail);
     organizationRepository.updateItem(organizationId, {
-        students: [...organization.students, studentEmail],
+        students: [...studentsUnique],
     });
 };
 
