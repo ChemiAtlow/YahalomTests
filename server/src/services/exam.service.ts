@@ -64,10 +64,11 @@ export const getAllExamsOfTest = async (testId: models.classes.guid) => {
 };
 
 export const getExamResult = async (examId: models.classes.guid) => {
-    const exam = await getExamById(examId);
+    const { test, questions, completed: completionDate, student: studentEmail } = await getExamById(
+        examId
+    );
     const {
         title,
-        questions,
         successEmail,
         successMessage,
         failureEmail,
@@ -75,41 +76,28 @@ export const getExamResult = async (examId: models.classes.guid) => {
         isReviewEnabled,
         minPassGrade,
         teacherEmail,
-    } = await testService.getTestsById(exam.test);
+    } = await testService.getTestsById(test);
     const originalQuestions = await Promise.all(
-        questions.map(async qId => await questionService.getQuestionById(qId))
+        questions.map(async ({ questionId }) => await questionService.getQuestionById(questionId))
     );
-    const [grade, correctAnswersCount] = calculateGrade(exam.questions, originalQuestions);
-    //check if garde > minPass grade...
-    const messages: { message: string; email: models.interfaces.Email } = {
-        message: "",
-        email: { body: "", subject: "" },
-    };
-    if (grade > minPassGrade) {
-        messages.message = successMessage;
-        messages.email = successEmail;
-    } else {
-        messages.message = failureMessage;
-        messages.email = failureEmail;
-    }
-    let result: models.interfaces.ExamResult = {
-        message: messages.message,
+    const [grade, correctAnswersCount] = calculateGrade(questions, originalQuestions);
+    const isGradePassing = grade > minPassGrade;
+    const result: models.interfaces.ExamResult = {
+        message: isGradePassing ? successMessage : failureMessage,
         isReviewEnabled,
         grade,
-        questionCount: exam.questions.length,
+        questionCount: questions.length,
         correctAnswersCount,
+        originalQuestions: isReviewEnabled ? originalQuestions : undefined,
+        answeredQuestions: isReviewEnabled ? questions : undefined,
     };
-    if (isReviewEnabled) {
-        result.originalQuestions = originalQuestions;
-        result.answeredQuestions = exam.questions;
-    }
     return {
         result, // UI data
-        email: messages.email,
+        email: isGradePassing ? successEmail : failureEmail,
         teacherEmail,
-        completionDate: exam.completed,
+        completionDate,
         title,
-        studentEmail: exam.student,
+        studentEmail,
     }; //seperate between UI and server props
 };
 
