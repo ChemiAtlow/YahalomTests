@@ -1,12 +1,21 @@
 import { Request, Response } from "express";
 import { HTTPStatuses } from "../constants";
-import { HttpError } from "../errors";
+import { HttpError, UnauthorizedError } from "../errors";
 import { types } from "../models";
-import { examService, organizationService, studentService } from "../services";
+import { examService, organizationService, questionService, studentService, testService } from "../services";
 
-export const getTestReport = (req: types.RequestWithId, res: Response) => {
-    //Technicaly this should be 501 - not implemented, but this will work...
-    res.sendStatus(HTTPStatuses.iAmATeapot);
+export const getTestReport = async (req: types.RequestWithId, res: Response) => {
+    const { organization } = req.headers as types.AuthenticatedRequestHeaders;
+    const { id: testId } = req.params;
+    const { id } = await organizationService.getOrganizationByTestId(testId);
+    if (id !== organization) {
+        throw new UnauthorizedError(false);
+    }
+    const getExams = examService.getAllExamsOfTest(testId);
+    const getTest = testService.getTestsById(testId);
+    const [exams, test] = await Promise.all([getExams, getTest]);
+    const originalQuestions = await questionService.getMultipleQuestionsByIdArray(test.questions);
+    res.send({ exams, test, originalQuestions });
 };
 
 export const getStudentReport = async (req: types.RequestWithEmail, res: Response) => {
