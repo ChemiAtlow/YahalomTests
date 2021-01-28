@@ -5,4 +5,4 @@ export const router = Router();
 
 router.get("/test/:id", reportController.getTestReport);
 
-router.get("/student/:id", reportController.getStudentReport);
+router.get("/student/:email", reportController.getStudentReport);
