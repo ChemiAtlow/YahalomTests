@@ -5,8 +5,9 @@ import { ItemNotInDbError } from "../errors";
 
 // Get Students
 export const getAllStudentsOfOrganization = async (organizationId: models.classes.guid) => {
-    const organization = await organizationService.getOrganizationById(organizationId);
-    const students = await studentRepository.getAll();
+    const getOrganization = organizationService.getOrganizationById(organizationId);
+    const getStudents = studentRepository.getAll();
+    const [organization, students] = await Promise.all([getOrganization, getStudents]);
     return students.filter(st => organization.students.includes(st.email));
 };
 
