@@ -50,6 +50,7 @@ $top-padding: 18px;
             @at-root {
                 textarea#{&} {
                     height: 150px;
+                    resize: none;
                 }
             }
             // IE 10-11

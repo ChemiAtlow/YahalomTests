@@ -40,7 +40,6 @@ const Questions: React.FC = () => {
     const columns: Column[] = [
         {
             label: "Title",
-            isFromData: true,
             key: "title",
             sortable: true,
             largeColumn: true,
@@ -48,28 +47,24 @@ const Questions: React.FC = () => {
         },
         {
             label: "Type",
-            isFromData: true,
             key: "type",
             sortable: true,
             template: ({ data }) => <span>{data === 0 ? "Single choice" : "Multi choice"}</span>,
         },
         {
             label: "Last Update",
-            isFromData: true,
             key: "lastUpdate",
             sortable: true,
             template: ({ data }) => <span>{new Date(data).toLocaleString()}</span>,
         },
         {
             label: "Usage count",
-            isFromData: true,
             key: "testCount",
             sortable: true,
             template: ({ data }) => <span>{data || 0}</span>,
         },
         {
             label: "",
-            isFromData: true,
             key: "*",
             sortable: false,
             smallColumn: true,
@@ -86,7 +81,6 @@ const Questions: React.FC = () => {
         },
         {
             label: "",
-            isFromData: true,
             key: "*",
             sortable: false,
             smallColumn: true,

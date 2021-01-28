@@ -55,9 +55,9 @@ export const QuestionDetails: React.FC<QuestionDetailsProps> = ({
         let errorStr = "";
         if (titleError || labelError) {
             if (titleError && labelError) {
-                errorStr = `Errors: ${titleError}, ${labelError}`
+                errorStr = `Errors: ${titleError}, ${labelError}`;
             } else {
-                errorStr = `Error: ${titleError || labelError}`
+                errorStr = `Error: ${titleError || labelError}`;
             }
         }
         onValidityChange(errorStr)

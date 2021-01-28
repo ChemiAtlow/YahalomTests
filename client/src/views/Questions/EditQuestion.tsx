@@ -1,7 +1,7 @@
 import { models } from '@yahalom-tests/common';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useRouteMatch } from 'react-router-dom';
-import { AppButton, SectionNavigator, Section, ErrorModal, QuestionPeekModal, WarningModal, MessageModal } from '../../components';
+import { AppButton, SectionNavigator, Section, ErrorModal, QuestionPeekModal, WarningModal, MessageModal, FixedFooter } from '../../components';
 import { QuestionDetails, QuestionDetailsKeys, QuestionAnswers } from './QuestionForm';
 import { useAuth, useModal } from "../../hooks";
 import { questionService } from '../../services';
@@ -98,28 +98,30 @@ const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) 
     }
 
     return (
-        <form onSubmit={onSubmit} noValidate className="edit-question__form">
-            <SectionNavigator>
-                <Section label="Question Details" isValid={!detailsError} errMsg={detailsError}>
-                    <QuestionDetails
-                        question={question}
-                        fieldName={activeStudyField?.name || ""}
-                        onChange={onChange}
-                        onValidityChange={setDetailsError} />
-                </Section>
-                <Section label="Question answers" isValid={!answersError} errMsg={answersError}>
-                    <QuestionAnswers question={question} onChange={onChange} onValidityChange={setAnswersError} />
-                </Section>
-            </SectionNavigator>
+        <FixedFooter>
+            <form onSubmit={onSubmit} noValidate id="edit-question__form">
+                <SectionNavigator>
+                    <Section label="Question Details" isValid={!detailsError} errMsg={detailsError}>
+                        <QuestionDetails
+                            question={question}
+                            fieldName={activeStudyField?.name || ""}
+                            onChange={onChange}
+                            onValidityChange={setDetailsError} />
+                    </Section>
+                    <Section label="Question answers" isValid={!answersError} errMsg={answersError}>
+                        <QuestionAnswers question={question} onChange={onChange} onValidityChange={setAnswersError} />
+                    </Section>
+                </SectionNavigator>
+            </form >
             <div>
-                <AppButton disabled={isInvalid} type="submit" className="edit-question__form">
+                <AppButton disabled={isInvalid} type="submit" className="edit-question__form" form="edit-question__form">
                     {question.id ? "Edit" : "Create"}
                 </AppButton>
                 <AppButton disabled={isInvalid} type="button" varaiety="secondary" className="edit-question__form" onClick={() => previewQuestion()}>
                     Preview
                 </AppButton>
             </div>
-        </form >
+        </FixedFooter>
     )
 }
 

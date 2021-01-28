@@ -1,18 +1,18 @@
 import {
     ArrayNotEmpty,
-	IsArray,
+    IsArray,
     IsBoolean,
     IsEmail,
-	IsEnum,
-	IsNotEmpty,
+    IsEnum,
+    IsNotEmpty,
     IsNumber,
-	IsOptional,
-	IsString,
-	IsUUID,
+    IsOptional,
+    IsString,
+    IsUUID,
     Max,
     MaxLength,
     Min,
-	ValidateNested,
+    ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
 import { guid } from "../classes";
@@ -21,44 +21,37 @@ import { Language } from "../enums";
 import { EmailDto } from "./email.dto";
 
 export class TestDto {
-	@IsOptional()
-	@IsUUID("all")
-	id?: guid;
-	@IsString()
+    @IsOptional()
+    @IsUUID("all")
+    id?: guid;
+    @IsString()
     @IsNotEmpty()
     @MaxLength(200)
     title!: string;
     @IsString()
-	@IsNotEmpty()
-    intro!:string;
+    @IsNotEmpty()
+    intro!: string;
     @IsArray()
     @ArrayNotEmpty()
     questions!: guid[];
     @IsEnum(Language)
-    language!:Language;
-    @IsEmail()
-    teacherEmail!:string;
+    language!: Language;
     @IsNumber()
     @Min(1)
     @Max(100)
-    minPassGrade!:number;
+    minPassGrade!: number;
     @IsBoolean()
-    isReviewEnabled!:boolean;
+    isReviewEnabled!: boolean;
     @IsString()
     @IsNotEmpty()
-    successMessage!:string;
+    successMessage!: string;
     @IsString()
     @IsNotEmpty()
-    failureMessage!:string;
+    failureMessage!: string;
     @Type(() => EmailDto)
     @ValidateNested()
     successEmail!: EmailDto;
     @Type(() => EmailDto)
     @ValidateNested()
     failureEmail!: EmailDto;
-
-
-
-
-	
 }

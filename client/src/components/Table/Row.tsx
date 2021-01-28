@@ -2,26 +2,28 @@ import React from "react";
 import { Column } from ".";
 import "./Row.scoped.scss";
 
-const Row: React.FC<{
+interface RowProps {
     columns: Column[];
     record: { [key: string]: any };
-}> = ({ record, columns }) => {
+    isActive?: boolean;
+    onRowClicked?: React.MouseEventHandler<HTMLDivElement>;
+}
+
+const Row: React.FC<RowProps> = ({ record, columns, onRowClicked, isActive }) => {
     return (
-        <div className="table-row">
+        <div className={`table-row ${isActive ? "active" : ""}`} onClick={onRowClicked}>
             {columns.map((col, colInd) => (
                 <div
                     className={`col ${col.smallColumn ? "col__small" : ""} ${
                         col.largeColumn ? "col__large" : ""
                     }`}
                     key={`col-${colInd}`}>
-                    {col.isFromData ? (
-                        col.template ? (
-                            <col.template data={col.key === "*" ? record : record[col.key]} />
-                        ) : (
-                            record[col.key]
-                        )
-                    ) : (
+                    {col.key === undefined ? (
                         <col.template />
+                    ) : col.template ? (
+                        <col.template data={col.key === "*" ? record : record[col.key]} />
+                    ) : (
+                        record[col.key]
                     )}
                 </div>
             ))}

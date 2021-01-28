@@ -1,20 +1,42 @@
 import { models } from "@yahalom-tests/common";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
-import { AppButton, Column, DataTable, Ellipsis, Icon, Tooltip } from "../../components";
-import { useAuth } from "../../hooks";
+import {
+    AppButton,
+    Column,
+    Container,
+    DataTable,
+    Ellipsis,
+    FormField,
+    Icon,
+    SearchRow,
+    TestLinkModal,
+    Tooltip,
+} from "../../components";
+import { useAuth, useModal } from "../../hooks";
+import { testService } from "../../services";
+import EditTest from "./EditTest";
 
 const Tests: React.FC = () => {
     const { path } = useRouteMatch();
     const { push } = useHistory();
-	const { getOrganizationAndFieldUrl } = useAuth();
-	const goToEditTest = (id: models.classes.guid) =>
-        push(getOrganizationAndFieldUrl("tests", "edit", id));
+    const [tests, setTests] = useState<models.interfaces.Test[]>([]);
+    const [search, setSearch] = useState("");
+    const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
+    const { openModal } = useModal();
+
+    const goToEditTest = (test: models.interfaces.Test) =>
+        push(getOrganizationAndFieldUrl("tests", "edit", test.id!), { test });
+    const goToTestStatitistics = (test: models.interfaces.Test) =>
+        console.warn("Statistics page is not yet implemented!", test);
+    const showLinkToTest = ({ title, id }: models.interfaces.Test) => {
+        openModal(TestLinkModal, { title, id: id! })
+    }
+    
 
     const columns: Column[] = [
         {
             label: "Test name",
-            isFromData: true,
             key: "title",
             sortable: true,
             largeColumn: true,
@@ -22,14 +44,12 @@ const Tests: React.FC = () => {
         },
         {
             label: "Question count",
-            isFromData: true,
             key: "questions",
             sortable: true,
             template: ({ data }) => <span>{data.length}</span>,
         },
         {
             label: "Last Update",
-            isFromData: true,
             key: "lastUpdate",
             sortable: true,
             template: ({ data }) => {
@@ -43,41 +63,79 @@ const Tests: React.FC = () => {
         },
         {
             label: "",
-            isFromData: true,
-            key: "id",
+            key: "*",
             sortable: false,
             smallColumn: true,
             template: ({ data }) => (
-                <div>
-                    <Tooltip value="Click to view test statistics." direction="left">
-                        <Icon icon="edit" onClick={() => goToEditTest(data)} />
-                    </Tooltip>
-                    <Tooltip value="Click to edit the test." direction="left">
-                        <Icon icon="edit" onClick={() => goToEditTest(data)} />
-                    </Tooltip>
-                </div>
+                <Tooltip value="Click to view test statistics." direction="left">
+                    <Icon icon="statistics" onClick={() => goToTestStatitistics(data)} />
+                </Tooltip>
+            ),
+        },
+        {
+            label: "",
+            key: "*",
+            sortable: false,
+            smallColumn: true,
+            template: ({ data }) => (
+                <Tooltip value="Click to edit the test." direction="left">
+                    <Icon icon="edit" onClick={() => goToEditTest(data)} />
+                </Tooltip>
+            ),
+        },
+        {
+            label: "",
+            key: "*",
+            sortable: false,
+            smallColumn: true,
+            template: ({ data }) => (
+                <Tooltip value="Click to get link to the test." direction="left">
+                    <Icon icon="link" onClick={() => showLinkToTest(data)} />
+                </Tooltip>
             ),
         },
     ];
+    const onTestChanged = (test: models.interfaces.Test) => {
+        const existingTestIndex = tests.findIndex(t => t.id === test.id);
+        if (existingTestIndex >= 0) {
+            tests[existingTestIndex] = { ...tests[existingTestIndex], ...test };
+        } else {
+            tests.push(test);
+        }
+        setTests(tests);
+        console.log(test);
+    };
+
+    useEffect(() => {
+        testService.getAllTests(buildAuthRequestData()).then(({ data }) => setTests(data));
+    }, [setTests, buildAuthRequestData]);
+
     return (
-        <div>
-            <Switch>
-                <Route path={path} exact>
-                    <div>
-                        <h1>Questions</h1>
+        <Switch>
+            <Route path={path} exact>
+                <Container>
+                    <h1>Tests</h1>
+                    <SearchRow>
                         <AppButton
                             onClick={() => push(getOrganizationAndFieldUrl("tests", "edit"))}>
                             Add new test
                         </AppButton>
-                        <DataTable data={[]} columns={columns} />
-                    </div>
-                </Route>
-                <Route requiresField path={`${path}/edit/:testId?`}>
-                    <p>Edit / Create test page</p>
-                    {/* <EditQuestion /> */}
-                </Route>
-            </Switch>
-        </div>
+
+                        <FormField
+                            label="Search by title"
+                            type="text"
+                            search
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                        />
+                    </SearchRow>
+                    <DataTable data={tests} columns={columns} searchTerm={search} />
+                </Container>
+            </Route>
+            <Route requiresField path={`${path}/edit/:testId?`}>
+                <EditTest onTestAddedOrEdited={onTestChanged} />
+            </Route>
+        </Switch>
     );
 };
 
