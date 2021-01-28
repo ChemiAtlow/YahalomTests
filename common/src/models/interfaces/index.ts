@@ -10,3 +10,4 @@ export * from "./Test";
 export * from "./Student";
 export * from "./AnsweredQuestion";
 export * from "./Exam";
+export * from "./ExamResult";
