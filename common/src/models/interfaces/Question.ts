@@ -10,6 +10,5 @@ export interface Question extends HasId {
     label: string;
     alignment: Alignment;
     lastUpdate: number;
-    active?: boolean;
-    testCount?: number;
+    testCount: number;
 }

@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { HTTPStatuses } from "../constants";
 import { BadRequestError, HttpError, UnauthorizedError } from "../errors";
 import { types } from "../models";
-import { organizationService, questionService } from "../services";
+import { fieldService, organizationService, questionService } from "../services";
 
 // Get Questions
 export const getAllQuestions = async (req: Request, res: Response) => {
@@ -87,11 +87,14 @@ export const deleteQuestion = async (req: types.RequestWithId, res: Response) =>
         if (!await organizationService.isQuestionConnectedToOrganization(organization, questionId)) {
             throw new UnauthorizedError(false);
         }
-        if (await questionService.isQuestionActive(questionId, field)) {
+        if (await questionService.isQuestionActive(questionId)) {
             throw new BadRequestError("Active questions cannot be deleted!");
         }
-        const data = await questionService.deleteQuestion(questionId);
-        res.status(HTTPStatuses.ok).send(data);
+        const deleteQuestion = questionService.deleteQuestion(questionId);
+        const removeFromOrganization = organizationService.removeQuestion(organization, questionId);
+        const removeFromStudyField = fieldService.removeQuestion(field, questionId);
+        const [deleted] = await Promise.all([deleteQuestion, removeFromOrganization, removeFromStudyField]);
+        res.status(HTTPStatuses.ok).send(deleted);
     } catch (err) {
         if (err instanceof HttpError) {
             throw err;
