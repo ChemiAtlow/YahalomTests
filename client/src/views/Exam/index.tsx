@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { match, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { Container, Loader } from '../../components';
 import { examService } from '../../services';
+import ExamQuestions from './ExamQuestions';
 import StudentForm from './StudentForm';
 
 export type PageState = "pending" | "success" | "failure";
@@ -31,7 +32,7 @@ const Exam: React.FC<ExamProps> = ({ match }) => {
             const { data } = await examService.requestToStartExam(testId, student);
             console.log(data);
             setState("success");
-            push(`${url}/${data.id}`, data);
+            push(`${url}/${data.id}`, { exam: data });
 
         } catch (error) {
             console.log(error);
@@ -46,11 +47,9 @@ const Exam: React.FC<ExamProps> = ({ match }) => {
     return (
         <Container>
             <Switch>
+                <Route path={`${path}/:examId`} component={ExamQuestions} />
                 <Route exact path={path}>
                     <StudentForm onRequestNewExam={onRequestNewExam} />
-                </Route>
-                <Route path={`${path}/:examId`}>
-                    <p>testttt</p>
                 </Route>
             </Switch>
         </Container>
