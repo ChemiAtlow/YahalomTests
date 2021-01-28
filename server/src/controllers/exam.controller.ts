@@ -1,5 +1,9 @@
+import { models } from "@yahalom-tests/common";
 import { Request, Response } from "express";
-import { certificationService } from "../services";
+import { HTTPStatuses } from "../constants";
+import { ExamLockedError, HttpError } from "../errors";
+import { types } from "../models";
+import { certificationService, emailService, examService, organizationService, studentService, testService } from "../services";
 
 export const getExamPassedCertificate = (req: Request, res: Response) => {
     //TODO: Validate exam was actually passed successfully, and gather info for certificate.
@@ -9,4 +13,40 @@ export const getExamPassedCertificate = (req: Request, res: Response) => {
     });
     doc.pipe(res);
     doc.end();
+};
+
+export const createExam = async (req: types.RequestWithId<any, models.dtos.StudentDto>, res: Response) => {
+    const { id: testId } = req.params;
+    try {
+        const { id: organizationId } = await organizationService.getOrganizationByTestId(testId);
+        const student = await studentService.addOrEditStudent(req.body, organizationId);
+        const exam = await examService.createNewExam(testId, student.email);
+        res.status(HTTPStatuses.created).send(exam);
+    } catch (err) {
+        if (err instanceof HttpError) {
+            throw err;
+        }
+        throw new HttpError(HTTPStatuses.internalServerError, "Unhandled error while creating your exam");
+    }
+};
+
+export const updateExam = async (req: types.RequestWithId<any, models.dtos.ExamChangeDto>, res: Response) => {
+    const { id: examId } = req.params;
+    const isLocked = await examService.isExamLocked(examId); //check if exam was already done.
+    if (isLocked) { throw new ExamLockedError(examId); }
+    const data = await examService.saveExamChanges(examId, req.body);
+    res.status(HTTPStatuses.ok).send(data);
+};
+
+export const submitExam = async (req: types.RequestWithId, res: Response) => {
+    const { id: examId } = req.params;
+    await examService.lockExam(examId);
+    const { email, result } = await examService.getExamResult(examId);
+    emailService.sendTestStatusEmail(email, "testName", { email: "", firstName: "", lastName: "" }, 0, result.grade, examId, '');
+    res.status(HTTPStatuses.ok).send(result);
+};
+
+export const checkIfTestExist = async (req: types.RequestWithId, res: Response) => {
+    await testService.getTestsById(req.params.id);
+    res.send({ message: "test was found" });
 };
