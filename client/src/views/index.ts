@@ -1,7 +1,9 @@
-export { default as Home } from "./Home";
-export { default as Login } from "./Login";
-export { default as Restore } from "./Restore";
-export { default as Questions } from "./Questions";
-export { default as Reports } from "./Reports";
-export { default as Tests } from "./Tests";
-export { default as Exam } from "./Exam";
+import { lazy } from "react";
+
+export const Exam = lazy(() => import(/* webpackChunkName: "Exam" */ "./Exam"));
+export const Home = lazy(() => import(/* webpackChunkName: "Home" */"./Home"));
+export const Login = lazy(() => import(/* webpackChunkName: "Login" */"./Login"));
+export const Questions = lazy(() => import(/* webpackChunkName: "Questions" */"./Questions"));
+export const Reports = lazy(() => import(/* webpackChunkName: "Reports" */"./Reports"));
+export const Restore = lazy(() => import(/* webpackChunkName: "Restore" */"./Restore"));
+export const Tests = lazy(() => import(/* webpackChunkName: "Tests" */"./Tests"));

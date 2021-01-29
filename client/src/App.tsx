@@ -1,16 +1,9 @@
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ProvideAuth } from "./hooks/auth.hook";
-import { NavBar, ProtectedRoute, NestedRoutes, Loader } from "./components";
+import { NavBar, ProtectedRoute, NestedRoutes, Loader, ErrorBoundary } from "./components";
 import { ModalProvider } from "./hooks";
-import { ErrorBoundary } from "./components/ErrorBoundery";
-import { lazy, Suspense } from "react";
-const Exam = lazy(() => import('./views/Exam'));
-const Home = lazy(() => import('./views/Home'));
-const Login = lazy(() => import('./views/Login'));
-const Questions = lazy(() => import('./views/Questions'));
-const Reports = lazy(() => import('./views/Reports'));
-const Restore = lazy(() => import('./views/Restore'));
-const Tests = lazy(() => import('./views/Tests'));
+import { Suspense } from "react";
+import { Exam, Home, Login, Questions, Reports, Restore, Tests } from "./views";
 
 const App: React.FC = () => {
     return (
