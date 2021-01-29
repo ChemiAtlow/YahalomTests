@@ -18,7 +18,7 @@ router.get("/:id", examController.getExam);
 router.put("/:id", validationMiddleware(models.dtos.ExamChangeDto), examController.updateExam);
 
 //Submit an exam
-router.get("submit/:id", examController.submitExam);
+router.get("/:id/submit", examController.submitExam);
 
 //Get exam certificate by exam id
 router.get("/:id/cert", examController.getExamPassedCertificate);
