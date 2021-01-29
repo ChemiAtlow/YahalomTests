@@ -1,12 +1,16 @@
 import { constants, models } from '@yahalom-tests/common';
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { AppButton, FormField, Row } from '../../components';
+import { useLoading } from '../../hooks';
+import { examService } from '../../services';
 
 interface StudentFormProps {
     onRequestNewExam: (student: models.dtos.StudentDto) => void;
+    testId: models.classes.guid;
 }
 
-const StudentForm: React.FC<StudentFormProps> = ({ onRequestNewExam }) => {
+const StudentForm: React.FC<StudentFormProps> = ({ onRequestNewExam, testId }) => {
+    const { setLoadingState } = useLoading();
     const [student, setStudent] = useState<models.dtos.StudentDto>({
         email: "",
         firstName: "",
@@ -57,6 +61,14 @@ const StudentForm: React.FC<StudentFormProps> = ({ onRequestNewExam }) => {
         }
         onRequestNewExam(student);
     };
+
+    useEffect(() => {
+        // setLoadingState("loading");
+        examService
+            .checkIfTestIdIsValid(testId)
+            .then(() => setLoadingState("success"))
+            .catch(() => setLoadingState("failure", "There seems to be no test with the requested Id!"));
+    }, [setLoadingState, testId])
 
     return (
         <form onSubmit={onSubmit}>

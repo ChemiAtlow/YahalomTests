@@ -16,13 +16,8 @@ const Exam: React.FC<ExamProps> = ({ match }) => {
     const { path, url } = useRouteMatch();
     const { push } = useHistory();
     const { setLoadingState } = useLoading();
-    useEffect(() => {
-        setLoadingState("loading");
-        examService
-            .checkIfTestIdIsValid(testId)
-            .then(() => setLoadingState("success"))
-            .catch(() => setLoadingState("failure", "There seems to be no test with the requested Id!"));
-    }, [testId, setLoadingState])
+
+    useEffect(() => setLoadingState("loading"), [])
 
     const onRequestNewExam = async (student: models.dtos.StudentDto) => {
         console.log(student);
@@ -41,10 +36,10 @@ const Exam: React.FC<ExamProps> = ({ match }) => {
     return (
         <Container>
             <Switch>
-                <Route path={`${path}/:examId`} component={ExamQuestions} />
                 <Route exact path={path}>
-                    <StudentForm onRequestNewExam={onRequestNewExam} />
+                    <StudentForm testId={match.params.testId} onRequestNewExam={onRequestNewExam} />
                 </Route>
+                <Route path={`${path}/:examId`} component={ExamQuestions} />
             </Switch>
         </Container>
     )
