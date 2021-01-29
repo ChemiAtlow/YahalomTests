@@ -7,12 +7,12 @@ import { Exam, Home, Login, Questions, Reports, Restore, Tests } from "./views";
 
 const App: React.FC = () => {
     return (
-        <LoadingProvider>
-            <ModalProvider>
-                <BrowserRouter>
-                    <ProvideAuth>
-                        <NavBar />
-                        <main className="app">
+        <ModalProvider>
+            <BrowserRouter>
+                <ProvideAuth>
+                    <NavBar />
+                    <main className="app">
+                        <LoadingProvider>
                             <ErrorBoundary>
                                 <Suspense fallback={<Loader />}>
                                     <Switch>
@@ -30,11 +30,11 @@ const App: React.FC = () => {
                                     </Switch>
                                 </Suspense>
                             </ErrorBoundary>
-                        </main>
-                    </ProvideAuth>
-                </BrowserRouter>
-                </ModalProvider>
-            </LoadingProvider>
+                        </LoadingProvider>
+                    </main>
+                </ProvideAuth>
+            </BrowserRouter>
+        </ModalProvider>
     );
 };
 

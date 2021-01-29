@@ -1,12 +1,11 @@
 import { models } from '@yahalom-tests/common';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { match, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
-import { Container, Loader } from '../../components';
+import { Container } from '../../components';
+import { useLoading } from '../../hooks';
 import { examService } from '../../services';
 import ExamQuestions from './ExamQuestions';
 import StudentForm from './StudentForm';
-
-export type PageState = "pending" | "success" | "failure";
 
 interface ExamProps {
     match: match<{ testId: models.classes.guid }>;
@@ -16,33 +15,28 @@ const Exam: React.FC<ExamProps> = ({ match }) => {
     const { testId } = match.params;
     const { path, url } = useRouteMatch();
     const { push } = useHistory();
-
-    const [state, setState] = useState<"pending" | "success" | "failure">("pending");
-    //const [exam,setExam] = useState<models.interfaces.Exam>();
+    const { setLoadingState } = useLoading();
     useEffect(() => {
-        examService.checkIfTestIdIsValid(testId)
-            .then(() => setState("success"))
-            .catch(() => setState("failure"));
-    }, [testId])
+        setLoadingState("loading");
+        examService
+            .checkIfTestIdIsValid(testId)
+            .then(() => setLoadingState("success"))
+            .catch(() => setLoadingState("failure", "There seems to be no test with the requested Id!"));
+    }, [testId, setLoadingState])
 
     const onRequestNewExam = async (student: models.dtos.StudentDto) => {
         console.log(student);
-        setState("pending");
+        setLoadingState("loading");
         try {
             const { data } = await examService.requestToStartExam(testId, student);
             console.log(data);
-            setState("success");
+            setLoadingState("success");
             push(`${url}/${data.id}`, { exam: data });
 
         } catch (error) {
             console.log(error);
-            setState("failure");
+            setLoadingState("failure", "Couldn't currently start a new exam!");
         }
-    }
-    if (state === "pending") {
-        return <Loader />
-    } else if (state === "failure") {
-        return <p>Error</p>
     }
     return (
         <Container>
