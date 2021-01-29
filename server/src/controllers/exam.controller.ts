@@ -53,8 +53,8 @@ export const updateExam = async (req: types.RequestWithId<any, models.dtos.ExamC
     const { id: examId } = req.params;
     const isLocked = await examService.isExamLocked(examId); //check if exam was already done.
     if (isLocked) { throw new ExamLockedError(examId); }
-    const data = await examService.saveExamChanges(examId, req.body);
-    res.status(HTTPStatuses.ok).send(data);
+    await examService.saveExamChanges(examId, req.body);
+    res.status(HTTPStatuses.ok).send({ message: "Successfully saved" });
 };
 
 export const submitExam = async (req: types.RequestWithId, res: Response) => {
