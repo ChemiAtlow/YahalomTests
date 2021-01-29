@@ -1,6 +1,5 @@
 import { models } from "@yahalom-tests/common";
-import { organizationService } from "server/dist/services";
-import { questionService, testService } from ".";
+import { questionService, testService, organizationService } from ".";
 import { examRepository } from "../DAL";
 import { BadRequestError, ItemNotInDbError } from "../errors";
 
