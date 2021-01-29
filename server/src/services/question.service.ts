@@ -54,7 +54,7 @@ export const editQuestion = async (
     });
 
 export const isQuestionActive = async (questionId: models.classes.guid) => {
-    const { testCount} = await getQuestionById(questionId);
+    const { testCount } = await getQuestionById(questionId);
     return testCount > 0;
 };
 
@@ -70,4 +70,9 @@ export const updateQuestionUsage = async (
         const { testCount } = await getQuestionById(qId);
         await questionRepository.updateItem(qId, { testCount: testCount + (increment ? 1 : -1) });
     }
+};
+
+export const getMultipleQuestionsByIdArray = async (ids: models.classes.guid[]) => {
+    const questions = await Promise.all(ids.map(async id => await getQuestionById(id)));
+    return questions;
 };
