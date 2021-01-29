@@ -5,6 +5,25 @@ import { ExamLockedError, HttpError } from "../errors";
 import { types } from "../models";
 import { certificationService, emailService, examService, organizationService, studentService, testService } from "../services";
 
+export const getExam = async (req: types.RequestWithId, res: Response) => {
+    const { id: examId } = req.params;
+    let toSend: models.interfaces.Exam | models.interfaces.ExamResult;
+    try {
+        if (await examService.isExamLocked(examId)) {
+            const { result } = await examService.getExamResult(examId);
+            toSend = result;
+        } else {
+            toSend = await examService.getExamById(examId);
+        }
+        res.send(toSend);
+    } catch (err) {
+        if (err instanceof HttpError) {
+            throw err;
+        }
+        throw new HttpError(HTTPStatuses.internalServerError, "Unhandled error while getting your exam");
+    }
+};
+
 export const getExamPassedCertificate = (req: Request, res: Response) => {
     //TODO: Validate exam was actually passed successfully, and gather info for certificate.
     const doc = certificationService.createCertificate({
