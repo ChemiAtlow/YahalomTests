@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { Loader } from "../components";
 
 type AppState = "loading" | "success" | "failure";
@@ -17,7 +17,7 @@ const LoadingContext = createContext<LoadingContextFn>({
 
 export function LoadingProvider({ children }: React.PropsWithChildren<any>) {
     const value = useLoadingProvider();
-    const shouldShowChildren = useMemo(() => value.appState !== "failure", [value.appState])
+    const shouldShowChildren = useMemo(() => value.appState !== "failure", [value.appState]);
     return (
         <LoadingContext.Provider value={value}>
             {value.appState === "loading" && <Loader />}
@@ -40,10 +40,10 @@ function useLoadingProvider(): LoadingContextFn {
     const [appState, setAppState] = useState<AppState>("success");
     const [error, setError] = useState<any>();
     
-    const setLoadingState = (state: AppState, error?: any) => {
+    const setLoadingState = useCallback((state: AppState, error?: any) => {
         setAppState(state);
         setError(error);
-    }
+    }, [setAppState, setError])
 
     return {
         appState,
