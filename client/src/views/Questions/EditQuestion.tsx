@@ -1,5 +1,5 @@
 import { models } from '@yahalom-tests/common';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import { AppButton, SectionNavigator, Section, ErrorModal, QuestionPeekModal, WarningModal, MessageModal, FixedFooter } from '../../components';
 import { QuestionDetails, QuestionDetailsKeys, QuestionAnswers } from './QuestionForm';
@@ -29,17 +29,6 @@ const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) 
     const { openModal } = useModal();
     const { state } = useLocation<{ question?: models.dtos.QuestionDto }>();
     const { params } = useRouteMatch<EditParams>();
-    const warnQuestion = useCallback(async (correctAnswersCount: number) => {
-        if (correctAnswersCount > 1) {
-            const modalPromise = await openModal(WarningModal, {
-                title: "Issue changing question type!",
-                body: `You tried changing a multi choice question to a single choice question.\nCurrently there are ${correctAnswersCount} answers marked as correct.\nProcceding with the change will mark all questions as incorrect.`,
-                okText: "Cancel",
-                cancelText: "Proceed changes"
-            }).promise;
-            return modalPromise;
-        }
-    }, [openModal])
     useEffect(() => {
         if (params.questionId && state?.question) {
             setQuestion(state.question);
@@ -59,8 +48,17 @@ const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) 
         if (e.type === models.enums.QuestionType.SingleChoice) {
             const correctAnswersCount = question.answers.filter(ans => ans.correct).length;
             afterChange.answers = afterChange.answers.map(({content}) => ({ content, correct: false }))
-            doSave = await new Promise<any>((res, rej) => {
-                setTimeout(() => warnQuestion(correctAnswersCount)?.then(res).catch(rej),0)
+            doSave = await new Promise<boolean>((res, rej) => {
+                if (correctAnswersCount > 1) {
+                    setTimeout(() => openModal(WarningModal, {
+                        title: "Issue changing question type!",
+                        body: `You tried changing a multi choice question to a single choice question.\nCurrently there are ${correctAnswersCount} answers marked as correct.\nProcceding with the change will mark all questions as incorrect.`,
+                        okText: "Cancel",
+                        cancelText: "Proceed changes"
+                    }).promise.then(res).catch(rej), 0);
+                } else {
+                    res(true);
+                }
             });
         }
         if (doSave) {
