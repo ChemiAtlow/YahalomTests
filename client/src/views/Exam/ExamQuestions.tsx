@@ -14,11 +14,11 @@ const ExamQuestions: React.FC<ExamProps> = ({ match }) => {
     const [exam, setExam] = useState<models.interfaces.Exam>();
     const { setLoadingState } = useLoading();
     useEffect(() => {
-        console.log(examId, state)
         if (examId && state?.exam) {
             setExam(state.exam);
         }
         else if (examId && !state?.exam) {
+            setLoadingState("loading");
             examService.getExam(examId)
                 .then(({ data }) => {
                     setExam(data);
