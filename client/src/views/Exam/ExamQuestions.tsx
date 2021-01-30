@@ -14,7 +14,7 @@ const ExamQuestions: React.FC<ExamProps> = ({ match }) => {
     const { state } = useLocation<{ exam?: models.interfaces.Exam }>();
     const [exam, setExam] = useState<models.interfaces.Exam | models.interfaces.ExamResult>();
     const { setLoadingState } = useLoading();
-    const isExamResult = useCallback((exam: any): exam is models.interfaces.ExamResult => exam.hasOwnProperty('originalQuestions'), []);
+    const isExamResult = useCallback((exam: any): exam is models.interfaces.ExamResult => exam?.hasOwnProperty('originalQuestions'), []);
     useEffect(() => {
         if (examId && state?.exam) {
             setExam(state.exam);
