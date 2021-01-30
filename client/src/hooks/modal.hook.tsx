@@ -64,20 +64,22 @@ function useModalProvider(): ModalContextFn {
         props: Omit<T, "close"> = {} as any
     ) => {
         const modal = new ModalWrapper<T>(Component, props);
-        setModalInstances([...modalInstances, modal]);
+        setModalInstances(instances => [...instances, modal]);
         return modal;
-    }, [setModalInstances, modalInstances]);
+    }, [setModalInstances]);
 
     const closeModal = useCallback(<V extends {}, T extends ModalInstance<V>>(modal: ModalWrapper<T>, value: V) => {
         modal.resolve(value);
-        setModalInstances(modalInstances.filter(m => m !== modal));
-    }, [setModalInstances, modalInstances]);
+        setModalInstances(instances => instances.filter(m => m !== modal));
+    }, [setModalInstances]);
 
     const closeLastModal = useCallback(() => {
-        const lastModal = modalInstances.pop();
-        lastModal?.resolve(undefined);
-        setModalInstances([...modalInstances]);
-    },[modalInstances, setModalInstances])
+        setModalInstances(instances => {
+            const lastModal = instances.pop();
+            lastModal?.resolve(undefined);
+            return instances;
+        });
+    },[setModalInstances])
     return {
         modalInstances,
         closeLastModal,
