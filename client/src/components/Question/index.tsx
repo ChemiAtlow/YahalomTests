@@ -4,7 +4,7 @@ import QuestionAnswer from "../QuestionAnswer";
 import "./Question.scoped.scss";
 
 interface QuestionProps {
-    question: models.dtos.QuestionDto;
+    question: models.dtos.QuestionDto | models.interfaces.AnsweredQuestion;
     mode: "review" | "test"
 }
 
