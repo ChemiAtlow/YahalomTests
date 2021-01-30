@@ -11,7 +11,7 @@ const Exam: React.FC = () => {
         <Container>
             <Switch>
                 <Route exact path={path} component={StudentForm} />
-                <Route path={`${path}/:examId`} component={ExamQuestions} />
+                <Route path={`${path}/:examId/:page?`} component={ExamQuestions} />
             </Switch>
         </Container>
     )
