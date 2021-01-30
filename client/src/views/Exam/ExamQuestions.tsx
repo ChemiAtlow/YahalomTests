@@ -20,7 +20,7 @@ const ExamQuestions: React.FC<ExamProps> = ({ match }) => {
     const { setLoadingState } = useLoading();
     const { push } = useHistory();
     const { openModal } = useModal();
-    const isExamResult = useCallback((exam: any): exam is models.interfaces.ExamResult => exam?.hasOwnProperty('originalQuestions'), []);
+    const isExamResult = useCallback((exam: any): exam is models.interfaces.ExamResult => exam?.hasOwnProperty('questionCount'), []);
     useEffect(() => {
         if (state?.exam) {
             setExam(state.exam);
@@ -92,19 +92,38 @@ const ExamQuestions: React.FC<ExamProps> = ({ match }) => {
             }
         };
     };
+    console.log(exam);
 
     if (exam === undefined || exam === null) {
         return <p>Loading</p >
     } else if (isExamResult(exam)) {
-        if (!exam.isReviewEnabled ||
+        const allowReview = exam.isReviewEnabled && exam.originalQuestions && exam.answeredQuestions;
+        if (!allowReview ||
             pageNumber > (exam.originalQuestions?.length || 0) - 1 ||
             pageNumber < 0) {
             return (<>
                 <p>{exam.message}</p>
-                {exam.isReviewEnabled && <AppButton onClick={() => changePage(0)}>Start review</AppButton>}
+                {allowReview && <AppButton onClick={() => changePage(0)}>Start review</AppButton>}
             </>)
         } else {
-            return <p>stam</p>
+            return (
+                <FixedFooter>
+                    <Container>
+                        <Question selectionState={selectionState()} question={exam.answeredQuestions![pageNumber]} highlightedAnswers={exam.originalQuestions![pageNumber].answers} mode="review" />
+                    </Container>
+                    <div>
+                        {//diplay next question button when valid
+                            pageNumber > 0 &&
+                            <AppButton varaiety="small" onClick={() => changePage(pageNumber - 1)}>{"<"}</AppButton>
+                        }
+                        <Pagination currentPage={pageNumber + 1} maximalPage={exam.answeredQuestions!.length} onClick={p => changePage(p - 1)} />
+                        {
+                            pageNumber < exam.answeredQuestions!.length - 1 &&
+                            < AppButton varaiety="small" onClick={() => changePage(pageNumber + 1)}>{">"}</AppButton>
+                        }
+                    </div>
+                </FixedFooter >
+            )
         }
 
     } else if (pageNumber < 0 || pageNumber > exam.questions.length - 1) {
