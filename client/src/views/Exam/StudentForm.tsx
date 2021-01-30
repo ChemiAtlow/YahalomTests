@@ -1,16 +1,20 @@
 import { constants, models } from '@yahalom-tests/common';
 import React, { useEffect, useMemo, useState } from 'react'
+import { match, useHistory, useRouteMatch } from 'react-router-dom';
 import { AppButton, FormField, Row } from '../../components';
 import { useLoading } from '../../hooks';
 import { examService } from '../../services';
 
 interface StudentFormProps {
-    onRequestNewExam: (student: models.dtos.StudentDto) => void;
+    match: match<{ testId: models.classes.guid }>;
     testId: models.classes.guid;
 }
 
-const StudentForm: React.FC<StudentFormProps> = ({ onRequestNewExam, testId }) => {
+const StudentForm: React.FC<StudentFormProps> = ({ match }) => {
+    const { url } = useRouteMatch();
+    const { push } = useHistory();
     const { setLoadingState } = useLoading();
+    const { testId } = match.params;
     const [student, setStudent] = useState<models.dtos.StudentDto>({
         email: "",
         firstName: "",
@@ -38,19 +42,19 @@ const StudentForm: React.FC<StudentFormProps> = ({ onRequestNewExam, testId }) =
     }
     const onFnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
-        const isValidName = /^[A-Z]+$/i.test(value);
+        const isValidName = /^[A-Z]+( ?- ?[A-Z]+)*$/i.test(value);
         setStudentErrors({ ...studentErrors, firstName: isValidName ? "" : "Name must be english letters only!" })
         setStudent({ ...student, firstName: value });
     }
     const onLnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
-        const isValidName = /^[A-Z]+$/i.test(value);
+        const isValidName = /^[A-Z]+( ?- ?[A-Z]+)*$/i.test(value);
         setStudentErrors({ ...studentErrors, lastName: isValidName ? "" : "Name must be english letters only!" })
         setStudent({ ...student, lastName: value });
     }
     const onPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
-        const isValidPhone = Boolean(value.trim());
+        const isValidPhone = /^05[0-58]-?((\d{3}-?\d{4})|(\d{4}-?\d{3}))$/.test(value);
         setStudentErrors({ ...studentErrors, phone: isValidPhone ? "" : "Please enter a valid ohone!" })
         setStudent({ ...student, phone: value });
     }
@@ -61,14 +65,26 @@ const StudentForm: React.FC<StudentFormProps> = ({ onRequestNewExam, testId }) =
         }
         onRequestNewExam(student);
     };
-
     useEffect(() => {
-        // setLoadingState("loading");
+        setLoadingState("loading");
         examService
             .checkIfTestIdIsValid(testId)
             .then(() => setLoadingState("success"))
             .catch(() => setLoadingState("failure", "There seems to be no test with the requested Id!"));
     }, [setLoadingState, testId])
+
+    const onRequestNewExam = async (student: models.dtos.StudentDto) => {
+        setLoadingState("loading");
+        try {
+            const { data } = await examService.requestToStartExam(testId, student);
+            console.log(data);
+            setLoadingState("success");
+            push(`${url}/${data.id}`, { exam: data });
+        } catch (error) {
+            console.log(error);
+            setLoadingState("failure", "Couldn't currently start a new exam!");
+        }
+    };
 
     return (
         <form onSubmit={onSubmit}>
