@@ -1,7 +1,7 @@
 import { constants, models } from '@yahalom-tests/common';
 import React, { useEffect, useMemo, useState } from 'react'
 import { match, useHistory, useRouteMatch } from 'react-router-dom';
-import { AppButton, FormField, Row } from '../../components';
+import { AppButton, Container, FormField, Row } from '../../components';
 import { useLoading } from '../../hooks';
 import { examService } from '../../services';
 
@@ -87,35 +87,37 @@ const StudentForm: React.FC<StudentFormProps> = ({ match }) => {
     };
 
     return (
-        <form onSubmit={onSubmit}>
-            <Row>
-                <FormField
-                    type="text"
-                    value={student.email}
-                    onChange={onEmailChange}
-                    error={studentErrors.email}
-                    label="Email" />
-                <FormField
-                    type="text"
-                    value={student.firstName}
-                    onChange={onFnameChange}
-                    error={studentErrors.firstName}
-                    label="First name" />
-                <FormField
-                    type="text"
-                    value={student.lastName}
-                    onChange={onLnameChange}
-                    error={studentErrors.lastName}
-                    label="Last name" />
-                <FormField
-                    type="text"
-                    value={student.phone}
-                    onChange={onPhoneChange}
-                    error={studentErrors.phone}
-                    label="Phone" />
-            </Row>
-            <AppButton type="submit" disabled={!isValid}>Start test!</AppButton>
-        </form>
+        <Container>
+            <form onSubmit={onSubmit}>
+                <Row>
+                    <FormField
+                        type="text"
+                        value={student.email}
+                        onChange={onEmailChange}
+                        error={studentErrors.email}
+                        label="Email" />
+                    <FormField
+                        type="text"
+                        value={student.firstName}
+                        onChange={onFnameChange}
+                        error={studentErrors.firstName}
+                        label="First name" />
+                    <FormField
+                        type="text"
+                        value={student.lastName}
+                        onChange={onLnameChange}
+                        error={studentErrors.lastName}
+                        label="Last name" />
+                    <FormField
+                        type="text"
+                        value={student.phone}
+                        onChange={onPhoneChange}
+                        error={studentErrors.phone}
+                        label="Phone" />
+                </Row>
+                <AppButton type="submit" disabled={!isValid}>Start test!</AppButton>
+            </form>
+        </Container>
     )
 }
 
