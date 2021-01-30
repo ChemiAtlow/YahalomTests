@@ -20,5 +20,5 @@ export async function updateExam(examId: models.classes.guid, update: models.dto
 };
 
 export async function submitExam(examId: models.classes.guid) {
-    return await http.get<void>(`${examRoute}${examId}/submit`);
+    return await http.get<models.interfaces.ExamResult>(`${examRoute}${examId}/submit`);
 };
