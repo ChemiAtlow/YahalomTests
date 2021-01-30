@@ -3,34 +3,37 @@ import React, { useState } from "react";
 import QuestionAnswer from "../QuestionAnswer";
 import "./Question.scoped.scss";
 
-interface QuestionProps {
+type QuestionProps = {
     question: models.dtos.QuestionDto | models.interfaces.AnsweredQuestion;
-    mode: "review" | "test"
+    mode: "review" | "test";
+    selectionState?: [boolean[], (selection: boolean[]) => void];
 }
 
-const Question: React.FC<QuestionProps> = ({ question, mode }) => {
+const Question: React.FC<QuestionProps> = ({ question, mode, selectionState }) => {
     const [selection, setSelection] = useState<boolean[]>(
         Array(question.answers.length).fill(false)
     );
-    const onSelectionChange = (index: number) => {
+    const conditionalSelection = selectionState?.[0] || selection;
+    const conditionalSetSelection = selectionState?.[1] || setSelection;
+
+    const onSelectionChange = ((index: number) => {
         let cloned;
         if (question.type === models.enums.QuestionType.MultiChoice) {
-            cloned = [...selection];
+            cloned = [...conditionalSelection];
             cloned[index] = !cloned[index];
         } else {
             cloned = Array(question.answers.length).fill(false);
             cloned[index] = true;
         }
-        setSelection(cloned);
-    };
+        conditionalSetSelection(cloned);
+    });
     return (
         <div className="question-item">
-            <p className="question-item__title">{question.title}</p>
+            <h3 className="question-item__title">{question.title}</h3>
             {question.additionalContent && <p className="question-item__additional">{question.additionalContent}</p>}
             <div
-                className={`question-item__questions ${
-                    question.alignment === models.enums.Alignment.Horizontal ? "horizontal" : ""
-                }`}>
+                className={`question-item__questions ${question.alignment === models.enums.Alignment.Horizontal ? "horizontal" : ""
+                    }`}>
                 {question.answers.map((ans, i) => (
                     <QuestionAnswer
                         key={i}
@@ -38,7 +41,7 @@ const Question: React.FC<QuestionProps> = ({ question, mode }) => {
                         mode={{ isEditMode: false, alignment: question.alignment, isReview: mode === "review" }}
                         questionType={question.type}
                         {...ans}
-                        selected={selection[i]}
+                        selected={conditionalSelection[i]}
                         onSelectionChange={() => onSelectionChange(i)}
                     />
                 ))}
