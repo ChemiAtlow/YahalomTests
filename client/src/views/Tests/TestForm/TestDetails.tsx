@@ -97,7 +97,7 @@ export const TestDetails: React.FC<TestDetailsProps> = ({ test, onValidityChange
                 />
                 <div>
                     <label>Show correct answers after submission</label>
-                    <input type="checkbox" onChange={onReviewedChanged} />
+                    <input type="checkbox" checked={test.isReviewEnabled} onChange={onReviewedChanged} />
                 </div>
                 <FormField label="Test intro - Header"
                     type="textarea"
