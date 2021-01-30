@@ -6,10 +6,11 @@ import "./Question.scoped.scss";
 type QuestionProps = {
     question: models.dtos.QuestionDto | models.interfaces.AnsweredQuestion;
     mode: "review" | "test";
+    highlightedAnswers?: models.interfaces.Answer[];
     selectionState?: [boolean[], (selection: boolean[]) => void];
 }
 
-const Question: React.FC<QuestionProps> = ({ question, mode, selectionState }) => {
+const Question: React.FC<QuestionProps> = ({ question, mode, selectionState, highlightedAnswers }) => {
     const [selection, setSelection] = useState<boolean[]>(
         Array(question.answers.length).fill(false)
     );
@@ -38,7 +39,7 @@ const Question: React.FC<QuestionProps> = ({ question, mode, selectionState }) =
                     <QuestionAnswer
                         key={i}
                         answerIndex={i}
-                        mode={{ isEditMode: false, alignment: question.alignment, isReview: mode === "review" }}
+                        mode={{ isEditMode: false, highlighted: highlightedAnswers?.[i].correct, alignment: question.alignment, isReview: mode === "review" }}
                         questionType={question.type}
                         {...ans}
                         selected={conditionalSelection[i]}
