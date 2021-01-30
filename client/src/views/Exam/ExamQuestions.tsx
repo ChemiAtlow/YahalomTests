@@ -1,6 +1,7 @@
 import { models } from '@yahalom-tests/common';
 import React, { useCallback, useEffect, useState } from 'react';
 import { match, useLocation } from 'react-router-dom';
+import Question from '../../components/Question';
 import { useLoading } from '../../hooks';
 import { examService } from '../../services';
 
@@ -28,15 +29,18 @@ const ExamQuestions: React.FC<ExamProps> = ({ match }) => {
                 }).catch(err => setLoadingState("failure", `An error occoured while loading the exam:\n${err?.message || ""}`))
         }
     }, [state, examId, setExam, setLoadingState])
+    if (exam === undefined || exam === null) {
+        return <></>
+    }
     if (isExamResult(exam)) {
         return <p>{exam.message}</p>
-    } else {
-        return pageNumber < 0 ?
-            <>
+    } else if (pageNumber < 0) {
+        return <>
             <h1>{exam?.title}</h1>
             <p>{exam?.intro}</p>
             </>
-            : <p>{exam?.questions[pageNumber].title}</p>
+    } else {
+        return <Question question={exam?.questions[pageNumber]!} mode="test"  />
     }
 }
 
