@@ -1,0 +1,204 @@
+$animationDuration: 0.3s;
+$halfAnimDur: $animationDuration / 2;
+$dark-primary: darken($color: $primary, $amount: 7);
+
+.toggle {
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    &.disabled {
+        cursor: default;
+    }
+    &-switch {
+        display: flex;
+        box-sizing: content-box;
+        cursor: pointer;
+        flex-shrink: 0;
+        background-color: $mid-light-gray;
+        border-color: $primary;
+        position: relative;
+        border-radius: 20px;
+        width: 26px;
+        height: 16px;
+        margin-right: 9px;
+        overflow: hidden;
+        transition: $animationDuration ease-out all;
+
+        input[type='checkbox'] {
+            display: none;
+        }
+
+        &.checked {
+            background-color: $dark-primary;
+        }
+
+        &.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .state {
+            background: $light;
+            border-radius: 100%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 40%);
+            position: absolute;
+            transition: $animationDuration ease-out all;
+            width: 14px;
+            height: 14px;
+            left: 1px;
+            top: 1px;
+
+            &:after {
+                position: absolute;
+                top: 7px;
+                left: 2px;
+                content: ' ';
+                border-left: 1px solid $dark-primary;
+                border-bottom: 1px solid $dark-primary;
+                width: 0;
+                height: 0;
+                transform: rotate(-45deg);
+                transition: height $halfAnimDur ease,
+                    left $halfAnimDur cubic-bezier(0, 0.55, 0, 1.17),
+                    width $halfAnimDur $halfAnimDur, top $halfAnimDur $halfAnimDur;
+
+                opacity: 0;
+            }
+
+            &.checked {
+                left: 11px;
+                &:after {
+                    opacity: 1;
+                    width: 6px;
+                    height: 4px;
+                    top: 4px;
+                    left: 4px;
+                }
+            }
+        }
+
+        &.large {
+            width: 49px;
+            height: 32px;
+
+            .state {
+                width: 28px;
+                height: 28px;
+                top: 2px;
+                left: 2px;
+
+                &:after {
+                    top: 13px;
+                    left: 9px;
+                    border-left: 2px solid $dark-primary;
+                    border-bottom: 2px solid $dark-primary;
+                }
+
+                &.checked {
+                    left: 19px;
+
+                    &:after {
+                        width: 13px;
+                        height: 7px;
+                        top: 9px;
+                        left: 7px;
+                    }
+                }
+            }
+        }
+
+        &.icons {
+            width: 80px;
+            height: 40px;
+
+            &.checked {
+                background-color: $mid-gray;
+            }
+
+            .state {
+                width: 40px;
+                height: 40px;
+                top: 0;
+                left: 0;
+                background: $bubble-bg;
+                box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 20%);
+
+                &:after {
+                    display: none;
+                }
+
+                &.checked {
+                    left: 40px;
+
+                    &:after {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        &.small-icons {
+            width: 58px;
+            height: 30px;
+            background-color: $mid-gray;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            border: 1px solid transparent; // keeps the width stable between themes
+
+            .icon-unchecked,
+            .icon-checked {
+                top: 5px;
+            }
+            .state {
+                width: 30px;
+                height: 30px;
+                top: 0;
+                left: -1px;
+                background: $bubble-bg;
+                box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 20%);
+
+                &:after {
+                    display: none;
+                }
+
+                &.checked {
+                    left: 30px;
+
+                    &:after {
+                        display: none;
+                    }
+                }
+            }
+
+            .icon-unchecked {
+                left: 4px;
+            }
+
+            .icon-checked {
+                right: 4px;
+            }
+        }
+    }
+}
+
+.icon-checked,
+.icon-unchecked {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 10px;
+    position: absolute;
+}
+
+.icon-unchecked {
+    left: 10px;
+}
+
+.icon-checked {
+    right: 10px;
+}

@@ -9,6 +9,8 @@ $light-gray: #f9f9fb;
 $dialog-gray: #d8dae5;
 $gray: #e9e9e9;
 $dark-gray: #969696;
+$mid-gray: #acacac;
+$mid-light-gray: #d1d1d1;
 $light-red: #f05662;
 $red: #d73544;
 $dark-red: #ac0f1d;
@@ -17,6 +19,7 @@ $dark-green: #087a41;
 $c-border: #d8dae5;
 
 $button-bg: linear-gradient(135.23deg, #{$secondary}, #{$dark-blue});
+$bubble-bg: linear-gradient(224.46deg, darken($deep-blue, 18) 0%, $deep-blue 100%);
 $warn-bg: linear-gradient(135.23deg, #{$light-red}, #{$dark-red});
 
 $header-height: 3.5rem;
