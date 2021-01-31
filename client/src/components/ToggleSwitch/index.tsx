@@ -23,6 +23,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
     ...rest
 }) => (
     <label className={`toggle  ${rest.disabled ? 'disabled' : ''}`}>
+        {children}
         <div
             className={`toggle-switch ${rest.checked ? 'checked' : ''} ${variety ?? 'regular'} ${
                 rest.disabled ? 'disabled' : ''
@@ -41,7 +42,6 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
                 </>
             )}
         </div>
-        {children}
     </label>
 );
 
