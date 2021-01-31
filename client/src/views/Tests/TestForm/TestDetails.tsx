@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { models } from '@yahalom-tests/common';
-import { Row, FormField, Select, Container } from '../../../components';
+import { Row, FormField, Select, Container, ToggleSwitch } from '../../../components';
 import { useAuth } from "../../../hooks";
 import { enumToArray, SwitchCamelCaseToHuman } from '../../../utils';
 
@@ -95,10 +95,7 @@ export const TestDetails: React.FC<TestDetailsProps> = ({ test, onValidityChange
                     onChange={onPassingGradeChange}
                     error={gradeError}
                 />
-                <div>
-                    <label>Show correct answers after submission</label>
-                    <input type="checkbox" checked={test.isReviewEnabled} onChange={onReviewedChanged} />
-                </div>
+                <ToggleSwitch variety="large" checked={test.isReviewEnabled} onChange={onReviewedChanged}>Show correct answers after submission</ToggleSwitch>
                 <FormField label="Test intro - Header"
                     type="textarea"
                     required
