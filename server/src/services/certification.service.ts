@@ -10,7 +10,8 @@ const signatureHeight = 390;
 export function createCertificate({
     firstName,
     lastName,
-}: Pick<models.interfaces.Student, "firstName" | "lastName">) {
+}: Pick<models.interfaces.Student, "firstName" | "lastName">, testTitle: string,
+    teacherEmail: string) {
     const studentName = `${firstName} ${lastName}`;
     const doc = new PDFDocument({
         layout: "landscape",
@@ -45,7 +46,7 @@ export function createCertificate({
 
     doc.fontSize(10) //.font("fonts/NotoSansJP-Light.otf")
         .fill("#021c27")
-        .text("NAME OF COURSE", { align: "center" });
+        .text(testTitle, { align: "center" });
 
     jumpLine(doc, 2);
     //#endregion
@@ -71,7 +72,7 @@ export function createCertificate({
 
     doc.fontSize(10) //.font("fonts/NotoSansJP-Light.otf")
         .fill("#021c27")
-        .text("Successfully completed TEST NAME.", { align: "center" });
+        .text(`Successfully completed ${testTitle}.`, { align: "center" });
 
     jumpLine(doc, 7);
 
@@ -102,7 +103,7 @@ export function createCertificate({
 
     doc.fontSize(10) //.font("fonts/NotoSansJP-Bold.otf")
         .fill("#021c27")
-        .text("TEACHER NAME", startLine1, signatureHeight + 10, {
+        .text(teacherEmail, startLine1, signatureHeight + 10, {
             columns: 1,
             columnGap: 0,
             height: 40,
@@ -160,7 +161,7 @@ export function createCertificate({
             align: "center",
         });
     //#endregion
-    
+
     //#region Footer
     jumpLine(doc, 4);
     const bottomHeight = doc.page.height - 140;

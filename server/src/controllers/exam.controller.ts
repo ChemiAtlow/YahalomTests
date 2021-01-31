@@ -1,7 +1,7 @@
 import { models } from "@yahalom-tests/common";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { HTTPStatuses } from "../constants";
-import { ExamLockedError, HttpError } from "../errors";
+import { BadRequestError, ExamLockedError, HttpError } from "../errors";
 import { types } from "../models";
 import { certificationService, emailService, examService, organizationService, studentService, testService } from "../services";
 
@@ -24,14 +24,27 @@ export const getExam = async (req: types.RequestWithId, res: Response) => {
     }
 };
 
-export const getExamPassedCertificate = (req: Request, res: Response) => {
-    //TODO: Validate exam was actually passed successfully, and gather info for certificate.
-    const doc = certificationService.createCertificate({
-        firstName: "Reem",
-        lastName: "Cohen",
-    });
-    doc.pipe(res);
-    doc.end();
+export const getExamPassedCertificate = async (req: types.RequestWithId, res: Response) => {
+    const { id: examId } = req.params;
+    //check if exam is locked
+    if (!await examService.isExamLocked(examId)) {
+        throw new BadRequestError("The exam wasn't completed yet!");
+    }
+    try {
+        const { title, teacherEmail, studentEmail, result } = await examService.getExamResult(examId);
+        if (result.grade < result.minPassGrade) {
+            throw new BadRequestError("You need to pass to test to get the certificate");
+        }
+        const student = await studentService.getStudentByEmail(studentEmail);
+        const doc = certificationService.createCertificate(student, title, teacherEmail);
+        doc.pipe(res);
+        doc.end();
+    } catch (err) {
+        if (err instanceof HttpError) {
+            throw err;
+        }
+        throw new HttpError(HTTPStatuses.internalServerError, "Unhandled error while creating your certificate");
+    }
 };
 
 export const createExam = async (req: types.RequestWithId<any, models.dtos.StudentDto>, res: Response) => {
