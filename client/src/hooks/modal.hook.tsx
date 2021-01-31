@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { Backdrop } from "../components";
 
@@ -59,25 +59,27 @@ export const useModal = () => {
 
 function useModalProvider(): ModalContextFn {
     const [modalInstances, setModalInstances] = useState<ModalWrapper<any>[]>([]);
-    const openModal = <T extends ModalInstance>(
+    const openModal = useCallback(<T extends ModalInstance>(
         Component: React.FC<T>,
         props: Omit<T, "close"> = {} as any
     ) => {
         const modal = new ModalWrapper<T>(Component, props);
-        setModalInstances([...modalInstances, modal]);
+        setModalInstances(instances => [...instances, modal]);
         return modal;
-    };
+    }, [setModalInstances]);
 
-    const closeModal = <V extends {}, T extends ModalInstance<V>>(modal: ModalWrapper<T>, value: V) => {
+    const closeModal = useCallback(<V extends {}, T extends ModalInstance<V>>(modal: ModalWrapper<T>, value: V) => {
         modal.resolve(value);
-        setModalInstances(modalInstances.filter(m => m !== modal));
-    };
+        setModalInstances(instances => instances.filter(m => m !== modal));
+    }, [setModalInstances]);
 
-    const closeLastModal = () => {
-        const lastModal = modalInstances.pop();
-        lastModal?.resolve(undefined);
-        setModalInstances([...modalInstances]);
-    }
+    const closeLastModal = useCallback(() => {
+        setModalInstances(instances => {
+            const lastModal = instances.pop();
+            lastModal?.resolve(undefined);
+            return instances;
+        });
+    },[setModalInstances])
     return {
         modalInstances,
         closeLastModal,

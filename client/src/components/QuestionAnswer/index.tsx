@@ -13,6 +13,7 @@ type ExamAndReviewMode = {
     isEditMode?: false;
     alignment: models.enums.Alignment;
     isReview?: boolean;
+    highlighted?: boolean;
 };
 type QuestionAnswerProps = {
     content: string;
@@ -58,8 +59,8 @@ const QuestionAnswer: React.FC<QuestionAnswerProps> = ({
                         onChange={mode.onContentChange}
                     />
                 ) : (
-                    <p className={(mode.isReview && correct) ? "correct" : ""}>{content}</p>
-                )}
+                        <p className={(mode.isReview && (mode.highlighted ?? correct)) ? "correct" : ""}>{content}</p>
+                    )}
             </div>
         </TagName>
     );
