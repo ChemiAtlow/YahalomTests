@@ -1,13 +1,13 @@
 import React from "react";
-import { Accordion, AccordionSection, AppButton, MessageModal } from "../components";
-import { useModal } from "../hooks";
+import { Accordion, AccordionSection, AppButton, MessageModal } from "../../components";
+import { useModal } from "../../hooks";
 
 const Reports: React.FC = () => {
     const { openModal } = useModal();
     const showMessage = (title: string, body: string) =>
         openModal(MessageModal, {
             title,
-			children: <p>{body}</p>,
+            children: <p>{body}</p>,
             okText: "SAVE",
             cancelText: "LATER",
         }).promise;
