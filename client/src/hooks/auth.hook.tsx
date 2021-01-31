@@ -1,5 +1,5 @@
 import { models } from "@yahalom-tests/common";
-import React, { useState, useContext, createContext } from "react";
+import React, { useState, useContext, createContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { AuthRequest } from "../models";
 import { authService } from "../services";
@@ -60,6 +60,7 @@ function useProvideAuth(): providerFn {
 			const { data } = await authService.login(user);
 			setJwt(data.jwt);
 			setOrganizationBaseInfo(data.organizationsInfo);
+			localStorage.setItem('authData', JSON.stringify(data));
 			return true;
 		} catch (error) {
 			return false;
@@ -77,6 +78,7 @@ function useProvideAuth(): providerFn {
 
 	const signout = () => {
 		replace("/")
+		localStorage.removeItem('authData');
 		setJwt(undefined);
 		setOrganizationBaseInfo(undefined);
 	};
@@ -87,17 +89,14 @@ function useProvideAuth(): providerFn {
 	const buildAuthRequestData = () => {
 		return { jwt: jwt ?? "", organizationId: activeOrganization?.id ?? "", studyFieldId: activeStudyField?.id ?? "" }
 	}
-	// useEffect(() => {
-	// 	const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-	// 		if (user) {
-	// 			setUser(user);
-	// 		} else {
-	// 			setUser(undefined);
-	// 		}
-	// 	});
-	// 	// Cleanup subscription on unmount
-	// 	return () => unsubscribe();
-	// }, []);
+	useEffect(() => {
+		const authData = localStorage.getItem('authData');
+		const data = JSON.parse(authData || "{}");
+		if (data && data.jwt && data.organizationsInfo) {
+			setJwt(data.jwt);
+			setOrganizationBaseInfo(data.organizationsInfo);
+		}
+	}, [setJwt, setOrganizationBaseInfo]);
 	// Return the user object and auth methods
 	return {
 		jwt,
