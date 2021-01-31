@@ -84,6 +84,7 @@ export const getExamResult = async (examId: models.classes.guid) => {
     );
     const {
         title,
+        intro,
         successEmail,
         successMessage,
         failureEmail,
@@ -98,6 +99,9 @@ export const getExamResult = async (examId: models.classes.guid) => {
     const isGradePassing = grade > minPassGrade;
     const result: models.interfaces.ExamResult = {
         message: isGradePassing ? successMessage : failureMessage,
+        intro,
+        title,
+        minPassGrade,
         isReviewEnabled,
         grade,
         questionCount: questions.length,
@@ -126,8 +130,8 @@ const buildAnsweredQuesionsByExam = async (testQuestions: models.classes.guid[])
                 type,
                 answers,
             } = await questionService.getQuestionById(qId);
-            answers.forEach(a => (a.correct = false));
-            return { alignment, answers, questionId: qId, title, type, additionalContent };
+            const cleanAnswers = answers.map<models.interfaces.Answer>(({ content }) => ({ content, correct: false }));
+            return { alignment, answers: cleanAnswers, questionId: qId, title, type, additionalContent };
         })
     );
     return shuffleArray(examQuestions);
