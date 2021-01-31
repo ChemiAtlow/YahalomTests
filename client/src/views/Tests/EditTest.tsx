@@ -4,7 +4,9 @@ import { useLocation, useRouteMatch } from 'react-router-dom';
 import { SectionNavigator, Section, AppButton, ErrorModal, MessageModal, FixedFooter } from '../../components'
 import { useAuth, useModal } from '../../hooks';
 import { testService } from '../../services';
-import { TestDetails, TestEmails, TestQuestions } from "./TestForm";
+import { TestDetails, TestEmails, TestQuestions, TestDetailsKeys } from "./TestForm";
+
+type TestDetailsError = Record<keyof Omit<TestDetailsKeys, "language" | "isReviewEnabled"> | "general", string>;
 
 interface EditTestProps {
     onTestAddedOrEdited: (test: models.interfaces.Test) => void;
@@ -28,14 +30,19 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
     });
     const { openModal } = useModal();
     const { buildAuthRequestData } = useAuth();
-    const [detailsError, setDetailsError] = useState("");
+    const [detailsErrors, setDetailsErrors] = useState<TestDetailsError>({
+        general: "",
+        intro: "",
+        minPassGrade: "",
+        title: ""
+    });
     const [emailsError, setEmailsError] = useState("");
     const [questionsError, setQuestionsError] = useState("");
     const { params } = useRouteMatch<EditParams>();
     const { state } = useLocation<{ test?: models.dtos.TestDto }>();
     const isInvalid =
         //check for errors from components
-        Boolean(emailsError) || Boolean(questionsError) || Boolean(detailsError) ||
+        Boolean(emailsError) || Boolean(questionsError) || Boolean(detailsErrors.general) ||
         //check validate in case the user didn't write and make a errorChange.
         !Boolean(test.title)
         || !Boolean(test.successMessage)
@@ -44,8 +51,23 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
 
     const onChange = (changed: Partial<models.dtos.TestDto>) => {
         setTest({ ...test, ...changed });
-        console.log({ ...test, ...changed });
     };
+    const onChangeDetails = (changed: Partial<TestDetailsKeys>) => {
+        if (changed.title !== undefined) {
+            const title = changed.title.trim() ? "" : "Title is required!";
+            setDetailsErrors({ ...detailsErrors, title });
+        }
+        if (changed.intro !== undefined) {
+            const intro = changed.intro.trim() ? "" : "Intro is required!";
+            setDetailsErrors({ ...detailsErrors, intro });
+        }
+        if (changed.minPassGrade !== undefined) {
+            const minPassGrade = changed.minPassGrade < 1 ? "Minimal passing grade is 1!" : 
+                changed.minPassGrade >= 100 ? "Minimal passing grade can't be 100 or more!" : "";
+            setDetailsErrors({ ...detailsErrors, minPassGrade });
+        }
+        onChange(changed);
+    }
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (isInvalid) {
@@ -83,6 +105,13 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
         };
         return testClone;
     };
+    useEffect(() => {
+        const showDetailsErorr = !test.title.trim() || !test.intro.trim() || test.minPassGrade < 1 || test.minPassGrade > 100;
+        const detailsError = showDetailsErorr ? "There are missing details in the form!" : "";
+        setDetailsErrors(detailsErrors => ({ ...detailsErrors, general: detailsError }));
+        const showQuestionsError = test.questions.length <= 0;
+        setQuestionsError(showQuestionsError ? "Please select at least one question!" : "");
+    }, [setQuestionsError, test])
 
     useEffect(() => {
         if (params.testId && state?.test) {
@@ -101,14 +130,14 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
         <FixedFooter>
         <form onSubmit={onSubmit} noValidate id="edit-test__form">
             <SectionNavigator>
-                <Section label="Test Details" errMsg={detailsError} isValid={!detailsError}>
-                    <TestDetails test={test} onChange={onChange} onValidityChange={setDetailsError} />
+                <Section label="Test Details" errMsg={detailsErrors.general} isValid={!detailsErrors.general}>
+                    <TestDetails test={test} onChange={onChangeDetails} gradeError={detailsErrors.minPassGrade} introError={detailsErrors.intro} titleError={detailsErrors.title} />
                 </Section>
                 <Section label="Completion messages" errMsg={emailsError} isValid={!emailsError}>
                     <TestEmails test={test} onChange={onChange} onValidityChange={setEmailsError} />
                 </Section>
                 <Section label="Test Questions" errMsg={questionsError} isValid={!questionsError}>
-                    <TestQuestions test={test} onChange={onChange} onValidityChange={setQuestionsError} />
+                    <TestQuestions test={test} onChange={onChange} />
                 </Section>
             </SectionNavigator>
             </form>
