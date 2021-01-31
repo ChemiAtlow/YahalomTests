@@ -1,7 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { models } from "@yahalom-tests/common";
-import { Accordion, AccordionSection, Container, FormField } from "../../../components";
+import {
+    Accordion,
+    AccordionSection,
+    Column,
+    Container,
+    DataTable,
+    FormField,
+} from '../../../components';
 import { EmailForm } from "./EmailForm";
+
+const columns: Column[] = [
+    {
+        label: 'Template',
+        key: 'key',
+        sortable: true,
+    },
+    {
+        label: 'Value',
+        key: 'value',
+        sortable: true,
+        largeColumn: true,
+    },
+];
+const emailTemplates = [
+    { key: '@TestName@', value: 'The name of the test.' },
+    { key: '@FirstName@', value: 'First name of student who took the exam.' },
+    { key: '@LastName@', value: 'Last name of student who took the exam.' },
+    { key: '@Date@', value: 'Date of exam completion.' },
+    { key: '@Grade@', value: 'The grade the student has gotten.' },
+    {
+        key: '@Certificate@',
+        value: 'A link to the course certificate - will work only for students who passed.',
+    },
+];
 
 export type TestEmailsKeys = Pick<
     models.dtos.TestDto,
@@ -83,14 +115,14 @@ export const TestEmails: React.FC<TestEmailsProps> = ({ test, onChange, onValidi
                         onChange={onSuccessMessageChanged}
                         error={successMsgError}
                     />
-                        <FormField
-                            label="Failure message"
-                            type="textarea"
-                            required
-                            value={test.failureMessage}
-                            onChange={onFailureMessageChanged}
-                            error={failureMsgError}
-                        />
+                    <FormField
+                        label="Failure message"
+                        type="textarea"
+                        required
+                        value={test.failureMessage}
+                        onChange={onFailureMessageChanged}
+                        error={failureMsgError}
+                    />
                 </AccordionSection>
                 <AccordionSection title="Success Email">
                     <EmailForm
@@ -105,6 +137,9 @@ export const TestEmails: React.FC<TestEmailsProps> = ({ test, onChange, onValidi
                         onChange={onFailureMailChange}
                         onValidityChange={setFaliureEmailError}
                     />
+                </AccordionSection>
+                <AccordionSection title="Email messages wildcards">
+                    <DataTable columns={columns} data={emailTemplates} />
                 </AccordionSection>
             </Accordion>
         </Container>
