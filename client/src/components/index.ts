@@ -8,6 +8,7 @@ export { default as Icon } from "./Icon";
 export { default as Backdrop } from "./Backdrop";
 export { default as Loader } from "./Loader";
 export { default as Pagination } from "./Pagination";
+export { default as ToggleSwitch } from './ToggleSwitch';
 export * from "./Accordion";
 export * from "./Modal";
 export * from "./Tooltip";

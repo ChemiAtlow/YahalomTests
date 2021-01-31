@@ -1,6 +1,9 @@
 .icon {
     vertical-align: middle;
     display: inline-block;
+    path {
+        transition: all 400ms ease-in-out;
+    }
     &.clickable {
         cursor: pointer;
     }
