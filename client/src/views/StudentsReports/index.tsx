@@ -2,7 +2,7 @@ import React from "react";
 import { Accordion, AccordionSection, AppButton, MessageModal } from "../../components";
 import { useModal } from "../../hooks";
 
-const Reports: React.FC = () => {
+const StudentsReports: React.FC = () => {
     const { openModal } = useModal();
     const showMessage = (title: string, body: string) =>
         openModal(MessageModal, {
@@ -23,4 +23,4 @@ const Reports: React.FC = () => {
     );
 };
 
-export default Reports;
+export default StudentsReports;
