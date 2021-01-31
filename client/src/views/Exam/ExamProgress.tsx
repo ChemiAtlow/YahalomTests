@@ -1,12 +1,12 @@
-import { models, constants } from '@yahalom-tests/common';
-import React, { useCallback, useEffect, useState } from 'react';
+import { models } from '@yahalom-tests/common';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { match, useHistory, useLocation } from 'react-router-dom';
-import { AppButton, Container, ErrorModal, FixedFooter, Pagination, WarningModal } from '../../components';
-import Question from '../../components/Question';
+import { ErrorModal, WarningModal } from '../../components';
+import ExamQuestions from '../../components/ExamQuestions';
 import { useLoading, useModal } from '../../hooks';
 import { examService } from '../../services';
-
-const { serverDomain, serverPort } = constants.URLS;
+import { isExamAnExamResult } from '../../utils';
+import ExamIntro from './ExamIntro';
 
 type ExamRouteProps = { examId: models.classes.guid; testId: models.classes.guid; page?: string }
 
@@ -14,7 +14,7 @@ interface ExamProps {
     match: match<ExamRouteProps>;
 }
 
-const ExamQuestions: React.FC<ExamProps> = ({ match }) => {
+const ExamProgress: React.FC<ExamProps> = ({ match }) => {
     const { examId, page, testId } = match.params;
     const pageNumber = isNaN(Number(page)) ? -1 : Number(page);
     const { state } = useLocation<{ exam?: models.interfaces.Exam }>();
@@ -23,6 +23,13 @@ const ExamQuestions: React.FC<ExamProps> = ({ match }) => {
     const { push } = useHistory();
     const { openModal } = useModal();
     const isExamResult = useCallback((exam: any): exam is models.interfaces.ExamResult => exam?.hasOwnProperty('questionCount'), []);
+    const isIntroPage = useMemo(() => {
+        const isExamInvalidPages = exam && !isExamAnExamResult(exam) && pageNumber > exam.questions.length - 1;
+        const isResultInvalidPages = isExamAnExamResult(exam) &&
+            (pageNumber > (exam.originalQuestions?.length || 0) - 1 ||
+                !exam.isReviewEnabled || !exam.originalQuestions || !exam.answeredQuestions);
+        return pageNumber < 0 || isExamInvalidPages || isResultInvalidPages;
+    }, [exam, pageNumber]);
     useEffect(() => {
         if (state?.exam) {
             setExam(state.exam);
@@ -97,73 +104,11 @@ const ExamQuestions: React.FC<ExamProps> = ({ match }) => {
 
     if (exam === undefined || exam === null) {
         return <p>Loading</p >
-    } else if (isExamResult(exam)) {
-        const allowReview = exam.isReviewEnabled && exam.originalQuestions && exam.answeredQuestions;
-        if (!allowReview ||
-            pageNumber > (exam.originalQuestions?.length || 0) - 1 ||
-            pageNumber < 0) {
-            return (<>
-                <h1>{exam.title}</h1>
-                <p>{exam.intro}</p>
-                <p>{exam.message}</p>
-                <p>Your grade is: {exam.grade}</p>
-                <p>You have answered: {exam.correctAnswersCount} questions correctly out of {exam.questionCount}.</p>
-                {
-                    exam.grade >= exam.minPassGrade &&
-                    <p>Get your certificate <a href={`${serverDomain}:${serverPort}/exam/${examId}/cert`}>here</a></p>}
-                {allowReview && <AppButton onClick={() => changePage(0)}>Start review</AppButton>}
-            </>)
-        } else {
-            return (
-                <FixedFooter>
-                    <Container>
-                        <Question selectionState={selectionState()} question={exam.answeredQuestions![pageNumber]} highlightedAnswers={exam.originalQuestions![pageNumber].answers} mode="review" />
-                    </Container>
-                    <div>
-                        {//diplay next question button when valid
-                            pageNumber > 0 &&
-                            <AppButton varaiety="small" onClick={() => changePage(pageNumber - 1)}>{"<"}</AppButton>
-                        }
-                        <Pagination currentPage={pageNumber + 1} maximalPage={exam.answeredQuestions!.length} onClick={p => changePage(p - 1)} />
-                        {
-                            pageNumber < exam.answeredQuestions!.length - 1 &&
-                            < AppButton varaiety="small" onClick={() => changePage(pageNumber + 1)}>{">"}</AppButton>
-                        }
-                    </div>
-                </FixedFooter >
-            )
-        }
-
-    } else if (pageNumber < 0 || pageNumber > exam.questions.length - 1) {
-        return <>
-            <h1>{exam.title}</h1>
-            <p>{exam.intro}</p>
-            <AppButton onClick={() => changePage(0)}>Start exam</AppButton>
-        </>
-    } else {
-        return (
-            <FixedFooter>
-                <Container>
-                    <Question selectionState={selectionState()} question={exam.questions[pageNumber]} mode="test" />
-                </Container>
-                <div>
-                    {//diplay next question button when valid
-                        pageNumber > 0 &&
-                        <AppButton varaiety="small" onClick={() => changePage(pageNumber - 1)}>{"<"}</AppButton>
-                    }
-                    <Pagination currentPage={pageNumber + 1} maximalPage={exam.questions.length} onClick={p => changePage(p - 1)} />
-                    {
-                        pageNumber < exam.questions.length - 1 &&
-                        < AppButton varaiety="small" onClick={() => changePage(pageNumber + 1)}>{">"}</AppButton>
-                    }
-                    {
-                        pageNumber === exam.questions.length - 1 &&
-                        < AppButton onClick={submitExam}>Submit</AppButton>
-                    }
-                </div>
-            </FixedFooter >
-        )
+    } else if (isIntroPage) {
+        return <ExamIntro exam={exam} onStartExamOrReview={() => changePage(0)} />
+    } else if (true) {
+        return <ExamQuestions { ...{exam, changePage, submitExam} } currentPage={pageNumber} selectionStateBuilder={selectionState} />
     }
 }
 
-export default ExamQuestions
+export default ExamProgress

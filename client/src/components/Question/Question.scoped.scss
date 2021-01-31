@@ -5,6 +5,7 @@
     &__questions {
         display: flex;
         flex-direction: column;
+        padding: 0 0.4rem;
         &.horizontal {
             flex-direction: row;
             flex-wrap: wrap;
