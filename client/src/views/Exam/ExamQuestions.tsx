@@ -1,10 +1,12 @@
-import { models } from '@yahalom-tests/common';
+import { models, constants } from '@yahalom-tests/common';
 import React, { useCallback, useEffect, useState } from 'react';
 import { match, useHistory, useLocation } from 'react-router-dom';
 import { AppButton, Container, ErrorModal, FixedFooter, Pagination, WarningModal } from '../../components';
 import Question from '../../components/Question';
 import { useLoading, useModal } from '../../hooks';
 import { examService } from '../../services';
+
+const { serverDomain, serverPort } = constants.URLS;
 
 type ExamRouteProps = { examId: models.classes.guid; testId: models.classes.guid; page?: string }
 
@@ -86,13 +88,12 @@ const ExamQuestions: React.FC<ExamProps> = ({ match }) => {
             try {
                 const { data } = await examService.submitExam(examId);
                 setExam(data);
-                console.log(data);
+                push(`/exam/${testId}/${examId}`);
             } catch (error) {
                 openModal(ErrorModal, { title: "Error", body: "Couldn't submit your test, please try again." })
             }
         };
     };
-    console.log(exam);
 
     if (exam === undefined || exam === null) {
         return <p>Loading</p >
@@ -102,7 +103,14 @@ const ExamQuestions: React.FC<ExamProps> = ({ match }) => {
             pageNumber > (exam.originalQuestions?.length || 0) - 1 ||
             pageNumber < 0) {
             return (<>
+                <h1>{exam.title}</h1>
+                <p>{exam.intro}</p>
                 <p>{exam.message}</p>
+                <p>Your grade is: {exam.grade}</p>
+                <p>You have answered: {exam.correctAnswersCount} questions correctly out of {exam.questionCount}.</p>
+                {
+                    exam.grade >= exam.minPassGrade &&
+                    <p>Get your certificate <a href={`${serverDomain}:${serverPort}/exam/${examId}/cert`}>here</a></p>}
                 {allowReview && <AppButton onClick={() => changePage(0)}>Start review</AppButton>}
             </>)
         } else {
