@@ -41,6 +41,7 @@
                     border-radius: 50%;
                     transition: opacity 0.4ms ease;
                     background: 100% 100% / cover, $dark-blue $button-bg;
+                    transition: opacity 400ms ease-in-out;
                 }
             }
             &[type="checkbox"] {
