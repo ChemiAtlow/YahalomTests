@@ -27,7 +27,7 @@ const ExamProgress: React.FC<ExamProps> = ({ match }) => {
         const isExamInvalidPages = exam && !isExamAnExamResult(exam) && pageNumber > exam.questions.length - 1;
         const isResultInvalidPages = isExamAnExamResult(exam) &&
             (pageNumber > (exam.originalQuestions?.length || 0) - 1 ||
-                !exam.isReviewEnabled || !exam.originalQuestions || exam.answeredQuestions);
+                !exam.isReviewEnabled || !exam.originalQuestions || !exam.answeredQuestions);
         return pageNumber < 0 || isExamInvalidPages || isResultInvalidPages;
     }, [exam, pageNumber]);
     useEffect(() => {

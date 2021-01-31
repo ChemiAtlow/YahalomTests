@@ -54,7 +54,7 @@ const ExamQuestions: React.FC<ExamQuestionsProps> = ({
                         {">"}
                     </AppButton>
                 )}
-                {isExamAResult && currentPage === questions!.length - 1 && (
+                {!isExamAResult && currentPage === questions!.length - 1 && (
                     <AppButton onClick={submitExam}>Submit</AppButton>
                 )}
             </div>
