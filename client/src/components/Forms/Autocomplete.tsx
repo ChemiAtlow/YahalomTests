@@ -19,7 +19,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onChange, value, .
         const filteredOptions = options.filter((opt) =>
             new RegExp(value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(opt)
         );
-        setFilteredOptions(filteredOptions);
+        setFilteredOptions([...new Set(filteredOptions)]);
         setShowOptions(true);
         onChange(value);
     };
