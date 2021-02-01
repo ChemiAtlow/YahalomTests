@@ -1,5 +1,5 @@
 import { models } from "@yahalom-tests/common";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { match } from "react-router-dom";
 import { Column, Container, DataTable, ErrorModal, ExamReviewModal, FormField, Icon, SearchRow, Tooltip } from "../../components";
 import { useAuth, useLoading, useModal } from "../../hooks";
@@ -58,6 +58,11 @@ const StudentReport: React.FC<StudentReportProps> = ({ match }) => {
         openModal(ExamReviewModal, { examResult });
     };
 
+    const average = useMemo(() => {
+        const totalGrades = examResults.reduce((prev, { grade }) => prev + grade, 0);
+        return Math.ceil(totalGrades / examResults.length);
+    }, [examResults]);
+
     useEffect(() => {
         setLoadingState("loading");
         reportService.getStudentReports(
@@ -72,7 +77,9 @@ const StudentReport: React.FC<StudentReportProps> = ({ match }) => {
         <Container>
             <h1>Student report</h1>
             <SearchRow>
-                <span>{studentEmail}</span>
+                <div>
+                    <b>Email:</b> {studentEmail}. <b>Average grade:</b> {average}.
+                </div>
                 <FormField label="Search by test name/id" type="text" search value={search} onChange={e => setSearch(e.target.value)} />
             </SearchRow>
             <DataTable data={examResults} columns={columns} searchTerm={search} searchKeys={["id", "test", "title"]} />
