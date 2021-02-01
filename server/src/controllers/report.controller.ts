@@ -14,8 +14,7 @@ export const getTestReport = async (req: types.RequestWithId, res: Response) => 
     const getExams = examService.getAllExamsOfTest(testId);
     const getTest = testService.getTestsById(testId);
     const [exams, test] = await Promise.all([getExams, getTest]);
-    const originalQuestions = await questionService.getMultipleQuestionsByIdArray(test.questions);
-    res.send({ exams, test, originalQuestions });
+    res.send({ exams, test });
 };
 
 export const getStudentReport = async (req: types.RequestWithEmail, res: Response) => {
