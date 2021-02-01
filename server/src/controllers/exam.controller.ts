@@ -74,10 +74,8 @@ export const updateExam = async (req: types.RequestWithId<any, models.dtos.ExamC
 
 export const submitExam = async (req: types.RequestWithId, res: Response) => {
     const { id: examId } = req.params;
-    const lockExam = examService.lockExam(examId);
-    const getExamResult = examService.getExamResult(examId);
-    const [, examResult] = await Promise.all([lockExam, getExamResult]);
-    const { email, result, teacherEmail, completionDate = 0, title, studentEmail } = examResult;
+    await examService.lockExam(examId);
+    const { email, result, teacherEmail, completionDate = 0, title, studentEmail } = await examService.getExamResult(examId);
     const markStudentActivity = studentService.markStudentActivity(studentEmail);
     const getStudentByEmail = studentService.getStudentByEmail(studentEmail);
     const [student] = await Promise.all([getStudentByEmail, markStudentActivity]);
