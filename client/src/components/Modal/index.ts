@@ -4,3 +4,4 @@ export * from "./QuestionPeekModal";
 export * from "./MessageModal";
 export * from "./WarningModal";
 export * from "./TestLinkModal";
+export * from "./ExamReviewModal";
