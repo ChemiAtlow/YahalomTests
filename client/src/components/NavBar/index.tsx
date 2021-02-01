@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../../hooks/auth.hook";
 import FloatingMenu from "../FloatingMenu";
 import "./NavBar.scoped.scss";
