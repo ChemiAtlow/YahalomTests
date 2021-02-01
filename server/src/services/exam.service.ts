@@ -8,7 +8,7 @@ export const createNewExam = async (
     studentEmail: models.classes.guid
 ) => {
     //if there is no test with this id - testService will throw an exception.
-    const { intro, language, title, questions } = await testService.getTestsById(testId);
+    const { intro, language, title, questions, minPassGrade } = await testService.getTestsById(testId);
     const examQuestions = await buildAnsweredQuesionsByExam(questions);
     const exam = await examRepository.addItem({
         id: "", //set by repo
@@ -19,6 +19,7 @@ export const createNewExam = async (
         language,
         title,
         questions: examQuestions,
+        minPassGrade
     });
     return exam;
 };
@@ -70,16 +71,17 @@ export const getAllExamsOfTest = async (testId: models.classes.guid) => {
 
 export const getAllExamsOfStudent = async (email: string, organizationId: models.classes.guid) => {
     const exams = await examRepository.getAll();
-    const filteredExams = exams.filter(async ({ student, test }) => {
-        student === email &&
-            (await organizationService.getOrganizationByTestId(test)).id === organizationId;
-    });
-    console.log(filteredExams);
-    return filteredExams;
+    //this functions should filtered asynchronously the exams.
+    const reducedExams = await exams.reduce(async (prev, current) => {
+        const isExamOfStudentAndOrg = current.student === email &&
+            (await organizationService.getOrganizationByTestId(current.test)).id === organizationId;
+        return isExamOfStudentAndOrg ? [... await prev, current] : prev;
+    }, Promise.resolve(Array<models.interfaces.Exam>()));
+    return reducedExams;
 };
 
 export const getExamResult = async (examId: models.classes.guid) => {
-    const { test, questions, completed: completionDate, student: studentEmail, grade = 0, correctAnswersCount = 0 } = await getExamById(
+    const { test, questions, completed: completionDate, student: studentEmail, grade = 0, correctAnswersCount = 0, minPassGrade } = await getExamById(
         examId
     );
     const {
@@ -90,7 +92,6 @@ export const getExamResult = async (examId: models.classes.guid) => {
         failureEmail,
         failureMessage,
         isReviewEnabled,
-        minPassGrade,
         teacherEmail,
     } = await testService.getTestsById(test);
     const originalQuestions = await Promise.all(
