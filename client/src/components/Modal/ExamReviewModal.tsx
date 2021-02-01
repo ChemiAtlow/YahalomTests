@@ -6,7 +6,7 @@ import { BaseModal } from "./BaseModal";
 
 export interface ExamReviewModalProps extends ModalInstance<boolean> {
     examResult: models.interfaces.ExamResult;
-    children: never;
+    children?: never;
 }
 
 export const ExamReviewModal: React.FC<ExamReviewModalProps> = ({
