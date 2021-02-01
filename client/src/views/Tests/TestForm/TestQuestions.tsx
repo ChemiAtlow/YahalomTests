@@ -1,47 +1,58 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth, useModal } from "../../../hooks";
 import { models } from '@yahalom-tests/common';
-import { AppButton, Column, Container, DataTable, Ellipsis, FormField, Icon, QuestionPeekModal, SearchRow } from '../../../components';
+import { AppButton, Autocomplete, Column, Container, DataTable, Ellipsis, Icon, QuestionPeekModal, SearchRow } from '../../../components';
 import { questionService } from '../../../services';
+import type { TestQuestionsKeys } from './types';
 
-export type TestQuestionsKeys = Pick<models.dtos.TestDto, "questions">;
 interface TestQuestionsProps {
     test: TestQuestionsKeys;
-    onChange: (change: Partial<TestQuestionsKeys>) => void;
-    onValidityChange: (change: string) => void;
+    onChange: (change: TestQuestionsKeys) => void;
 }
 
-export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, onValidityChange }) => {
+export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange }) => {
     //set test prop as component state.
     const { buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
     const [questions, setQuestions] = useState<models.interfaces.Question[]>([]);
-    const [search, setSearch] = useState("");
+    const [questionsAutoComplete, setQuestionsAutoComplete] = useState<string[]>([]);
+    const [search, setSearch] = useState('');
     const filteredQuestions = useRef<models.interfaces.Question[]>([]);
-    const [activeRows, setActiveRows] = useState<{ key: "id"; rows: models.classes.guid[] }>({ key: "id", rows: test.questions })
+    const [activeRows, setActiveRows] = useState<{ key: 'id'; rows: models.classes.guid[] }>({
+        key: 'id',
+        rows: test.questions,
+    });
     const previewQuestion = (question: models.interfaces.Question) =>
         openModal(QuestionPeekModal, { question });
     const columns: Column[] = [
         {
-            label: "Title",
-            key: "title",
+            label: 'Title',
+            key: 'title',
             sortable: true,
             template: ({ data }) => <Ellipsis data={data} maxLength={10} direction="right" />,
         },
         {
-            label: "Labels",
-            key: "label",
+            label: 'Labels',
+            key: 'label',
             sortable: true,
             largeColumn: true,
             template: ({ data }) => <span>{data}</span>,
         },
         {
-            label: "",
-            key: "*",
+            label: '',
+            key: '*',
             sortable: false,
             smallColumn: true,
-            template: ({ data }) => <Icon icon="preview" onClick={(e) => { e.stopPropagation(); previewQuestion(data) }} />,
-        }
+            template: ({ data }) => (
+                <Icon
+                    icon="preview"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        previewQuestion(data);
+                    }}
+                />
+            ),
+        },
     ];
 
     //get field questions.
@@ -51,19 +62,24 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
             .then(({ data }) => setQuestions(data));
     }, [setQuestions, buildAuthRequestData]);
     useEffect(() => {
-        setActiveRows({ key: "id", rows: test.questions });
+        const labels = questions.flatMap(({ label }) => label.split(/[ ,]+/));
+        const uniqueLabels = [...new Set(labels)];
+        setQuestionsAutoComplete(uniqueLabels);
+    }, [questions, setQuestionsAutoComplete]);
+    useEffect(() => {
+        setActiveRows({ key: 'id', rows: test.questions });
     }, [setActiveRows, test.questions]);
 
     const clearAllSelected = () => {
         onChange({ questions: [] });
     };
     const selectAllVisible = () => {
-        const visibleQuestionsIds = filteredQuestions.current.map(q => q.id!);
+        const visibleQuestionsIds = filteredQuestions.current.map((q) => q.id!);
         onChange({ questions: [...new Set(test.questions.concat(visibleQuestionsIds))] });
     };
 
     const onRowClicked = (question: models.interfaces.Question) => {
-        const questionIndex = test.questions.findIndex(qId => qId === question.id);
+        const questionIndex = test.questions.findIndex((qId) => qId === question.id);
         if (questionIndex < 0) {
             test.questions.push(question.id!);
         } else {
@@ -83,23 +99,22 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange, on
                         Select all visible
                     </AppButton>
                 </div>
-                <FormField
+                <Autocomplete
                     label="Search by label"
-                    type="text"
-                    search
+                    options={questionsAutoComplete}
                     value={search}
-                    onChange={e => setSearch(e.target.value)}
+                    onChange={setSearch}
                 />
             </SearchRow>
             <DataTable
                 columns={columns}
                 data={questions}
                 onRowClick={onRowClicked}
-                onDataFiltered={filtered => filteredQuestions.current = filtered}
-                searchKeys={["label"]}
+                onDataFiltered={(filtered) => (filteredQuestions.current = filtered)}
+                searchKeys={['label']}
                 searchTerm={search}
                 activeRows={activeRows}
             />
         </Container>
     );
-}
+};

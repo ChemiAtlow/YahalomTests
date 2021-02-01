@@ -1,67 +1,23 @@
 import { models } from "@yahalom-tests/common";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FormField, Select, Row, Container } from "../../../components";
 import { enumToArray, SwitchCamelCaseToHuman } from "../../../utils";
+import type { QuestionDetailsKeys, QuestionDetailsErrors } from "./types";
 
 const types = enumToArray(models.enums.QuestionType).map(SwitchCamelCaseToHuman);
 const alignments = enumToArray(models.enums.Alignment).map(SwitchCamelCaseToHuman);
 
-export type QuestionDetailsKeys = Pick<
-    models.interfaces.Question,
-    "type" | "alignment" | "title" | "label" | "additionalContent"
->;
 interface QuestionDetailsProps {
     fieldName: string;
     question: QuestionDetailsKeys;
+    errors: Omit<QuestionDetailsErrors, "general">;
     onChange: (change: Partial<QuestionDetailsKeys>) => void;
-    onValidityChange: (change: string) => void;
 }
 
-export const QuestionDetails: React.FC<QuestionDetailsProps> = ({
-    fieldName,
-    question,
-    onChange,
-    onValidityChange
-}) => {
-    const [titleError, setTitleError] = useState("");
-    const [labelError, setLabelError] = useState("");
-
-    const onTypeSelected = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        onChange({ type: e.target.selectedIndex - 1 });
-    };
-    const onAlignmentSelected = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        onChange({ alignment: e.target.selectedIndex - 1 });
-    };
-
-    const onTitleChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTitleError("");
-        const { value } = e.target;
-        if (!value.trim()) {
-            setTitleError("Title is required")
-        }
-        onChange({ title: value });
-    };
-    const onTagsChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setLabelError("");
-        const { value } = e.target;
-        if (!value.trim()) {
-            setLabelError("Label is required");
-        } else if (!/(\w+)(,\s*\w+)*/.test(value)) {
-            setLabelError("Label must be a comma seperated string")
-        }
-        onChange({ label: e.target.value });
-    };
-    useEffect(() => {
-        let errorStr = "";
-        if (titleError || labelError) {
-            if (titleError && labelError) {
-                errorStr = `Errors: ${titleError}, ${labelError}`;
-            } else {
-                errorStr = `Error: ${titleError || labelError}`;
-            }
-        }
-        onValidityChange(errorStr)
-    }, [titleError, labelError, onValidityChange])
+export const QuestionDetails: React.FC<QuestionDetailsProps> = ({ fieldName, question, onChange, errors }) => {
+    const genericChange = <K extends keyof QuestionDetailsKeys, V extends QuestionDetailsKeys[K]>(key: K, value: V) => {
+        onChange({ [key]: value })
+    }
 
     return (
         <Container>
@@ -73,14 +29,14 @@ export const QuestionDetails: React.FC<QuestionDetailsProps> = ({
                     label="Question type"
                     required
                     value={question.type}
-                    onChange={onTypeSelected}
+                    onChange={({target}) => genericChange("type", target.selectedIndex - 1)}
                     options={types}
                 />
                 <Select
                     label="Answer layout"
                     required
                     value={question.alignment}
-                    onChange={onAlignmentSelected}
+                    onChange={({target}) => genericChange("alignment", target.selectedIndex - 1)}
                     options={alignments}
                 />
             </Row>
@@ -89,22 +45,22 @@ export const QuestionDetails: React.FC<QuestionDetailsProps> = ({
                 type="text"
                 required
                 value={question.title}
-                onChange={onTitleChanged}
-                error={titleError}
+                onChange={({target}) => genericChange("title", target.value)}
+                error={errors.title}
             />
             <FormField
                 label="Aditional content"
                 type="textarea"
                 value={question.additionalContent}
-                onChange={e => onChange({ additionalContent: e.target.value })}
+                onChange={({target}) => genericChange("additionalContent", target.value)}
             />
             <FormField
                 label="Tags"
                 required
                 type="text"
                 value={question.label}
-                onChange={onTagsChanged}
-                error={labelError}
+                onChange={({target}) => genericChange("label", target.value)}
+                error={errors.label}
             />
         </Container>
     );

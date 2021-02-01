@@ -1,3 +1,3 @@
 export * from "./TestDetails";
-export * from "./TestEmails";
+export * from './TestMessages';
 export * from "./TestQuestions";

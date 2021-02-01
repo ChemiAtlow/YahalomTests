@@ -13,7 +13,7 @@ $top-padding: 18px;
 .form-field {
     $form-field: &;
     display: block;
-    margin-bottom: 16px;
+    margin-bottom: 0.3rem;
     &__control {
         display: block;
         overflow: hidden;
@@ -107,11 +107,12 @@ $top-padding: 18px;
                 border-bottom: 2px solid $dark-red;
             }
         }
-        #{$form-field}__error {
-            margin: 0;
-            padding: 5px 12px;
-            color: $dark-red;
-            text-align: left;
-        }
+    }
+    &__error {
+        margin: 0;
+        padding: 5px 12px;
+        height: 2rem;
+        color: $dark-red;
+        text-align: left;
     }
 }

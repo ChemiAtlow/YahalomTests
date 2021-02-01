@@ -1,11 +1,12 @@
 import { models } from '@yahalom-tests/common';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import { AppButton, SectionNavigator, Section, ErrorModal, QuestionPeekModal, WarningModal, MessageModal, FixedFooter } from '../../components';
-import { QuestionDetails, QuestionDetailsKeys, QuestionAnswers } from './QuestionForm';
+import { QuestionDetails, QuestionAnswers } from './QuestionForm';
 import { useAuth, useModal } from "../../hooks";
 import { questionService } from '../../services';
 import "./EditQuestion.scoped.scss";
+import type { QuestionDetailsErrors, QuestionDetailsKeys } from './QuestionForm/types';
 
 interface EditParams {
     questionId?: models.classes.guid;
@@ -23,12 +24,18 @@ const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) 
         label: "",
         alignment: models.enums.Alignment.Vertical,
     });
-    const [detailsError, setDetailsError] = useState("");
+    const [detailsError, setDetailsError] = useState<QuestionDetailsErrors>({
+        title: "",
+        general: "",
+        label: "",
+    });
     const [answersError, setAnswersError] = useState("");
     const { activeStudyField, buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
     const { state } = useLocation<{ question?: models.dtos.QuestionDto }>();
     const { params } = useRouteMatch<EditParams>();
+    const isInvalid = useMemo(() => Boolean(detailsError.general) || Boolean(answersError), [detailsError, answersError]);
+    
     useEffect(() => {
         if (params.questionId && state?.question) {
             setQuestion(state.question);
@@ -40,16 +47,63 @@ const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) 
                     body: `An error occoured while loading the question for editing:\n${err?.message || ""}`
                 }))
         }
-    }, [state, params, setQuestion, buildAuthRequestData, openModal])
-    const isInvalid = !question.title || !question.label || Boolean(detailsError) || question.answers.length < 2 || question.answers.filter(({correct}) => correct).length < 1 || Boolean(answersError);
-    const onChange = async (e: Partial<QuestionDetailsKeys>) => {
+    }, [state, params, setQuestion, buildAuthRequestData, openModal]);
+
+    useEffect(() => {
+        const { answers } = question;
+        const answersLength = answers.length;
+        const isAtLeast2Answers = answersLength < 2 || (answersLength === 2 && !answers[1].content.trim())
+        const containsEmptyAnswers = answers.some(({ content }, i) => !content.trim() && i !== answersLength - 1);
+        const containsNoCorrectAnswer = answers.every(({correct}) => !correct);
+        const isAnEmptyAnswerCorrect = answers.some(({content, correct}) => !content.trim() && correct);
+        const errors: string[] = [];
+        //Check at least 2 questions exist
+        if (isAtLeast2Answers) {
+            errors.push("at least 2 answers are required");
+        }
+        //only last answer can be empty
+        if (containsEmptyAnswers) {
+            errors.push("Empty answers are invalid");
+        }
+        //empty answer can't be correct
+        if (isAnEmptyAnswerCorrect) {
+            errors.push("Empty answer can't be correct")
+        }
+        //no answer is marked as correct
+        if (containsNoCorrectAnswer) {
+            errors.push("At least one question must be correct")
+        }
+        let errMsg = "";
+        if (errors.length === 1) {
+            errMsg = `Error: ${errors[0]}`
+        } else if (errors.length > 1) {
+            errMsg = `Errors: ${errors.join(", ")}`
+        }
+        setAnswersError(errMsg);
+        const isQuestionDetailsInvalid = !question.title.trim() || !/(\w+)(,\s*\w+)*/.test(question.label);
+        const general = isQuestionDetailsInvalid ? "There are required details missing!" : ""
+        setDetailsError(detailsError => ({ ...detailsError, general }));
+    }, [question]);
+    const onDetailsChange = (change: Partial<QuestionDetailsKeys>) => {
+        if (change.title !== undefined) {
+            const title = change.title.trim() ? "" : "Title is required!";
+            setDetailsError({ ...detailsError, title });
+        }
+        if (change.label !== undefined) {
+            const value = change.label;
+            const label = !value.trim() ? "Label is required!" : !/(\w+)(,\s*\w+)*/.test(value) ? "Label must be a comma seperated string!" : "";
+            setDetailsError({ ...detailsError, label });
+        }
+        onChange(change);
+    }
+    const onChange = async (e: Partial<models.dtos.QuestionDto>) => {
         const afterChange = { ...question, ...e };
         let doSave = true;
         if (e.type === models.enums.QuestionType.SingleChoice) {
             const correctAnswersCount = question.answers.filter(ans => ans.correct).length;
-            afterChange.answers = afterChange.answers.map(({content}) => ({ content, correct: false }))
             doSave = await new Promise<boolean>((res, rej) => {
                 if (correctAnswersCount > 1) {
+                    afterChange.answers = afterChange.answers.map(({content}) => ({ content, correct: false }))
                     setTimeout(() => openModal(WarningModal, {
                         title: "Issue changing question type!",
                         body: `You tried changing a multi choice question to a single choice question.\nCurrently there are ${correctAnswersCount} answers marked as correct.\nProcceding with the change will mark all questions as incorrect.`,
@@ -122,15 +176,15 @@ const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) 
         <FixedFooter>
             <form onSubmit={onSubmit} noValidate id="edit-question__form">
                 <SectionNavigator>
-                    <Section label="Question Details" isValid={!detailsError} errMsg={detailsError}>
+                    <Section label="Question Details" isValid={!detailsError.general} errMsg={detailsError.general}>
                         <QuestionDetails
                             question={question}
                             fieldName={activeStudyField?.name || ""}
-                            onChange={onChange}
-                            onValidityChange={setDetailsError} />
+                            errors={detailsError}
+                            onChange={onDetailsChange} />
                     </Section>
                     <Section label="Question answers" isValid={!answersError} errMsg={answersError}>
-                        <QuestionAnswers question={question} onChange={onChange} onValidityChange={setAnswersError} />
+                        <QuestionAnswers question={question} onChange={onChange} />
                     </Section>
                 </SectionNavigator>
             </form >
