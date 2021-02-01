@@ -7,19 +7,10 @@ interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement | HT
     label: string;
     error?: string;
     search?: boolean;
-    ref?: React.MutableRefObject<HTMLDivElement | null>;
 }
-const FormField: React.FC<FormFieldProps> = ({
-    label,
-    error,
-    type,
-    required,
-    search,
-    ref,
-    ...rest
-}) => {
+const FormField: React.FC<FormFieldProps> = ({ label, error, type, required, search, ...rest }) => {
     return (
-        <div ref={ref} className={`form-field ${error ? 'error' : ''} ${search ? 'search' : ''}`}>
+        <div className={`form-field ${error ? 'error' : ''} ${search ? 'search' : ''}`}>
             <label className="form-field__control">
                 {type === 'textarea' ? (
                     <textarea
