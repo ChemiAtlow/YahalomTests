@@ -10,9 +10,9 @@ interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement | HT
 }
 const FormField: React.FC<FormFieldProps> = ({ label, error, type, required, search, ...rest }) => {
     return (
-        <div className={`form-field ${error ? "error" : ""} ${search ? "search" : ""}`}>
+        <div className={`form-field ${error ? 'error' : ''} ${search ? 'search' : ''}`}>
             <label className="form-field__control">
-                {type === "textarea" ? (
+                {type === 'textarea' ? (
                     <textarea
                         className="form-field__control-input"
                         placeholder=" "
@@ -29,7 +29,7 @@ const FormField: React.FC<FormFieldProps> = ({ label, error, type, required, sea
                     />
                 )}
                 <span className="form-field__control-label">{`${label}${
-                    required ? "*" : ""
+                    required ? '*' : ''
                 }`}</span>
                 <div className="form-field__control-bar" />
                 {search && (
@@ -38,7 +38,7 @@ const FormField: React.FC<FormFieldProps> = ({ label, error, type, required, sea
                     </div>
                 )}
             </label>
-            {error && <p className="form-field__error">{error}</p>}
+            <p className="form-field__error">{error}</p>
         </div>
     );
 };
