@@ -1,16 +1,25 @@
-import React from "react";
-import "./FormField.scoped.scss";
-import Icon from "../Icon";
+import React from 'react';
+import './FormField.scoped.scss';
+import Icon from '../Icon';
 
 interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
-    type: "text" | "password" | "number" | "textarea";
+    type: 'text' | 'password' | 'number' | 'textarea';
     label: string;
     error?: string;
     search?: boolean;
+    ref?: React.MutableRefObject<HTMLDivElement | null>;
 }
-const FormField: React.FC<FormFieldProps> = ({ label, error, type, required, search, ...rest }) => {
+const FormField: React.FC<FormFieldProps> = ({
+    label,
+    error,
+    type,
+    required,
+    search,
+    ref,
+    ...rest
+}) => {
     return (
-        <div className={`form-field ${error ? 'error' : ''} ${search ? 'search' : ''}`}>
+        <div ref={ref} className={`form-field ${error ? 'error' : ''} ${search ? 'search' : ''}`}>
             <label className="form-field__control">
                 {type === 'textarea' ? (
                     <textarea
