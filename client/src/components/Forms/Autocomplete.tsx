@@ -52,7 +52,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onChange, value, .
                 blockErrors
             />
             {showOptions && value && (
-                <ul className="autocomplete-options" >
+                <ul className="autocomplete-options">
                     {filteredOptions.length ? (
                         filteredOptions.map((optionName, index) => {
                             return (
@@ -67,7 +67,9 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onChange, value, .
                             );
                         })
                     ) : (
-                        <li className="autocomplete-options__item empty">No options!</li>
+                        <li className="autocomplete-options__item empty">
+                            No suggestion found
+                        </li>
                     )}
                 </ul>
             )}
