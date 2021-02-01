@@ -5,7 +5,7 @@ $darker-blue: #0025ec;
 $deep-blue: #3f51b5;
 $grayish-blue: #d8dae5;
 $light: #fff;
-$light-gray: #f9f9fb;
+$light-gray: #f6f6f9;
 $dialog-gray: #d8dae5;
 $gray: #e9e9e9;
 $dark-gray: #969696;
@@ -22,7 +22,7 @@ $button-bg: linear-gradient(135.23deg, #{$secondary}, #{$dark-blue});
 $bubble-bg: linear-gradient(224.46deg, darken($deep-blue, 18) 0%, $deep-blue 100%);
 $warn-bg: linear-gradient(135.23deg, #{$light-red}, #{$dark-red});
 
-$header-height: 3.5rem;
+$header-height: 4rem;
 $modal-padding: 1.5rem;
 $modal-radius: 0.15rem;
 $modal-section-height: 4.5rem;

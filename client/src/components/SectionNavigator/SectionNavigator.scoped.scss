@@ -6,8 +6,8 @@
     &-links {
         display: flex;
         background: $light;
-        border-top: 1px solid $deep-blue;
-        box-shadow: 0 1px 5px $deep-blue;
+        border-top: 1px solid $gray;
+        box-shadow: 0 1px 20px rgba($deep-blue, 0.5);
         &__item {
             flex: 1;
             display: flex;
@@ -16,15 +16,19 @@
             position: relative;
             font-weight: bold;
             font-size: 1.1rem;
+            margin: 0.2rem 0;
             transition: all 400ms ease-in-out;
             &:not(:last-of-type) {
-                border-right: 1px solid $deep-blue;
+                border-right: 1px solid $gray;
             }
-            &.active,
-            &:hover {
+            &.active {
                 background: $gray;
                 font-size: 1.2rem;
                 color: $deep-blue;
+            }
+            &:hover {
+                color: $deep-blue;
+                background: rgba($c-border, 0.3);
             }
             &-error {
                 position: absolute;

@@ -5,6 +5,7 @@
     height: 100%;
     width: 100%;
     background: rgba($primary, 0.4);
-    backdrop-filter: blur(0.25rem);
+    backdrop-filter: blur(0.75rem);
     height: 100%;
+    z-index: 4;
 }
