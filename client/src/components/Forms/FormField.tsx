@@ -6,11 +6,29 @@ interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement | HT
     type: 'text' | 'password' | 'number' | 'textarea';
     label: string;
     error?: string;
+    blockErrors?: boolean;
     search?: boolean;
 }
-const FormField: React.FC<FormFieldProps> = ({ label, error, type, required, search, ...rest }) => {
+const FormField: React.FC<FormFieldProps> = ({
+    label,
+    error,
+    type,
+    required,
+    blockErrors,
+    search,
+    ...rest
+}) => {
     return (
-        <div className={`form-field ${error ? 'error' : ''} ${search ? 'search' : ''}`}>
+        <div
+  
+
+                                className={`form-field ${error && !blockErrors ? 'error' : ''} ${
+                
+                
+                search ? 'search' : ''
+            
+            
+            }`}>
             <label className="form-field__control">
                 {type === 'textarea' ? (
                     <textarea
@@ -38,7 +56,7 @@ const FormField: React.FC<FormFieldProps> = ({ label, error, type, required, sea
                     </div>
                 )}
             </label>
-            <p className="form-field__error">{error}</p>
+            {!blockErrors && <p className="form-field__error">{error}</p>}
         </div>
     );
 };
