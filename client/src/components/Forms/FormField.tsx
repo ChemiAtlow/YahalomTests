@@ -20,14 +20,8 @@ const FormField: React.FC<FormFieldProps> = ({
 }) => {
     return (
         <div
-  
-
-                                className={`form-field ${error && !blockErrors ? 'error' : ''} ${
-                
-                
+            className={`form-field ${error && !blockErrors ? 'error' : ''} ${
                 search ? 'search' : ''
-            
-            
             }`}>
             <label className="form-field__control">
                 {type === 'textarea' ? (
