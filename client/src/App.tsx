@@ -23,7 +23,12 @@ const App: React.FC = () => {
                                             <NestedRoutes>
                                                 <ProtectedRoute requiresField path="/questions" component={Questions} />
                                                 <ProtectedRoute requiresField path="/tests" component={Tests} />
-                                                <ProtectedRoute requiresField path="/reports" component={Reports} />
+                                                <ProtectedRoute requiresField path="/reports">
+                                                    <NestedRoutes>
+                                                        <ProtectedRoute requiresField path="/student" component={Reports} />
+                                                        <ProtectedRoute requiresField path="/test" component={Reports} />
+                                                    </NestedRoutes>
+                                                </ProtectedRoute>
                                             </NestedRoutes>
                                         </ProtectedRoute>
                                         <ProtectedRoute path="/" component={Home} />

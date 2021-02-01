@@ -39,8 +39,13 @@ const NavBar: React.FC = () => {
 						</Link>
 					)}
 					{activeStudyField && (
-						<Link to={getOrganizationAndFieldUrl("reports")}>
-							Reports
+						<Link to={getOrganizationAndFieldUrl("reports/student")}>
+							Reports per student
+						</Link>
+					)}
+					{activeStudyField && (
+						<Link to={getOrganizationAndFieldUrl("reports/test")}>
+							Reports per test
 						</Link>
 					)}
 					<div onClick={() => signout()}>Log out</div>
