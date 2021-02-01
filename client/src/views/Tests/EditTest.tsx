@@ -5,7 +5,7 @@ import { SectionNavigator, Section, AppButton, ErrorModal, MessageModal, FixedFo
 import { useAuth, useModal } from '../../hooks';
 import { testService } from '../../services';
 import { TestDetails, TestMessages, TestQuestions } from "./TestForm";
-import { TestDetailsKeys, TestMessagesKeys, TestDetailsError, TestMessagesError  } from './TestForm/types';
+import type { TestDetailsKeys, TestMessagesKeys, TestDetailsError, TestMessagesError  } from './TestForm/types';
 
 interface EditTestProps {
     onTestAddedOrEdited: (test: models.interfaces.Test) => void;

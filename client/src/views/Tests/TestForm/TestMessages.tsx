@@ -8,7 +8,7 @@ import {
     FormField,
 } from '../../../components';
 import { EmailForm } from "./EmailForm";
-import { TestMessagesError, TestMessagesKeys } from './types';
+import type { TestMessagesError, TestMessagesKeys } from './types';
 
 const columns: Column[] = [
     {

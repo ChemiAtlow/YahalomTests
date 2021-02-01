@@ -3,7 +3,7 @@ import { useAuth, useModal } from "../../../hooks";
 import { models } from '@yahalom-tests/common';
 import { AppButton, Column, Container, DataTable, Ellipsis, FormField, Icon, QuestionPeekModal, SearchRow } from '../../../components';
 import { questionService } from '../../../services';
-import { TestQuestionsKeys } from './types';
+import type { TestQuestionsKeys } from './types';
 
 interface TestQuestionsProps {
     test: TestQuestionsKeys;

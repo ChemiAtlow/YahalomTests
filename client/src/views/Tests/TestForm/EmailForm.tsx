@@ -1,7 +1,7 @@
 import React from 'react';
 import { models } from '@yahalom-tests/common';
 import { FormField } from '../../../components';
-import { TestEmailError } from './types';
+import type { TestEmailError } from './types';
 
 interface EmailFormProps {
     email: models.dtos.EmailDto;

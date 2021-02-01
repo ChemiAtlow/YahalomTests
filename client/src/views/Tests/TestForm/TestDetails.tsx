@@ -3,7 +3,7 @@ import { models } from '@yahalom-tests/common';
 import { Row, FormField, Select, Container, ToggleSwitch } from '../../../components';
 import { useAuth } from "../../../hooks";
 import { enumToArray, SwitchCamelCaseToHuman } from '../../../utils';
-import { TestDetailsError, TestDetailsKeys } from './types';
+import type { TestDetailsError, TestDetailsKeys } from './types';
 
 const languages = enumToArray(models.enums.Language).map(SwitchCamelCaseToHuman);
 
