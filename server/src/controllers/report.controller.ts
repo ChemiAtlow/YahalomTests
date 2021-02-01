@@ -22,7 +22,7 @@ export const getStudentReport = async (req: types.RequestWithEmail, res: Respons
     const { organization } = req.headers as types.AuthenticatedRequestHeaders;
     const { email } = req.params;
     try {
-        const exams = await examService.getAllExamsOfStudent(email, organization);
+        const exams = await examService.getAllExamResultsOfStudent(email, organization);
         res.send(exams);
     } catch (err) {
         if (err instanceof HttpError) {
