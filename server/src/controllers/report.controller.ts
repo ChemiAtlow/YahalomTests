@@ -11,7 +11,7 @@ export const getTestReport = async (req: types.RequestWithId, res: Response) => 
     if (id !== organization) {
         throw new UnauthorizedError(false);
     }
-    const getExams = examService.getAllExamsOfTest(testId);
+    const getExams = examService.getAllExamResultsOfTest(testId);
     const getTest = testService.getTestsById(testId);
     const [exams, test] = await Promise.all([getExams, getTest]);
     res.send({ exams, test });
