@@ -3,19 +3,17 @@ import { models } from '@yahalom-tests/common';
 import { Row, FormField, Select, Container, ToggleSwitch } from '../../../components';
 import { useAuth } from "../../../hooks";
 import { enumToArray, SwitchCamelCaseToHuman } from '../../../utils';
-import { TestDetailsKeys } from './types';
+import { TestDetailsError, TestDetailsKeys } from './types';
 
 const languages = enumToArray(models.enums.Language).map(SwitchCamelCaseToHuman);
 
 interface TestDetailsProps {
     test: TestDetailsKeys;
     onChange: (change: Partial<TestDetailsKeys>) => void;
-    titleError: string;
-    gradeError: string;
-    introError: string;
+    errors: Omit<TestDetailsError, "general">;
 };
 
-export const TestDetails: React.FC<TestDetailsProps> = ({ test, onChange, gradeError, introError, titleError }) => {
+export const TestDetails: React.FC<TestDetailsProps> = ({ test, onChange, errors }) => {
     const { activeStudyField } = useAuth();
     const genericChange = <K extends keyof TestDetailsKeys, V extends TestDetailsKeys[K]>(key: K, value: V) => {
         onChange({ [key]: value })
@@ -35,7 +33,7 @@ export const TestDetails: React.FC<TestDetailsProps> = ({ test, onChange, gradeE
                     required
                     value={test.title}
                     onChange={({ target }) => genericChange("title", target.value)}
-                    error={titleError}
+                    error={errors.title}
                 />
                 <FormField label="Passing grade"
                     type="number"
@@ -44,7 +42,7 @@ export const TestDetails: React.FC<TestDetailsProps> = ({ test, onChange, gradeE
                     required
                     value={test.minPassGrade}
                     onChange={({ target }) => genericChange("minPassGrade", +target.value)}
-                    error={gradeError}
+                    error={errors.minPassGrade}
                 />
                 <ToggleSwitch variety="large" checked={test.isReviewEnabled} onChange={({ target }) => genericChange("isReviewEnabled", target.checked)}>
                     Show correct answers after submission
@@ -54,7 +52,7 @@ export const TestDetails: React.FC<TestDetailsProps> = ({ test, onChange, gradeE
                     required
                     value={test.intro}
                     onChange={({ target }) => genericChange("intro", target.value)}
-                    error={introError}
+                    error={errors.intro}
                 />
             </Row>
         </Container>
