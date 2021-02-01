@@ -9,6 +9,7 @@ import {
     FormField,
 } from '../../../components';
 import { EmailForm } from "./EmailForm";
+import { TestMessagesKeys } from './types';
 
 const columns: Column[] = [
     {
@@ -35,14 +36,9 @@ const emailTemplates = [
     },
 ];
 
-export type TestEmailsKeys = Pick<
-    models.dtos.TestDto,
-    "failureEmail" | "successEmail" | "failureMessage" | "successMessage"
->;
-
 interface TestEmailsProps {
-    test: TestEmailsKeys;
-    onChange: (change: Partial<TestEmailsKeys>) => void;
+    test: TestMessagesKeys;
+    onChange: (change: Partial<TestMessagesKeys>) => void;
     onValidityChange: (change: string) => void;
 }
 

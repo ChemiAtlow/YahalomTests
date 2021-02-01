@@ -3,10 +3,9 @@ import { models } from '@yahalom-tests/common';
 import { Row, FormField, Select, Container, ToggleSwitch } from '../../../components';
 import { useAuth } from "../../../hooks";
 import { enumToArray, SwitchCamelCaseToHuman } from '../../../utils';
+import { TestDetailsKeys } from './types';
 
 const languages = enumToArray(models.enums.Language).map(SwitchCamelCaseToHuman);
-export type TestDetailsKeys = Pick<models.dtos.TestDto,
-    "language" | "intro" | "minPassGrade" | "title" | "isReviewEnabled">;
 
 interface TestDetailsProps {
     test: TestDetailsKeys;

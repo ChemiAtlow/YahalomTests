@@ -3,8 +3,8 @@ import { useAuth, useModal } from "../../../hooks";
 import { models } from '@yahalom-tests/common';
 import { AppButton, Column, Container, DataTable, Ellipsis, FormField, Icon, QuestionPeekModal, SearchRow } from '../../../components';
 import { questionService } from '../../../services';
+import { TestQuestionsKeys } from './types';
 
-export type TestQuestionsKeys = Pick<models.dtos.TestDto, "questions">;
 interface TestQuestionsProps {
     test: TestQuestionsKeys;
     onChange: (change: TestQuestionsKeys) => void;
