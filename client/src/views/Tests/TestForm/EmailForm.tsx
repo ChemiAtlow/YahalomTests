@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { models } from '@yahalom-tests/common';
 import { FormField } from '../../../components';
 
-export type TestEmailsKeys = Pick<models.dtos.EmailDto, "body" | "subject">;
-
 interface EmailFormProps {
     email: models.dtos.EmailDto;
-    onChange: (change: Partial<TestEmailsKeys>) => void;
+    onChange: (change: Partial<models.dtos.EmailDto>) => void;
     onValidityChange: (change: string) => void;
 }
 
