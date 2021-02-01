@@ -4,14 +4,13 @@ import { useClickOutside } from '../../hooks';
 import './Autocomplete.scoped.scss';
 
 interface AutocompleteProps
-    extends Omit<React.ComponentProps<typeof FormField>, 'search' | 'onChange'> {
+    extends Omit<React.ComponentProps<typeof FormField>, 'search' | 'onChange' | 'type'> {
     value: string;
     options: string[];
     onChange: (change: string) => void;
 }
 
 const Autocomplete: React.FC<AutocompleteProps> = ({ options, onChange, value, ...rest }) => {
-    const inputRef = useRef<HTMLDivElement>(null);
     const [showOptions, setShowOptions] = useState(false);
     const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
     const [activeOption, setActiveOption] = useState(0);
@@ -37,23 +36,23 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onChange, value, .
             setActiveOption(activeOption !== filteredOptions.length - 1 ? activeOption + 1 : 0);
         }
     };
-    const optionsRef = useClickOutside<HTMLUListElement>({
+    const optionsRef = useClickOutside<HTMLDivElement>({
         callback: () => setShowOptions(false),
         activate: showOptions,
-        ignoredElements: [inputRef],
     });
     return (
-        <>
+        <div className="autocomplete" ref={optionsRef}>
             <FormField
-                ref={inputRef}
                 {...rest}
                 onKeyDown={onKeyDown}
                 onChange={onValueChange}
                 value={value}
+                type="text"
                 search
+                blockErrors
             />
             {showOptions && value && (
-                <ul className="autocomplete-options" ref={optionsRef}>
+                <ul className="autocomplete-options" >
                     {filteredOptions.length ? (
                         filteredOptions.map((optionName, index) => {
                             return (
@@ -72,7 +71,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onChange, value, .
                     )}
                 </ul>
             )}
-        </>
+        </div>
     );
 };
 
