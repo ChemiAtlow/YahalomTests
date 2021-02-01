@@ -12,10 +12,10 @@ interface StudentReportProps {
 const StudentReport: React.FC<StudentReportProps> = ({ match }) => {
     const { openModal } = useModal();
     const [search, setSearch] = useState("");
-    const [examResult, setExamResults] = useState<models.interfaces.ExamResult[]>([]);
+    const [examResults, setExamResults] = useState<models.interfaces.ExamResult[]>([]);
     const { setLoadingState } = useLoading();
     const { buildAuthRequestData } = useAuth();
-    const { studentEmail: email } = match.params;
+    const { studentEmail } = match.params;
 
     const columns: Column[] = [
         {
@@ -59,21 +59,21 @@ const StudentReport: React.FC<StudentReportProps> = ({ match }) => {
     useEffect(() => {
         setLoadingState("loading");
         reportService.getStudentReports(
-            buildAuthRequestData(), email)
+            buildAuthRequestData(), studentEmail)
             .then(({ data }) => setExamResults(data))
             .catch(() =>
                 openModal(ErrorModal, { title: "Error", body: "Couldn't fetch student exam results. try later." }))
             .finally(() => setLoadingState("success"));
-    }, [setExamResults, buildAuthRequestData, setLoadingState, openModal, email]);
+    }, [setExamResults, buildAuthRequestData, setLoadingState, openModal, studentEmail]);
 
     return (
         <Container>
             <h1>Student report</h1>
             <SearchRow>
-                <span>{email}</span>
-                <FormField label="Search" type="text" search value={search} onChange={e => setSearch(e.target.value)} />
+                <span>{studentEmail}</span>
+                <FormField label="Search by test name/id" type="text" search value={search} onChange={e => setSearch(e.target.value)} />
             </SearchRow>
-            <DataTable data={examResult} columns={columns} searchTerm={search} searchKeys={["email", "firstName", "lastName"]} />
+            <DataTable data={examResults} columns={columns} searchTerm={search} searchKeys={["id", "test", "title"]} />
         </Container>
     );
 };
