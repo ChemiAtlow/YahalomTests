@@ -37,7 +37,7 @@ export function useSearchAndSort<T extends { [key: string]: any }>(
             };
             arrayCopy.sort((a, b) => compareBy(a, b, sortTerm));
         }
-        const regex = new RegExp(searchTerm.replace(/\\/g, '\\\\'), 'i');
+        const regex = new RegExp(searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
         const results = arrayCopy.filter(entry => {
             if (searchableKeys && searchableKeys.length > 0) {
                 return Object.entries(entry).some(

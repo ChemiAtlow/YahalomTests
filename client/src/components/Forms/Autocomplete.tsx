@@ -17,7 +17,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onChange, value, .
     const onValueChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = target;
         const filteredOptions = options.filter((opt) =>
-            new RegExp(value.replace(/\\/g, '\\\\'), 'i').test(opt)
+            new RegExp(value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(opt)
         );
         setFilteredOptions(filteredOptions);
         setShowOptions(true);
