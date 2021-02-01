@@ -108,7 +108,8 @@ export const getExamResult = async (exam: models.classes.guid | models.interface
     );
     const isGradePassing = grade > minPassGrade;
     const result: models.interfaces.ExamResult = {
-        id: id,
+        id,
+        completionDate: completionDate || 0,
         message: isGradePassing ? successMessage : failureMessage,
         intro,
         title,
