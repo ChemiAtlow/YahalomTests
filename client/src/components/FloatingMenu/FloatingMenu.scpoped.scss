@@ -34,13 +34,14 @@
 			li:not(:empty) {
 				border-bottom: 1px solid $grayish-blue;
 				cursor: pointer;
+				transition: background-color 400ms linear;
 				& > * {
 					text-decoration: none;
 					color: $primary;
 					padding: 15px 20px;
 					display: block;
 				}
-				&:hover {
+				&:hover, & .active {
 					background-color: $gray;
 				}
 			}
@@ -67,14 +68,4 @@
 		border-left: 15px solid transparent;
 		border-bottom: 15px solid $light;
 	}
-}
-.arrow {
-	// width: 0;
-	// height: 0;
-	// border-left: 20px solid transparent;
-	// border-right: 20px solid transparent;
-	// border-bottom: 20px solid black;
-	// z-index: 22;
-	// margin: 0 0 15px 0;
-	// position: absolute;
 }
