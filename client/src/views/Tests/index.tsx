@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import {
     AppButton,
+    Autocomplete,
     Column,
     Container,
     DataTable,
     Ellipsis,
-    FormField,
     Icon,
     SearchRow,
     TestLinkModal,
@@ -21,6 +21,7 @@ const Tests: React.FC = () => {
     const { path } = useRouteMatch();
     const { push } = useHistory();
     const [tests, setTests] = useState<models.interfaces.Test[]>([]);
+    const [testsAutoComplete, setTestsAutoComplete] = useState<string[]>([]);
     const [search, setSearch] = useState("");
     const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
@@ -107,6 +108,10 @@ const Tests: React.FC = () => {
     };
 
     useEffect(() => {
+        const titles = tests.map(({ title }) => title);
+        setTestsAutoComplete(titles);
+    }, [tests, setTestsAutoComplete]);
+    useEffect(() => {
         testService.getAllTests(buildAuthRequestData()).then(({ data }) => setTests(data));
     }, [setTests, buildAuthRequestData]);
 
@@ -120,13 +125,11 @@ const Tests: React.FC = () => {
                             onClick={() => push(getOrganizationAndFieldUrl("tests", "edit"))}>
                             Add new test
                         </AppButton>
-
-                        <FormField
+                        <Autocomplete
                             label="Search by title"
-                            type="text"
-                            search
+                            options={testsAutoComplete}
                             value={search}
-                            onChange={e => setSearch(e.target.value)}
+                            onChange={setSearch}
                         />
                     </SearchRow>
                     <DataTable data={tests} columns={columns} searchTerm={search} />
