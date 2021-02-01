@@ -5,12 +5,7 @@ import { SectionNavigator, Section, AppButton, ErrorModal, MessageModal, FixedFo
 import { useAuth, useModal } from '../../hooks';
 import { testService } from '../../services';
 import { TestDetails, TestMessages, TestQuestions } from "./TestForm";
-import { TestDetailsKeys, TestMessagesKeys } from './TestForm/types';
-
-
-type TestDetailsError = Record<keyof Omit<TestDetailsKeys, "language" | "isReviewEnabled"> | "general", string>;
-type TestEmailError = Record<keyof models.dtos.EmailDto, string>;
-type TestMessagesError = Record<keyof Omit<TestMessagesKeys, "successEmail" | "failureEmail"> | "general", string> & { successEmail: TestEmailError; failureEmail: TestEmailError };
+import { TestDetailsKeys, TestMessagesKeys, TestDetailsError, TestMessagesError  } from './TestForm/types';
 
 interface EditTestProps {
     onTestAddedOrEdited: (test: models.interfaces.Test) => void;
