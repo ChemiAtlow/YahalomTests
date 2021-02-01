@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { FormField } from '.';
 import { useClickOutside } from '../../hooks';
 import './Autocomplete.scoped.scss';
