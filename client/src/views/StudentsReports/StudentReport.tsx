@@ -30,7 +30,7 @@ const StudentReport: React.FC<StudentReportProps> = ({ match }) => {
         },
         {
             label: "Last activity",
-            key: "completed",
+            key: "completionDate",
             sortable: true,
             template: ({ data }) => <Tooltip value={new Date(data).toLocaleString()} >{new Date(data).toLocaleDateString()}</Tooltip>,
         },
@@ -54,6 +54,7 @@ const StudentReport: React.FC<StudentReportProps> = ({ match }) => {
 
     const openStudentExamResult = (id: models.classes.guid) => {
         console.log("go to exam res", id);
+        
     };
 
     useEffect(() => {
