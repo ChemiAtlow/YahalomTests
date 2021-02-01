@@ -69,21 +69,30 @@ export const getAllExamsOfTest = async (testId: models.classes.guid) => {
     return exams.filter(ex => ex.test === testId);
 };
 
-export const getAllExamsOfStudent = async (email: string, organizationId: models.classes.guid) => {
+export const getAllExamResultsOfStudent = async (email: string, organizationId: models.classes.guid) => {
     const exams = await examRepository.getAll();
     //this functions should filtered asynchronously the exams.
     const reducedExams = await exams.reduce(async (prev, current) => {
         const isExamOfStudentAndOrg = current.student === email &&
             (await organizationService.getOrganizationByTestId(current.test)).id === organizationId;
-        return isExamOfStudentAndOrg ? [... await prev, current] : prev;
-    }, Promise.resolve(Array<models.interfaces.Exam>()));
+        return isExamOfStudentAndOrg ? [... await prev, (await getExamResult(current)).result] : prev;
+    }, Promise.resolve(Array<models.interfaces.ExamResult>()));
+
     return reducedExams;
 };
 
-export const getExamResult = async (examId: models.classes.guid) => {
-    const { test, questions, completed: completionDate, student: studentEmail, grade = 0, correctAnswersCount = 0, minPassGrade } = await getExamById(
-        examId
-    );
+export const getExamResult = async (exam: models.classes.guid | models.interfaces.Exam) => {
+    const examToBuild = typeof (exam) !== "string" ? exam as models.interfaces.Exam : await getExamById(exam);
+    const {
+        id,
+        test,
+        questions,
+        completed: completionDate,
+        student: studentEmail,
+        grade = 0,
+        correctAnswersCount = 0,
+        minPassGrade
+    } = examToBuild;
     const {
         title,
         intro,
@@ -99,7 +108,7 @@ export const getExamResult = async (examId: models.classes.guid) => {
     );
     const isGradePassing = grade > minPassGrade;
     const result: models.interfaces.ExamResult = {
-        id: examId,
+        id: id,
         message: isGradePassing ? successMessage : failureMessage,
         intro,
         title,
