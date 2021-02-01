@@ -5,6 +5,7 @@ import { AppButton } from "../Forms";
 import { Container, FixedFooter } from "../Layout";
 import Pagination from "../Pagination";
 import Question from "../Question";
+import "./ExamQuestions.scoped.scss";
 
 interface ExamQuestionsProps {
     exam: models.interfaces.Exam | models.interfaces.ExamResult;
@@ -34,16 +35,16 @@ const ExamQuestions: React.FC<ExamQuestionsProps> = ({
     };
     return (
         <FixedFooter>
-            <Container>
+            <Container align="start"> 
                 <Question selectionState={selectionStateBuilder()} {...questionProps} />
             </Container>
-            <div>
+            <div className="exam-pagination">
                 {//diplay next question button when valid
-                currentPage > 0 && (
-                    <AppButton varaiety="small" onClick={() => changePage(currentPage - 1)}>
-                        {"<"}
-                    </AppButton>
-                )}
+                    currentPage > 0 && (
+                        <AppButton varaiety="small" onClick={() => changePage(currentPage - 1)}>
+                            {"<"}
+                        </AppButton>
+                    )}
                 <Pagination
                     currentPage={currentPage + 1}
                     maximalPage={questions!.length}
