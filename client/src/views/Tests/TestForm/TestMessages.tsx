@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { models } from "@yahalom-tests/common";
+import React from "react";
 import {
     Accordion,
     AccordionSection,
@@ -9,7 +8,7 @@ import {
     FormField,
 } from '../../../components';
 import { EmailForm } from "./EmailForm";
-import { TestMessagesKeys } from './types';
+import { TestMessagesError, TestMessagesKeys } from './types';
 
 const columns: Column[] = [
     {
@@ -38,66 +37,19 @@ const emailTemplates = [
 
 interface TestEmailsProps {
     test: TestMessagesKeys;
+    errors: Omit<TestMessagesError, "general">;
     onChange: (change: Partial<TestMessagesKeys>) => void;
-    onValidityChange: (change: string) => void;
 }
 
-export const TestMessages: React.FC<TestEmailsProps> = ({ test, onChange, onValidityChange }) => {
-    const [successMsgError, setSuccessMsgError] = useState('');
-    const [failureMsgError, setFailureMsgError] = useState('');
-    const [successEmailError, setSuccessEmailError] = useState('');
-    const [failureEmailError, setFaliureEmailError] = useState('');
+export const TestMessages: React.FC<TestEmailsProps> = ({
+    test,
+    onChange,
+    errors,
+}) => {
 
-    const onSuccessMessageChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = e.target;
-        stringPropsErrorValidate(value, 'Success message');
-        onChange({ successMessage: value });
-    };
-
-    const onFailureMessageChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = e.target;
-        stringPropsErrorValidate(value, 'Failure message');
-        onChange({ failureMessage: value });
-    };
-
-    const onSuccessMailChange = (changed: Partial<models.dtos.EmailDto>) => {
-        onChange({ successEmail: { ...test.successEmail, ...changed } });
-    };
-
-    const onFailureMailChange = (changed: Partial<models.dtos.EmailDto>) => {
-        onChange({ failureEmail: { ...test.failureEmail, ...changed } });
-    };
-
-    const stringPropsErrorValidate = (
-        value: string,
-        propName: 'Success message' | 'Failure message'
-    ) => {
-        propName === 'Success message' ? setSuccessMsgError('') : setFailureMsgError('');
-        if (!value.trim()) {
-            propName === 'Success message'
-                ? setSuccessMsgError(`${propName} is required`)
-                : setFailureMsgError(`${propName} is required`);
-        }
-    };
-
-    useEffect(() => {
-        let errorStr = '';
-        const errors = [successMsgError, failureMsgError, successEmailError, failureEmailError];
-        if (successMsgError || failureMsgError || successEmailError || failureEmailError) {
-            if (successMsgError && failureMsgError && successEmailError && failureEmailError) {
-                errorStr = `Errors: ${successMsgError}, ${failureMsgError},${successEmailError},${failureEmailError}`;
-            } else {
-                errorStr = `Errors: `;
-                errors.forEach((err) => {
-                    if (err) {
-                        errorStr += `${err},`;
-                    }
-                });
-                errorStr.slice(0, -1);
-            }
-        }
-        onValidityChange(errorStr);
-    }, [successMsgError, failureMsgError, successEmailError, failureEmailError, onValidityChange]);
+    const genericChange = <K extends keyof TestMessagesKeys, V extends TestMessagesKeys[K]>(key: K, value: Partial<V>) => {
+        onChange({ [key]: value })
+    }
 
     return (
         <Container>
@@ -108,30 +60,30 @@ export const TestMessages: React.FC<TestEmailsProps> = ({ test, onChange, onVali
                         type="textarea"
                         required
                         value={test.successMessage}
-                        onChange={onSuccessMessageChanged}
-                        error={successMsgError}
+                        onChange={({target}) => genericChange("successMessage", target.value)}
+                        error={errors.successMessage}
                     />
                     <FormField
                         label="Failure message"
                         type="textarea"
                         required
                         value={test.failureMessage}
-                        onChange={onFailureMessageChanged}
-                        error={failureMsgError}
+                        onChange={({target}) => genericChange("failureMessage", target.value)}
+                        error={errors.failureMessage}
                     />
                 </AccordionSection>
                 <AccordionSection title="Success Email">
                     <EmailForm
                         email={test.successEmail}
-                        onChange={onSuccessMailChange}
-                        onValidityChange={setSuccessEmailError}
-                    />
+                        onChange={change => genericChange("successEmail", change)}
+                        errors={errors.successEmail}
+                        />
                 </AccordionSection>
                 <AccordionSection title="Failure Email">
                     <EmailForm
                         email={test.failureEmail}
-                        onChange={onFailureMailChange}
-                        onValidityChange={setFaliureEmailError}
+                        onChange={change => genericChange("failureEmail", change)}
+                        errors={errors.failureEmail}
                     />
                 </AccordionSection>
                 <AccordionSection title="Email messages wildcards">
