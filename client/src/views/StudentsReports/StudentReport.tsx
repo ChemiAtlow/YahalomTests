@@ -1,7 +1,7 @@
 import { models } from "@yahalom-tests/common";
 import React, { useEffect, useState } from "react";
 import { match } from "react-router-dom";
-import { Column, Container, DataTable, ErrorModal, FormField, Icon, SearchRow, Tooltip } from "../../components";
+import { Column, Container, DataTable, ErrorModal, ExamReviewModal, FormField, Icon, SearchRow, Tooltip } from "../../components";
 import { useAuth, useLoading, useModal } from "../../hooks";
 import { reportService } from "../../services";
 
@@ -53,8 +53,9 @@ const StudentReport: React.FC<StudentReportProps> = ({ match }) => {
     ];
 
     const openStudentExamResult = (id: models.classes.guid) => {
-        console.log("go to exam res", id);
-        
+        const examResult = examResults.find(ex => ex.id === id);
+        if (!examResult) { return; }
+        openModal(ExamReviewModal, { examResult });
     };
 
     useEffect(() => {
