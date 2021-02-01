@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth, useModal } from "../../../hooks";
 import { models } from '@yahalom-tests/common';
-import { AppButton, Column, Container, DataTable, Ellipsis, FormField, Icon, QuestionPeekModal, SearchRow } from '../../../components';
+import { AppButton, Autocomplete, Column, Container, DataTable, Ellipsis, Icon, QuestionPeekModal, SearchRow } from '../../../components';
 import { questionService } from '../../../services';
 import type { TestQuestionsKeys } from './types';
 
@@ -15,6 +15,7 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange }) 
     const { buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
     const [questions, setQuestions] = useState<models.interfaces.Question[]>([]);
+    const [questionsAutoComplete, setQuestionsAutoComplete] = useState<string[]>([]);
     const [search, setSearch] = useState('');
     const filteredQuestions = useRef<models.interfaces.Question[]>([]);
     const [activeRows, setActiveRows] = useState<{ key: 'id'; rows: models.classes.guid[] }>({
@@ -61,6 +62,11 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange }) 
             .then(({ data }) => setQuestions(data));
     }, [setQuestions, buildAuthRequestData]);
     useEffect(() => {
+        const labels = questions.flatMap(({ label }) => label.split(/[ ,]+/));
+        const uniqueLabels = [...new Set(labels)];
+        setQuestionsAutoComplete(uniqueLabels);
+    }, [questions, setQuestionsAutoComplete]);
+    useEffect(() => {
         setActiveRows({ key: 'id', rows: test.questions });
     }, [setActiveRows, test.questions]);
 
@@ -93,12 +99,11 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange }) 
                         Select all visible
                     </AppButton>
                 </div>
-                <FormField
+                <Autocomplete
                     label="Search by label"
-                    type="text"
-                    search
+                    options={questionsAutoComplete}
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={setSearch}
                 />
             </SearchRow>
             <DataTable
