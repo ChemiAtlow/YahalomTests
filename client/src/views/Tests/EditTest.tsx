@@ -1,12 +1,16 @@
 import { models } from '@yahalom-tests/common';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import { SectionNavigator, Section, AppButton, ErrorModal, MessageModal, FixedFooter } from '../../components'
 import { useAuth, useModal } from '../../hooks';
 import { testService } from '../../services';
-import { TestDetails, TestEmails, TestQuestions, TestDetailsKeys } from "./TestForm";
+import { TestDetails, TestMessages, TestQuestions } from "./TestForm";
+import { TestDetailsKeys, TestMessagesKeys } from './TestForm/types';
+
 
 type TestDetailsError = Record<keyof Omit<TestDetailsKeys, "language" | "isReviewEnabled"> | "general", string>;
+type TestEmailError = Record<keyof models.dtos.EmailDto, string>;
+type TestMessagesError = Record<keyof Omit<TestMessagesKeys, "successEmail" | "failureEmail"> | "general", string> & { successEmail: TestEmailError; failureEmail: TestEmailError };
 
 interface EditTestProps {
     onTestAddedOrEdited: (test: models.interfaces.Test) => void;
@@ -36,18 +40,37 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
         minPassGrade: "",
         title: ""
     });
-    const [emailsError, setEmailsError] = useState("");
+    const [messagesErrors, setMessagesErrors] = useState<TestMessagesError>({
+        general: "",
+        successMessage: "",
+        failureMessage: "",
+        failureEmail: {
+            body: "",
+            subject: ""
+        },
+        successEmail: {
+            body: "",
+            subject: ""
+        }
+    });
     const [questionsError, setQuestionsError] = useState("");
     const { params } = useRouteMatch<EditParams>();
     const { state } = useLocation<{ test?: models.dtos.TestDto }>();
+    const isDetailsPageInvalid = useMemo(
+        () => !test.title.trim() || !test.intro.trim() || test.minPassGrade < 1 || test.minPassGrade > 100,
+        [test.title, test.intro, test.minPassGrade]
+    );
+    const isMessagesPageInvalid = useMemo(
+        () => !test.successMessage.trim() || !test.successEmail.body.trim() || !test.successEmail.subject.trim() ||
+            !test.failureMessage.trim() || !test.failureEmail.body.trim() || !test.failureEmail.subject.trim(),
+        [test.successMessage, test.successEmail, test.failureMessage, test.failureEmail]
+    );
+    const isQuestionsPageInvalid = useMemo(() => test.questions.length <= 0, [test]);
     const isInvalid =
         //check for errors from components
-        Boolean(emailsError) || Boolean(questionsError) || Boolean(detailsErrors.general) ||
+        Boolean(messagesErrors.general) || Boolean(questionsError) || Boolean(detailsErrors.general) ||
         //check validate in case the user didn't write and make a errorChange.
-        !Boolean(test.title)
-        || !Boolean(test.successMessage)
-        || !Boolean(test.successEmail) || !Boolean(test.questions?.length > 0) || !Boolean(test.minPassGrade)
-        || !Boolean(test.intro) || !Boolean(test.failureMessage) || !Boolean(test.failureEmail);
+        isDetailsPageInvalid || isMessagesPageInvalid || isQuestionsPageInvalid;
 
     const onChange = (changed: Partial<models.dtos.TestDto>) => {
         setTest({ ...test, ...changed });
@@ -62,9 +85,42 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
             setDetailsErrors({ ...detailsErrors, intro });
         }
         if (changed.minPassGrade !== undefined) {
-            const minPassGrade = changed.minPassGrade < 1 ? "Minimal passing grade is 1!" : 
+            const minPassGrade = changed.minPassGrade < 1 ? "Minimal passing grade is 1!" :
                 changed.minPassGrade >= 100 ? "Minimal passing grade can't be 100 or more!" : "";
             setDetailsErrors({ ...detailsErrors, minPassGrade });
+        }
+        onChange(changed);
+    }
+    const onChangeEmails = (changed: Partial<TestMessagesKeys>) => {
+        if (changed.failureMessage !== undefined) {
+            const failureMessage = changed.failureMessage.trim() ? "" : "Message is required!";
+            setMessagesErrors({ ...messagesErrors, failureMessage });
+        }
+        if (changed.successMessage !== undefined) {
+            const successMessage = changed.successMessage.trim() ? "" : "Message is required!";
+            setMessagesErrors({ ...messagesErrors, successMessage });
+        }
+        if (changed.failureEmail !== undefined) {
+            if (changed.failureEmail.subject !== undefined) {
+                const failureEmailSubject = changed.failureEmail.subject.trim() ? "" : "Email subject is required!";
+                setMessagesErrors({ ...messagesErrors, failureEmail: { ...messagesErrors.failureEmail, subject: failureEmailSubject } });
+            }
+            if (changed.failureEmail.body !== undefined) {
+                const failureEmailBody = changed.failureEmail.body.trim() ? "" : "Email body is required!";
+                setMessagesErrors({ ...messagesErrors, failureEmail: { ...messagesErrors.failureEmail, body: failureEmailBody } });
+            }
+            changed.failureEmail = { ...test.failureEmail, ...changed.failureEmail };
+        }
+        if (changed.successEmail !== undefined) {
+            if (changed.successEmail.subject !== undefined) {
+                const successEmailSubject = changed.successEmail.subject.trim() ? "" : "Email subject is required!";
+                setMessagesErrors({ ...messagesErrors, successEmail: { ...messagesErrors.successEmail, subject: successEmailSubject } });
+            }
+            if (changed.successEmail.body !== undefined) {
+                const successEmailBody = changed.successEmail.body.trim() ? "" : "Email body is required!";
+                setMessagesErrors({ ...messagesErrors, successEmail: { ...messagesErrors.successEmail, body: successEmailBody } });
+            }
+            changed.successEmail = { ...test.successEmail, ...changed.successEmail };
         }
         onChange(changed);
     }
@@ -106,12 +162,12 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
         return testClone;
     };
     useEffect(() => {
-        const showDetailsErorr = !test.title.trim() || !test.intro.trim() || test.minPassGrade < 1 || test.minPassGrade > 100;
-        const detailsError = showDetailsErorr ? "There are missing details in the form!" : "";
+        const detailsError = isDetailsPageInvalid ? "There are missing details in the form!" : "";
         setDetailsErrors(detailsErrors => ({ ...detailsErrors, general: detailsError }));
-        const showQuestionsError = test.questions.length <= 0;
-        setQuestionsError(showQuestionsError ? "Please select at least one question!" : "");
-    }, [setQuestionsError, test])
+        const messagesError = isMessagesPageInvalid ? "There are missing details in the form!" : "";
+        setMessagesErrors(messagesErrors => ({ ...messagesErrors, general: messagesError }));
+        setQuestionsError(isQuestionsPageInvalid ? "Please select at least one question!" : "");
+    }, [setQuestionsError, isDetailsPageInvalid, isMessagesPageInvalid, isQuestionsPageInvalid])
 
     useEffect(() => {
         if (params.testId && state?.test) {
@@ -128,18 +184,18 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
 
     return (
         <FixedFooter>
-        <form onSubmit={onSubmit} noValidate id="edit-test__form">
-            <SectionNavigator>
-                <Section label="Test Details" errMsg={detailsErrors.general} isValid={!detailsErrors.general}>
-                    <TestDetails test={test} onChange={onChangeDetails} gradeError={detailsErrors.minPassGrade} introError={detailsErrors.intro} titleError={detailsErrors.title} />
-                </Section>
-                <Section label="Completion messages" errMsg={emailsError} isValid={!emailsError}>
-                    <TestEmails test={test} onChange={onChange} onValidityChange={setEmailsError} />
-                </Section>
-                <Section label="Test Questions" errMsg={questionsError} isValid={!questionsError}>
-                    <TestQuestions test={test} onChange={onChange} />
-                </Section>
-            </SectionNavigator>
+            <form onSubmit={onSubmit} noValidate id="edit-test__form">
+                <SectionNavigator>
+                    <Section label="Test Details" errMsg={detailsErrors.general} isValid={!detailsErrors.general}>
+                        <TestDetails test={test} onChange={onChangeDetails} errors={detailsErrors} />
+                    </Section>
+                    <Section label="Completion messages" errMsg={messagesErrors.general} isValid={!messagesErrors.general}>
+                        <TestMessages test={test} onChange={onChangeEmails} errors={messagesErrors} />
+                    </Section>
+                    <Section label="Test Questions" errMsg={questionsError} isValid={!questionsError}>
+                        <TestQuestions test={test} onChange={onChange} />
+                    </Section>
+                </SectionNavigator>
             </form>
             <div>
                 <AppButton disabled={isInvalid} type="submit" form="edit-test__form">
