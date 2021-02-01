@@ -14,5 +14,6 @@ export interface Exam extends HasId {
     questions: AnsweredQuestion[];
     timeStarted: number;
     grade?: number;
-    correctAnswersCount?: number; 
+    minPassGrade: number;
+    correctAnswersCount?: number;
 }

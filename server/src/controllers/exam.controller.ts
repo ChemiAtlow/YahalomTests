@@ -52,7 +52,9 @@ export const createExam = async (req: types.RequestWithId<any, models.dtos.Stude
     try {
         const { id: organizationId } = await organizationService.getOrganizationByTestId(testId);
         const student = await studentService.addOrEditStudent(req.body, organizationId);
-        const exam = await examService.createNewExam(testId, student.email);
+        const markStudentActivity = studentService.markStudentActivity(student.email);
+        const createExam = examService.createNewExam(testId, student.email);
+        const [, exam] = await Promise.all([markStudentActivity, createExam]);
         res.status(HTTPStatuses.created).send(exam);
     } catch (err) {
         if (err instanceof HttpError) {
@@ -74,7 +76,9 @@ export const submitExam = async (req: types.RequestWithId, res: Response) => {
     const { id: examId } = req.params;
     await examService.lockExam(examId);
     const { email, result, teacherEmail, completionDate = 0, title, studentEmail } = await examService.getExamResult(examId);
-    const student = await studentService.getStudentByEmail(studentEmail);
+    const markStudentActivity = studentService.markStudentActivity(studentEmail);
+    const getStudentByEmail = studentService.getStudentByEmail(studentEmail);
+    const [student] = await Promise.all([getStudentByEmail, markStudentActivity]);
     emailService.sendTestStatusEmail(email, title, student, completionDate, result.grade, examId, teacherEmail);
     res.status(HTTPStatuses.ok).send(result);
 };

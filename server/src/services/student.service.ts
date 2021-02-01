@@ -31,6 +31,10 @@ export const addOrEditStudent = async (
     }
 };
 
+export const markStudentActivity = async (email: string) => {
+    await studentRepository.updateItem(email, { lastActivity: Date.now() });
+};
+
 const getUserAndAddToOrganizationIfNeeded = async (
     email: string,
     organizationId: models.classes.guid

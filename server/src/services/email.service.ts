@@ -1,6 +1,6 @@
 import { createTransport, createTestAccount, getTestMessageUrl } from "nodemailer";
 import { constants, models } from "@yahalom-tests/common";
-const { clientDomain, clientPort } = constants.URLS;
+const { clientDomain, clientPort, serverDomain, serverPort } = constants.URLS;
 
 export const sendTestStatusEmail = async (
     { body, subject }: models.interfaces.Email,
@@ -17,7 +17,7 @@ export const sendTestStatusEmail = async (
         .replace(/@LastName@/g, lastName)
         .replace(/@Date@/g, new Date(completionDate).toLocaleString())
         .replace(/@Grade@/g, `${grade}`)
-        .replace(/@Certificate@/g, `${clientDomain}:${clientPort}/certificate/${examId}`);
+        .replace(/@Certificate@/g, `${serverDomain}:${serverPort}/exam/${examId}/cert`);
 
     const msg = { subject, body: parsedBody, plainBody: getMsgPlainText(parsedBody) };
     await sendEmail(`${email}, ${teacherEmail}`, msg);
