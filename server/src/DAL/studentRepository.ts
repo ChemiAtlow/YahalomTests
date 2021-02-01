@@ -31,6 +31,7 @@ export class StudentRepository {
 			if (!Array.isArray(data)) {
 				throw new DbError("Db is corrupt");
 			}
+			this.data = data;
 			return data;
 		} catch (err) {
 			if (err instanceof DbError) {
