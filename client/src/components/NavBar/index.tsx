@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../../hooks/auth.hook";
 import FloatingMenu from "../FloatingMenu";
 import "./NavBar.scoped.scss";
@@ -27,21 +27,21 @@ const NavBar: React.FC = () => {
 							<div className="main__header-more__back" />
 						</div>
 					}>
-					<Link to="/">Select study field</Link>
+					<NavLink exact to="/">Select study field</NavLink>
 					{activeStudyField && (
-						<Link to={getOrganizationAndFieldUrl("questions")}>
+						<NavLink to={getOrganizationAndFieldUrl("questions")}>
 							Manage questions
-						</Link>
+						</NavLink>
 					)}
 					{activeStudyField && (
-						<Link to={getOrganizationAndFieldUrl("tests")}>
+						<NavLink to={getOrganizationAndFieldUrl("tests")}>
 							Manage tests
-						</Link>
+						</NavLink>
 					)}
 					{activeStudyField && (
-						<Link to={getOrganizationAndFieldUrl("reports")}>
+						<NavLink to={getOrganizationAndFieldUrl("reports")}>
 							Reports
-						</Link>
+						</NavLink>
 					)}
 					<div onClick={() => signout()}>Log out</div>
 				</FloatingMenu>

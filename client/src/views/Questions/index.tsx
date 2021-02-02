@@ -9,16 +9,17 @@ import {
     Icon,
     Tooltip,
     ErrorModal,
-    FormField,
     Container,
-    SearchRow
-} from "../../components";
+    SearchRow,
+    Autocomplete,
+} from '../../components';
 import { questionService } from "../../services";
 import { useAuth, useModal } from "../../hooks";
 import EditQuestion from "./EditQuestion";
 
 const Questions: React.FC = () => {
     const [questions, setQuestions] = useState<models.interfaces.Question[]>([]);
+    const [questionsAutoComplete, setQuestionsAutoComplete] = useState<string[]>([]);
     const [search, setSearch] = useState("");
     const { path } = useRouteMatch();
     const { push } = useHistory();
@@ -101,6 +102,10 @@ const Questions: React.FC = () => {
         setQuestions(questions);
     };
     useEffect(() => {
+        const titles = questions.map(({ title }) => title);
+        setQuestionsAutoComplete(titles);
+    }, [questions, setQuestionsAutoComplete]);
+    useEffect(() => {
         questionService
             .getAllQuestions(buildAuthRequestData())
             .then(({ data }) => setQuestions(data));
@@ -112,12 +117,24 @@ const Questions: React.FC = () => {
                     <h1>Questions</h1>
                     <SearchRow>
                         <AppButton
-                            onClick={() => push(getOrganizationAndFieldUrl("questions", "edit"))}>
+                            onClick={() =>
+                                push(getOrganizationAndFieldUrl('questions', 'edit'))
+                            }>
                             Add new question
                         </AppButton>
-                        <FormField label="Search by title" type="text" search value={search} onChange={e => setSearch(e.target.value)} />
+                        <Autocomplete
+                            label="Search by title"
+                            options={questionsAutoComplete}
+                            value={search}
+                            onChange={setSearch}
+                        />
                     </SearchRow>
-                    <DataTable data={questions} columns={columns} searchTerm={search} searchKeys={["title"]} />
+                    <DataTable
+                        data={questions}
+                        columns={columns}
+                        searchTerm={search}
+                        searchKeys={['title']}
+                    />
                 </Container>
             </Route>
             <Route path={`${path}/edit/:questionId?`}>

@@ -52,7 +52,7 @@ const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) 
     useEffect(() => {
         const { answers } = question;
         const answersLength = answers.length;
-        const isAtLeast2Answers = answersLength < 3 || (answersLength === 2 && !answers[1].content.trim())
+        const isAtLeast2Answers = answersLength < 2 || (answersLength === 2 && !answers[1].content.trim())
         const containsEmptyAnswers = answers.some(({ content }, i) => !content.trim() && i !== answersLength - 1);
         const containsNoCorrectAnswer = answers.every(({correct}) => !correct);
         const isAnEmptyAnswerCorrect = answers.some(({content, correct}) => !content.trim() && correct);
