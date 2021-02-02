@@ -24,7 +24,7 @@ const Login: React.FC = () => {
 			setLoadingState("success");
 			replace(state?.from?.pathname || "/");
 		}
-	}, [organizationBaseInfo, state, replace]);
+	}, [organizationBaseInfo, state, replace, setLoadingState]);
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setLoadingState("loading");
