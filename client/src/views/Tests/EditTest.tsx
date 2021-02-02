@@ -178,7 +178,7 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
                 }))
                 .finally(() => setLoadingState("success"));
         }
-    }, [state, params, setTest, buildAuthRequestData, openModal]);
+    }, [state, params, setTest, buildAuthRequestData, openModal, setLoadingState]);
 
     return (
         <FixedFooter>
