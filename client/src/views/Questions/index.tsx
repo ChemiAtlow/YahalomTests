@@ -74,7 +74,14 @@ const Questions: React.FC = () => {
             label: 'Last Update',
             key: 'lastUpdate',
             sortable: true,
-            template: ({ data }) => <span>{new Date(data).toLocaleString()}</span>,
+            template: ({ data }) => {
+                const date = new Date(data);
+                return (
+                    <Tooltip value={date.toLocaleString()}>
+                        <span>{date.toLocaleDateString()}</span>
+                    </Tooltip>
+                );
+            },
         },
         {
             label: 'Usage count',
