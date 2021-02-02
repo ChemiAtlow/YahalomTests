@@ -16,7 +16,7 @@ import {
     MessageModal,
 } from '../../components';
 import { questionService } from '../../services';
-import { useAuth, useModal } from '../../hooks';
+import { useAuth, useLoading, useModal } from '../../hooks';
 import EditQuestion from './EditQuestion';
 
 const Questions: React.FC = () => {
@@ -26,6 +26,7 @@ const Questions: React.FC = () => {
     const { path } = useRouteMatch();
     const { push } = useHistory();
     const { openModal } = useModal();
+    const { setLoadingState } = useLoading();
     const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
     const removeQuestion = async (id: models.classes.guid) => {
         const shouldDelete = await openModal(WarningModal, {
@@ -131,10 +132,14 @@ const Questions: React.FC = () => {
         setQuestionsAutoComplete(titles);
     }, [questions, setQuestionsAutoComplete]);
     useEffect(() => {
+        setLoadingState("loading");
         questionService
             .getAllQuestions(buildAuthRequestData())
-            .then(({ data }) => setQuestions(data));
-    }, [setQuestions, buildAuthRequestData]);
+            .then(({ data }) => setQuestions(data))
+            .catch(() =>
+                openModal(ErrorModal, { title: "Error", body: "Couldn't fetch questions. try again." }))
+            .finally(() => setLoadingState("success"));
+    }, [setQuestions, buildAuthRequestData, openModal, setLoadingState]);
     return (
         <Switch>
             <Route path={path} exact>

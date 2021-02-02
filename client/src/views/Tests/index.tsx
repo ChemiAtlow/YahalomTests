@@ -8,12 +8,13 @@ import {
     Container,
     DataTable,
     Ellipsis,
+    ErrorModal,
     Icon,
     SearchRow,
     TestLinkModal,
     Tooltip,
 } from '../../components';
-import { useAuth, useModal } from '../../hooks';
+import { useAuth, useLoading, useModal } from '../../hooks';
 import { testService } from '../../services';
 import EditTest from './EditTest';
 
@@ -25,6 +26,7 @@ const Tests: React.FC = () => {
     const [search, setSearch] = useState('');
     const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
+    const { setLoadingState } = useLoading();
 
     const goToEditTest = (test: models.interfaces.Test) =>
         push(getOrganizationAndFieldUrl('tests', 'edit', test.id!), { test });
@@ -114,8 +116,12 @@ const Tests: React.FC = () => {
         setTestsAutoComplete(titles);
     }, [tests, setTestsAutoComplete]);
     useEffect(() => {
-        testService.getAllTests(buildAuthRequestData()).then(({ data }) => setTests(data));
-    }, [setTests, buildAuthRequestData]);
+        setLoadingState("loading");
+        testService.getAllTests(buildAuthRequestData())
+            .then(({ data }) => setTests(data))
+            .catch(() => openModal(ErrorModal, { title: "Error", body: "Couldn't fetch tests. try again." }))
+            .finally(() => setLoadingState("success"));
+    }, [setTests, buildAuthRequestData, openModal, setLoadingState]);
 
     return (
         <Switch>
