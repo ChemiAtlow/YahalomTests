@@ -64,9 +64,12 @@ export const lockExam = async (examId: models.classes.guid) => {
     return await examRepository.updateItem(examId, { completed: Date.now(), grade, correctAnswersCount });
 };
 
-export const getAllExamsOfTest = async (testId: models.classes.guid) => {
+export const getAllExamResultsOfTest = async (testId: models.classes.guid) => {
     const exams = await examRepository.getAll();
-    return exams.filter(ex => ex.test === testId);
+    const reducedExams = await exams.reduce(async (prev, current) => {
+        return current.test === testId ? [...await prev, (await getExamResult(current)).result] : prev;
+    }, Promise.resolve(Array<models.interfaces.ExamResult>()));
+    return reducedExams;
 };
 
 export const getAllExamResultsOfStudent = async (email: string, organizationId: models.classes.guid) => {
