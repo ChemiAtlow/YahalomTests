@@ -1,27 +1,43 @@
+.header-wrapper {
+    background-color: $light-gray;
+    position: sticky;
+    top: 0;
+}
 .header {
-		display: flex;
-        background: $bubble-bg;
-        color: $light;
-        font-weight: bold;
-        font-size: 1.2rem;
-        position: sticky;
-        top: 0.8rem;
-        overflow: hidden;
-        border-radius: 0.7rem 0.7rem 0 0;
-		& > div {
-			flex: 1;
-			padding: 1rem 0.4em;
-            &.sortable {
-                cursor: pointer;
+    display: flex;
+    background: $bubble-bg;
+    color: $light;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-top: 0.8rem;
+    overflow: hidden;
+    border-radius: 0.7rem 0.7rem 0 0;
+    &.stick-at-top {
+        border-radius: 0;
+        margin-top: 0;
+    }
+    & > div {
+        flex: 1;
+        padding: 1rem 0.4em;
+        &.sortable {
+            cursor: pointer;
+            display: grid;
+            grid-template-columns: 1fr 1.5rem;
+            align-items: center;
+            justify-content: center;
+            > :first-child {
+                margin-left: 1.5rem;
             }
-            &.header__small {
-                flex: 0 5%;
-            }
-            &.header__large {
-                flex: 2;
-            }
-            &.sortable:hover, &.sorted {
-                background-color: $deep-blue;
-            }
-		}
-	}
+        }
+        &.header__small {
+            flex: 0 5%;
+        }
+        &.header__large {
+            flex: 2;
+        }
+        &.sortable:hover,
+        &.sorted {
+            background-color: $deep-blue;
+        }
+    }
+}

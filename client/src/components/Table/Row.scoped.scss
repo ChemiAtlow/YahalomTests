@@ -16,12 +16,12 @@
         }
     }
     &:hover {
-        background-color: lighten($gray, 20);
+        background-color: $gray;
     }
     &.active {
-        background-color: lighten($secondary, 24);
+        background-color: lighten($secondary, 22);
         &:hover {
-            background-color: lighten($secondary, 20);
+            background-color: lighten($secondary, 16);
         }
     }
 }
