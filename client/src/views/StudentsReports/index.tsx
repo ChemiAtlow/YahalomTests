@@ -1,7 +1,7 @@
 import { models } from "@yahalom-tests/common";
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
-import { Column, Container, DataTable, ErrorModal, FormField, Icon, SearchRow, Tooltip } from "../../components";
+import { Autocomplete, Column, Container, DataTable, ErrorModal, Icon, SearchRow, Tooltip } from "../../components";
 import { useAuth, useLoading, useModal } from "../../hooks";
 import { reportService } from "../../services";
 import StudentReport from "./StudentReport";
@@ -10,6 +10,7 @@ const StudentsReports: React.FC = () => {
     const { openModal } = useModal();
     const [search, setSearch] = useState("");
     const [students, setStudents] = useState<models.interfaces.Student[]>([]);
+    const [studentsAutoComplete, setStudentsAutoComplete] = useState<string[]>([]);
     const { path, url } = useRouteMatch();
     const { push } = useHistory();
     const { setLoadingState } = useLoading();
@@ -60,6 +61,10 @@ const StudentsReports: React.FC = () => {
     };
 
     useEffect(() => {
+        const suggestions = students.flatMap(({ firstName, lastName, email }) => [firstName, lastName, email]);
+        setStudentsAutoComplete(suggestions);
+    }, [students, setStudentsAutoComplete]);
+    useEffect(() => {
         setLoadingState("loading");
         reportService
             .getAllStudents(buildAuthRequestData())
@@ -76,7 +81,7 @@ const StudentsReports: React.FC = () => {
                     <h1>Students reports</h1>
                     <SearchRow>
                         <span></span>
-                        <FormField label="Search" type="text" search value={search} onChange={e => setSearch(e.target.value)} />
+                        <Autocomplete options={studentsAutoComplete} label="Search" value={search} onChange={setSearch} />
                     </SearchRow>
                     <DataTable data={students} columns={columns} searchTerm={search} searchKeys={["email", "firstName", "lastName"]} />
                 </Container>
