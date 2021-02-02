@@ -7,6 +7,7 @@
     align-items: center; //vertical
     background: rgba($dark-blue, 0.2);
     backdrop-filter: blur(0.25rem);
+    z-index: 50;
     }
     span.loader__ball {
       display: inline-block;
