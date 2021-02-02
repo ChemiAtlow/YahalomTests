@@ -72,7 +72,3 @@ export const updateQuestionUsage = async (
     }
 };
 
-export const getMultipleQuestionsByIdArray = async (ids: models.classes.guid[]) => {
-    const questions = await Promise.all(ids.map(async id => await getQuestionById(id)));
-    return questions;
-};
