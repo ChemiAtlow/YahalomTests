@@ -1,15 +1,16 @@
 import { models } from "@yahalom-tests/common";
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
-import { Column, Container, DataTable, ErrorModal, FormField, Icon, SearchRow, Tooltip } from "../../components";
+import { Autocomplete, Column, Container, DataTable, ErrorModal, Icon, SearchRow, Tooltip } from "../../components";
 import { useAuth, useLoading, useModal } from "../../hooks";
 import { testService } from "../../services";
-import TestReport from "./TestReport";
+import StudentReport from "./TestReport";
 
 const TestsReports: React.FC = () => {
     const { openModal } = useModal();
     const [search, setSearch] = useState("");
     const [tests, setTests] = useState<models.interfaces.Test[]>([]);
+    const [testsAutoComplete, setTestsAutoComplete] = useState<string[]>([]);
     const { path, url } = useRouteMatch();
     const { push } = useHistory();
     const { setLoadingState } = useLoading();
@@ -17,7 +18,7 @@ const TestsReports: React.FC = () => {
 
     const columns: Column[] = [
         {
-            label: "Title",
+            label: "Test Name",
             key: "title",
             sortable: true,
         },
@@ -27,15 +28,16 @@ const TestsReports: React.FC = () => {
             sortable: true,
         },
         {
+            label: "Question review",
+            key: "isReviewEnabled",
+            sortable: true,
+            template: ({ data }) => <span>{data ? "Allowed" : "No Review"}</span>,
+        },
+        {
             label: "Last Update",
             key: "lastUpdate",
             sortable: true,
             template: ({ data }) => <Tooltip value={new Date(data).toLocaleString()} >{new Date(data).toLocaleDateString()}</Tooltip>,
-        },
-        {
-            label: "Pass grade",
-            key: "minPassGrade",
-            sortable: true
         },
         {
             label: "",
@@ -44,7 +46,7 @@ const TestsReports: React.FC = () => {
             smallColumn: true,
             template: ({ data }) => (
                 <Tooltip
-                    value="View tests's reports"
+                    value="View test's reports"
                     direction="left">
                     <Icon
                         icon="preview"
@@ -60,9 +62,13 @@ const TestsReports: React.FC = () => {
     };
 
     useEffect(() => {
+        const suggestions = tests.flatMap(({ title, id, teacherEmail }) => [title, id ?? "", teacherEmail]);
+        setTestsAutoComplete(suggestions);
+    }, [tests, setTestsAutoComplete]);
+    useEffect(() => {
         setLoadingState("loading");
-        testService.getAllTests(
-            buildAuthRequestData())
+        testService
+            .getAllTests(buildAuthRequestData())
             .then(({ data }) => setTests(data))
             .catch(() =>
                 openModal(ErrorModal, { title: "Error", body: "Couldn't fetch tests. try later." }))
@@ -77,12 +83,12 @@ const TestsReports: React.FC = () => {
                     <h1>Tests reports</h1>
                     <SearchRow>
                         <span></span>
-                        <FormField label="Search" type="text" search value={search} onChange={e => setSearch(e.target.value)} />
+                        <Autocomplete options={testsAutoComplete} label="Search by test name/id/creator" value={search} onChange={setSearch} />
                     </SearchRow>
-                    <DataTable data={tests} columns={columns} searchTerm={search} searchKeys={["title", "minPassGrade"]} />
+                    <DataTable data={tests} columns={columns} searchTerm={search} searchKeys={["id", "title"]} />
                 </Container>
             </Route>
-            <Route path={`${path}/:testId`} component={TestReport} />
+            <Route path={`${path}/:testId`} component={StudentReport}/>
         </Switch>
     );
 };

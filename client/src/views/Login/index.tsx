@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { constants } from "@yahalom-tests/common";
 import { AppButton, Container, ErrorModal, FormField, MessageModal } from "../../components";
-import { useAuth, useModal } from "../../hooks";
+import { useAuth, useLoading, useModal } from "../../hooks";
 import "./Login.scoped.scss";
 const { emailRegex, passwordDescription, passwordRegex } = constants.validations;
 
@@ -12,6 +12,7 @@ const Login: React.FC = () => {
 	const isLogin = /login/i.test(pathname);
 	const { signin, signup, organizationBaseInfo } = useAuth();
 	const { openModal } = useModal();
+	const { setLoadingState } = useLoading();
 	const [tmpUser, setTmpUser] = useState({ email: "", password: "" });
 	const [emailError, setEmailError] = useState("");
 	const [passwordError, setPasswordError] = useState("");
@@ -20,21 +21,26 @@ const Login: React.FC = () => {
 	);
 	useEffect(() => {
 		if (organizationBaseInfo) {
+			setLoadingState("success");
 			replace(state?.from?.pathname || "/");
 		}
-	}, [organizationBaseInfo, state, replace]);
+	}, [organizationBaseInfo, state, replace, setLoadingState]);
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		setLoadingState("loading");
 		if (isLogin && !await signin(tmpUser)) {
+			setLoadingState("success");
 			openModal(ErrorModal, { title: "Login has failed!", body: "Please check your credentials and try again." });
 		}
 		else if (!isLogin) {
 			if (await signup(tmpUser)) {
+				setLoadingState("success");
 				// display success message
 				openModal(MessageModal, { children: <p>Signup completed successfully.<br />A validation email was sent.</p>, title: "Success!", okText: "OK" })
 				push("/login")
 			}
 			else {
+				setLoadingState("success");
 				openModal(ErrorModal, { title: "Signup has failed!", body: "Please try again." })
 			}
 		}

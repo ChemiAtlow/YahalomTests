@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { constants } from "@yahalom-tests/common";
 import { AppButton, ErrorModal, FormField, MessageModal, Container } from "../../components";
-import { useModal } from "../../hooks";
+import { useLoading, useModal } from "../../hooks";
 import "./Restore.scoped.scss";
 import { authService } from "../../services";
 const { emailRegex, passwordDescription, passwordRegex } = constants.validations;
@@ -11,11 +11,13 @@ const Restore: React.FC = () => {
     const { push } = useHistory(); //replace doesnt make any affect on user pages history
     const { params } = useRouteMatch<{ token?: string }>();
     const { openModal } = useModal();
+    const { setLoadingState } = useLoading();
     const [value, setValue] = useState("");
     const [error, setError] = useState("");
     const isInvalid = Boolean(error || !value);
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setLoadingState("loading");
         if (params.token) {
             try {
                 await authService.resetPassword(params.token, { password: value });
@@ -29,6 +31,8 @@ const Restore: React.FC = () => {
                     title: "Failure!",
                     body: "Please try again.",
                 });
+            } finally {
+                setLoadingState("success");
             }
         } else {
             try {
@@ -43,6 +47,8 @@ const Restore: React.FC = () => {
                     title: "Failure!",
                     body: "Please check the email address and try again.",
                 });
+            } finally {
+                setLoadingState("success");
             }
         }
     };

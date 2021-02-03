@@ -1,7 +1,7 @@
 import { models } from "@yahalom-tests/common";
 import React, { useEffect, useMemo, useState } from "react";
 import { match } from "react-router-dom";
-import { Column, Container, DataTable, ErrorModal, ExamReviewModal, FormField, Icon, SearchRow, Tooltip } from "../../components";
+import { Autocomplete, Column, Container, DataTable, ErrorModal, ExamReviewModal, Icon, SearchRow, Tooltip } from "../../components";
 import { useAuth, useLoading, useModal } from "../../hooks";
 import { reportService } from "../../services";
 
@@ -13,6 +13,7 @@ const StudentReport: React.FC<StudentReportProps> = ({ match }) => {
     const { openModal } = useModal();
     const [search, setSearch] = useState("");
     const [examResults, setExamResults] = useState<models.interfaces.ExamResult[]>([]);
+    const [examsAutoComplete, setExamsAutoComplete] = useState<string[]>([]);
     const { setLoadingState } = useLoading();
     const { buildAuthRequestData } = useAuth();
     const { studentEmail } = match.params;
@@ -64,6 +65,10 @@ const StudentReport: React.FC<StudentReportProps> = ({ match }) => {
     }, [examResults]);
 
     useEffect(() => {
+        const suggestions = examResults.flatMap(({ title,id }) => [title,id]);
+        setExamsAutoComplete(suggestions);
+    }, [examResults, setExamsAutoComplete]);
+    useEffect(() => {
         setLoadingState("loading");
         reportService.getStudentReports(
             buildAuthRequestData(), studentEmail)
@@ -80,7 +85,7 @@ const StudentReport: React.FC<StudentReportProps> = ({ match }) => {
                 <div>
                     <b>Email:</b> {studentEmail}. <b>Average grade:</b> {average}.
                 </div>
-                <FormField label="Search by test name/id" type="text" search value={search} onChange={e => setSearch(e.target.value)} />
+                <Autocomplete options={examsAutoComplete} label="Search by test name/id" value={search} onChange={setSearch} />
             </SearchRow>
             <DataTable data={examResults} columns={columns} searchTerm={search} searchKeys={["id", "test", "title"]} />
         </Container>

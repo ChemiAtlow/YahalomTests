@@ -23,6 +23,7 @@ interface DataTableProps {
     searchTerm?: string;
     searchKeys?: string[];
     activeRows?: { key: string; rows: any[] };
+    stickAtTop?: boolean;
     onRowClick?: (data: any) => void;
     onDataFiltered?: (filteredData: any[]) => void;
 }
@@ -35,6 +36,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     searchKeys,
     searchTerm,
     activeRows,
+    stickAtTop
 }) => {
     const { data: filteredData, sort, search } = useSearchAndSort(data, searchKeys);
     const [sortedColumn, setSortedColumn] = useState<SortedColumn>();
@@ -59,7 +61,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
     return (
         <div className="table">
-            <Header columns={columns} sortedColumn={sortedColumn} onSort={sortColumn} />
+            <Header columns={columns} sortedColumn={sortedColumn} stickAtTop={stickAtTop} onSort={sortColumn} />
             <div className="body">
                 {!filteredData.length ? (
                     <div className="row-empty">No Records to show.</div>

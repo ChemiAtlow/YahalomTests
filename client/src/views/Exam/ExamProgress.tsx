@@ -92,12 +92,15 @@ const ExamProgress: React.FC<ExamProps> = ({ match }) => {
         }).promise;
         const [, shouldProceed] = await Promise.all([update, modal]);
         if (shouldProceed) {
+            setLoadingState("loading");
             try {
                 const { data } = await examService.submitExam(examId);
                 setExam(data);
                 push(`/exam/${testId}/${examId}`);
             } catch (error) {
                 openModal(ErrorModal, { title: "Error", body: "Couldn't submit your test, please try again." })
+            } finally {
+                setLoadingState("success");
             }
         };
     };

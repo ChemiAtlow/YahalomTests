@@ -14,7 +14,7 @@ export async function getStudentReports(authReqData: AuthRequest, email: string)
 }
 
 export async function getTestReport(authReqData: AuthRequest, id: models.classes.guid) {
-    return await http.get<models.interfaces.Test>( //need to notice which type to send...
+    return await http.get<models.interfaces.TestReport>(
         `${reportsRoute}test/${id}`, authRequestToHeaders(authReqData));
 }
 

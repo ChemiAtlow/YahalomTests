@@ -1,56 +1,61 @@
-import { models } from "@yahalom-tests/common";
-import React, { useEffect, useState } from "react";
-import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
+import { models } from '@yahalom-tests/common';
+import React, { useEffect, useState } from 'react';
+import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import {
     AppButton,
+    Autocomplete,
     Column,
     Container,
     DataTable,
     Ellipsis,
-    FormField,
+    ErrorModal,
     Icon,
     SearchRow,
     TestLinkModal,
     Tooltip,
-} from "../../components";
-import { useAuth, useModal } from "../../hooks";
-import { testService } from "../../services";
-import EditTest from "./EditTest";
+} from '../../components';
+import { useAuth, useLoading, useModal } from '../../hooks';
+import { testService } from '../../services';
+import EditTest from './EditTest';
 
 const Tests: React.FC = () => {
     const { path } = useRouteMatch();
     const { push } = useHistory();
     const [tests, setTests] = useState<models.interfaces.Test[]>([]);
-    const [search, setSearch] = useState("");
+    const [testsAutoComplete, setTestsAutoComplete] = useState<string[]>([]);
+    const [search, setSearch] = useState('');
     const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
+    const { setLoadingState } = useLoading();
 
     const goToEditTest = (test: models.interfaces.Test) =>
-        push(getOrganizationAndFieldUrl("tests", "edit", test.id!), { test });
+        push(getOrganizationAndFieldUrl('tests', 'edit', test.id!), { test });
     const goToTestStatitistics = (test: models.interfaces.Test) =>
-        console.warn("Statistics page is not yet implemented!", test);
+        push(getOrganizationAndFieldUrl('reports', 'test', test.id!), { test });
     const showLinkToTest = ({ title, id }: models.interfaces.Test) => {
-        openModal(TestLinkModal, { title, id: id! })
-    }
-    
+        openModal(TestLinkModal, {
+            title,
+            id: id!,
+        });
+    };
 
     const columns: Column[] = [
         {
-            label: "Test name",
-            key: "title",
+            label: 'Test name',
+            key: 'title',
             sortable: true,
             largeColumn: true,
             template: ({ data }) => <Ellipsis data={data} maxLength={50} direction="right" />,
         },
         {
-            label: "Question count",
-            key: "questions",
+            label: 'Question count',
+            key: 'questions',
             sortable: true,
             template: ({ data }) => <span>{data.length}</span>,
         },
         {
-            label: "Last Update",
-            key: "lastUpdate",
+            label: 'Last Update',
+            key: 'lastUpdate',
             sortable: true,
             template: ({ data }) => {
                 const date = new Date(data);
@@ -62,8 +67,8 @@ const Tests: React.FC = () => {
             },
         },
         {
-            label: "",
-            key: "*",
+            label: '',
+            key: '*',
             sortable: false,
             smallColumn: true,
             template: ({ data }) => (
@@ -73,8 +78,8 @@ const Tests: React.FC = () => {
             ),
         },
         {
-            label: "",
-            key: "*",
+            label: '',
+            key: '*',
             sortable: false,
             smallColumn: true,
             template: ({ data }) => (
@@ -84,8 +89,8 @@ const Tests: React.FC = () => {
             ),
         },
         {
-            label: "",
-            key: "*",
+            label: '',
+            key: '*',
             sortable: false,
             smallColumn: true,
             template: ({ data }) => (
@@ -107,8 +112,16 @@ const Tests: React.FC = () => {
     };
 
     useEffect(() => {
-        testService.getAllTests(buildAuthRequestData()).then(({ data }) => setTests(data));
-    }, [setTests, buildAuthRequestData]);
+        const titles = tests.map(({ title }) => title);
+        setTestsAutoComplete(titles);
+    }, [tests, setTestsAutoComplete]);
+    useEffect(() => {
+        setLoadingState("loading");
+        testService.getAllTests(buildAuthRequestData())
+            .then(({ data }) => setTests(data))
+            .catch(() => openModal(ErrorModal, { title: "Error", body: "Couldn't fetch tests. try again." }))
+            .finally(() => setLoadingState("success"));
+    }, [setTests, buildAuthRequestData, openModal, setLoadingState]);
 
     return (
         <Switch>
@@ -117,16 +130,14 @@ const Tests: React.FC = () => {
                     <h1>Tests</h1>
                     <SearchRow>
                         <AppButton
-                            onClick={() => push(getOrganizationAndFieldUrl("tests", "edit"))}>
+                            onClick={() => push(getOrganizationAndFieldUrl('tests', 'edit'))}>
                             Add new test
                         </AppButton>
-
-                        <FormField
+                        <Autocomplete
                             label="Search by title"
-                            type="text"
-                            search
+                            options={testsAutoComplete}
                             value={search}
-                            onChange={e => setSearch(e.target.value)}
+                            onChange={setSearch}
                         />
                     </SearchRow>
                     <DataTable data={tests} columns={columns} searchTerm={search} />
