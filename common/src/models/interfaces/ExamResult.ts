@@ -15,4 +15,5 @@ export interface ExamResult {
     answeredQuestions?: AnsweredQuestion[];
     originalQuestions?: Question[];
     completionDate: number;
+    studentName?: string;
 }
