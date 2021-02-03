@@ -1,0 +1,30 @@
+.date-picker {
+    &__wrapper {
+        position: relative;
+        * {
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Chrome/Safari/Opera */
+            -khtml-user-select: none; /* Konqueror */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently */
+        }
+    }
+    &__input {
+        cursor: pointer;
+    }
+    &__container {
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 57px;
+        min-height: 350px;
+        background: $light;
+        box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.2);
+        border-radius: 0 0 0.5rem 0.5rem;
+        overflow: hidden;
+        padding: 25px 30px;
+        display: grid;
+        grid-template-rows: 55px 1fr;
+    }
+}
