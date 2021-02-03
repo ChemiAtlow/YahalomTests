@@ -1,7 +1,8 @@
 import { models } from "@yahalom-tests/common";
-import { questionService, testService, organizationService } from ".";
+import { questionService, testService, organizationService, studentService } from ".";
 import { examRepository } from "../DAL";
 import { BadRequestError, ItemNotInDbError } from "../errors";
+import { types } from "../models";
 
 export const createNewExam = async (
     testId: models.classes.guid,
@@ -67,7 +68,7 @@ export const lockExam = async (examId: models.classes.guid) => {
 export const getAllExamResultsOfTest = async (testId: models.classes.guid) => {
     const exams = await examRepository.getAll();
     const reducedExams = await exams.reduce(async (prev, current) => {
-        return current.test === testId ? [...await prev, (await getExamResult(current)).result] : prev;
+        return current.test === testId ? [...await prev, await getExamResult(current)] : prev;
     }, Promise.resolve(Array<models.interfaces.ExamResult>()));
     return reducedExams;
 };
@@ -78,19 +79,20 @@ export const getAllExamResultsOfStudent = async (email: string, organizationId: 
     const reducedExams = await exams.reduce(async (prev, current) => {
         const isExamOfStudentAndOrg = current.student === email &&
             (await organizationService.getOrganizationByTestId(current.test)).id === organizationId;
-        return isExamOfStudentAndOrg ? [... await prev, (await getExamResult(current)).result] : prev;
+        return isExamOfStudentAndOrg ? [... await prev, await getExamResult(current)] : prev;
     }, Promise.resolve(Array<models.interfaces.ExamResult>()));
 
     return reducedExams;
 };
 
-export const getExamResult = async (exam: models.classes.guid | models.interfaces.Exam) => {
-    const examToBuild = typeof (exam) !== "string" ? exam as models.interfaces.Exam : await getExamById(exam);
+export const getExamResult: types.ExamResultFn = async (exam: models.classes.guid | models.interfaces.Exam) => {
+    const isExamNotId = typeof (exam) !== "string";
+    const examToBuild = isExamNotId ? exam as models.interfaces.Exam : await getExamById(exam as models.classes.guid);
     const {
         id,
         test,
         questions,
-        completed: completionDate,
+        completed: completionDate = 0,
         student: studentEmail,
         grade = 0,
         correctAnswersCount = 0,
@@ -121,9 +123,14 @@ export const getExamResult = async (exam: models.classes.guid | models.interface
         grade,
         questionCount: questions.length,
         correctAnswersCount,
-        originalQuestions: isReviewEnabled ? originalQuestions : undefined,
-        answeredQuestions: isReviewEnabled ? questions : undefined,
+        originalQuestions: isReviewEnabled || isExamNotId ? originalQuestions : undefined,
+        answeredQuestions: isReviewEnabled || isExamNotId ? questions : undefined,
     };
+    if (isExamNotId) {
+        const { firstName, lastName } = await studentService.getStudentByEmail(studentEmail);
+        result.studentName = `${firstName} ${lastName}`;
+        return result;
+    }
     return {
         result, // UI data
         email: isGradePassing ? successEmail : failureEmail,
@@ -131,7 +138,7 @@ export const getExamResult = async (exam: models.classes.guid | models.interface
         completionDate,
         title,
         studentEmail,
-    }; //seperate between UI and server props
+    } as any; //seperate between UI and server props
 };
 
 //get test questions and build examQuesions
