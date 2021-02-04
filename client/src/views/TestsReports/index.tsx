@@ -1,4 +1,4 @@
-import { models } from "@yahalom-tests/common";
+import { constants, models } from "@yahalom-tests/common";
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import { Autocomplete, Column, Container, DataTable, DatePicker, ErrorModal, Icon, SearchRow, Tooltip } from "../../components";
@@ -6,6 +6,8 @@ import { useAuth, useLoading, useModal } from "../../hooks";
 import { testService } from "../../services";
 import StudentReport from "./TestReport";
 import "./TestReports.scoped.scss";
+
+const monthAgo = new Date(Date.now() - constants.TIME.month);
 
 const TestsReports: React.FC = () => {
     const { openModal } = useModal();
@@ -84,7 +86,7 @@ const TestsReports: React.FC = () => {
                     <h1>Tests reports</h1>
                     <SearchRow>
                         <div id="range-selector">
-                            <DatePicker label="Start date" onChange={() => {}} />
+                            <DatePicker label="Start date" initialDate={monthAgo} onChange={() => {}} />
                             <DatePicker label="End date" onChange={() => {}} />
                         </div>
                         <Autocomplete options={testsAutoComplete} label="Search by test name/id/creator" value={search} onChange={setSearch} />
