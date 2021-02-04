@@ -1,9 +1,8 @@
 export type DateDetails = {
     date: number;
-    day: number;
+    dayOfWeek: number;
     month: number;
     timestamp: number;
-    dayString: string;
 };
 export type DateArgs = {
     dayOfMonth: number;

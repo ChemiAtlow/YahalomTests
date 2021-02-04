@@ -13,6 +13,7 @@ interface DatePickerProps {
     onChange: (timestamp: number) => void;
 }
 
+
 const DatePicker: React.FC<DatePickerProps> = ({ label, onChange }) => {
     const [inputVal, setInputVal] = useState("");
     const todayTimestamp = useMemo(() => Date.now() - (Date.now() % TIME.day) + new Date().getTimezoneOffset() * 1000 * 60, [])
@@ -28,7 +29,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ label, onChange }) => {
     }, []);
     const getDayDetails = useCallback((args: DateArgs) => {
         const _date = args.dayOfMonth - args.firstDayOfMonth;
-        const day = args.dayOfMonth % 7;
+        const dayOfWeek = args.dayOfMonth % 7;
         let prevMonth = args.month - 1;
         let prevYear = args.year;
         if (prevMonth < 0) {
@@ -36,53 +37,17 @@ const DatePicker: React.FC<DatePickerProps> = ({ label, onChange }) => {
             prevYear--;
         }
         const prevMonthNumberOfDays = getNumberOfDays(prevYear, prevMonth);
-        let date = (_date < 0 ? prevMonthNumberOfDays + _date : _date % args.numberOfDaysInMonth) + 1;
-        let month = _date < 0 ? -1 : _date >= args.numberOfDaysInMonth ? 1 : 0;
-        let timestamp = new Date(args.year, args.month, _date).getTime();
+        const date = (_date < 0 ? prevMonthNumberOfDays + _date : _date % args.numberOfDaysInMonth) + 1;
+        const month = _date < 0 ? -1 : _date >= args.numberOfDaysInMonth ? 1 : 0;
+        const timestamp = new Date(args.year, args.month, date).getTime();
         return {
             date,
-            day,
+            dayOfWeek,
             month,
-            timestamp,
-            dayString: TIME.dayNames[day]
+            timestamp
         }
     }, [getNumberOfDays]);
     const getMonthDetails = useCallback<(year: number, month: number) => DateDetails[]>((year, month) => {
-        const monthDays = TIME.getMonthDays(month, year);
-        const monthFirstDay = TIME.getMonthFirstDay(month, year);
-        // Get number of days to be displayed from previous and next months
-        // These ensure a total of 42 days (6 weeks) displayed on the calendar
-        const daysFromPrevMonth = monthFirstDay - 1;
-        const daysFromNextMonth = TIME.CALENDAR_WEEKS * TIME.DAYS_IN_WEEK - (daysFromPrevMonth + monthDays);
-        // Get the previous and next months and years
-        const { month: prevMonth, year: prevMonthYear } = TIME.getPreviousMonth(month, year);
-        const { month: nextMonth, year: nextMonthYear } = TIME.getNextMonth(month, year);
-        // Get number of days in previous month
-        const prevMonthDays = TIME.getMonthDays(prevMonth, prevMonthYear);
-        // Builds dates to be displayed from previous month
-        const prevMonthDates = [...new Array(daysFromPrevMonth)].map((n, index) => {
-            const day = index + 1 + (prevMonthDays - daysFromPrevMonth);
-            getDayDetails({
-                dayOfMonth,
-                numberOfDaysInMonth,
-                firstDayOfMonth,
-                year,
-                month
-            });
-            return [prevMonthYear, TIME.zeroPad(prevMonth, 2), TIME.zeroPad(day, 2)];
-        });
-        // Builds dates to be displayed from current month
-        // const thisMonthDates = [...new Array(monthDays)].map((n, index) => {
-        //     const day = index + 1;
-        //     return [year, zeroPad(month, 2), zeroPad(day, 2)];
-        // });
-        // // Builds dates to be displayed from next month
-        // const nextMonthDates = [...new Array(daysFromNextMonth)].map((n, index) => {
-        //     const day = index + 1;
-        //     return [nextMonthYear, zeroPad(nextMonth, 2), zeroPad(day, 2)];
-        // });
-        // Combines all dates from previous, current and next months
-        // return [...prevMonthDates, ...thisMonthDates, ...nextMonthDates];
         const firstDayOfMonth = (new Date(year, month)).getDay(),
             numberOfDaysInMonth = getNumberOfDays(year, month),
             monthArray = [],
