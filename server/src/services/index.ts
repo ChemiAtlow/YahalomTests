@@ -7,3 +7,4 @@ export * as authService from './auth.service';
 export * as certificationService from './certification.service';
 export * as examService from './exam.service';
 export * as studentService from './student.service';
+export * as appLoggerService from './appLogger.service';
