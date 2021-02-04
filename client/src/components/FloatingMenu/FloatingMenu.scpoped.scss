@@ -23,7 +23,7 @@
     }
 
     .menu {
-        box-shadow: 0 0.3rem 1rem rgba($primary, 0.5);
+        box-shadow: $blue-shadow;
         border-radius: 8px;
         overflow: hidden;
         transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;

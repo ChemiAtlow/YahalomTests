@@ -8,7 +8,7 @@
     max-height: calc(100% - 12rem);
     background: $light;
     border-radius: 0.8rem;
-    box-shadow:  0 0.3rem 1rem rgba($primary, 0.5);
+    box-shadow:  $blue-shadow;
     overflow-y: auto;
     z-index:9;
     &-header {

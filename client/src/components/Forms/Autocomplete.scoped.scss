@@ -2,9 +2,9 @@
     position: relative;
     &-options {
         position: absolute;
-        right:0;
-        left:0;
-        top:3.6rem;
+        right: 0;
+        left: 0;
+        top: 3.6rem;
         z-index: 5;
         display: block;
         list-style: none;
@@ -14,8 +14,10 @@
         background: $light-gray;
         border: 1px solid $grayish-blue;
         border-radius: 0 0 0.5rem 0.5rem;
-        box-shadow: 0 0.3rem 1rem rgba($primary, 0.5);
+        box-shadow: $blue-shadow;
         overflow: hidden;
+        overflow-y: scroll;
+        max-height: 20rem;
         &__item {
             display: block;
             padding: 10px;
