@@ -21,6 +21,33 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
     const { setLoadingState } = useLoading();
     const { buildAuthRequestData } = useAuth();
     const { testId } = match.params;
+    let submissionsNumber = useMemo(() => {
+        let count = 0;
+        questions.forEach(({ id: qId }) => {
+            count = examResults.filter(({ answeredQuestions }) =>
+                answeredQuestions?.reduce((prev, { questionId, answers }) => {
+                    if (answers.filter(a => a.correct === true).length > 0 && questionId === qId) {
+                        return prev + 1;
+                    }
+                    return prev;
+                }, 0)
+            ).length
+        });
+        return count;
+    }, [examResults, questions]);
+
+    // const answeredCorrectly = useMemo(() => {
+    //     const correctAnswered = examResults.reduce((prev, { answeredQuestions, originalQuestions }) => {
+    //         if (originalQuestions !== undefined) {
+    //             originalQuestions.forEach(({ answers }, i) => {
+    //                 return answers.filter(({ correct }, j) =>
+    //                     (correct === true && answeredQuestions?.[i].answers[j].correct === correct)).length < 1 ? prev : prev + 1;
+    //             });
+    //         }            
+    //         return prev;
+    //     }, 0);
+    //     return correctAnswered / submissionsNumber;
+    // }, [examResults]);
 
     const columns: Column[] = [
         {
@@ -55,6 +82,37 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
                 </Tooltip>
             ),
         },
+    ];
+
+    const QuestionsStatisticColumns: Column[] = [
+        {
+            label: "Question",
+            key: "title",
+            sortable: true,
+        },
+        {
+            label: "Tags",
+            key: "label",
+            sortable: true,
+        },
+        {
+            label: "Submitted",
+            key: "lastUpdate",
+            sortable: true,
+            template: ({ data }) => <Tooltip value={new Date(data).toLocaleString()} >{new Date(data).toLocaleDateString()}</Tooltip>,
+        },
+        {
+            label: "Number of submissions",
+            key: "*",
+            sortable: true,
+            template: ({ data }) => <span>{submissionsNumber}</span>,
+        },
+        // {
+        //     label: "Answered correctly",
+        //     key: "grade",
+        //     sortable: true,
+        //     template: ({ data }) => <span>{answeredCorrectly}</span>,
+        // },
     ];
 
     const openStudentExamResult = (id: models.classes.guid) => {
@@ -135,7 +193,7 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
                         <div />
                         <Autocomplete options={questionsAutoComplete} label="Search by question name/id/label" value={questionSearch} onChange={setQuestionSearch} />
                     </SearchRow>
-                    <DataTable data={questions} columns={columns} searchTerm={questionSearch} searchKeys={["id", "label", "title"]} />
+                    <DataTable data={questions} columns={QuestionsStatisticColumns} searchTerm={questionSearch} searchKeys={["id", "label", "title"]} />
                 </AccordionSection>
             </Accordion>
         </Container>
