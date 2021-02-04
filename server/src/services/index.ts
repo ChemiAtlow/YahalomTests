@@ -1,3 +1,4 @@
+export * as appLoggerService from './appLogger.service';
 export * as emailService from './email.service';
 export * as organizationService from './organization.service';
 export * as fieldService from './field.service';
@@ -7,4 +8,3 @@ export * as authService from './auth.service';
 export * as certificationService from './certification.service';
 export * as examService from './exam.service';
 export * as studentService from './student.service';
-export * as appLoggerService from './appLogger.service';
