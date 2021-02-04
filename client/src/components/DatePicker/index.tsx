@@ -136,7 +136,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ label, onChange }) => {
     return (
         <div className="date-picker__wrapper" ref={datePickerRef}>
             <div className="date-picker__input" onClick={() => setShowDatePicker(true)}>
-                <FormField label="date" type="text" value={inputVal} onChange={e => updateDateFromInput(e.target.value)} />
+                <FormField label={label} blockErrors type="text" value={inputVal} onChange={e => updateDateFromInput(e.target.value)} />
             </div>
             {showDatePicker && <div className="date-picker__container">
                 <DatePickerHead currentMonth={getMonthStr(monthState)} currentYear={yearState} onChangeMonth={changeMonth} onChangeYear={changeYear} />

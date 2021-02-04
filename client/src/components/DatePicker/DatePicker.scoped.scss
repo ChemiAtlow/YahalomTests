@@ -17,8 +17,9 @@
         width: 100%;
         position: absolute;
         left: 0;
-        top: 57px;
+        top: 59px;
         min-height: 350px;
+        min-width: 292px;
         background: $light;
         box-shadow: 0 0.3rem 1rem rgba($primary, 0.5);
         border-radius: 0 0 1rem 1rem;
@@ -26,5 +27,6 @@
         padding: 25px 30px;
         display: grid;
         grid-template-rows: 55px 1fr;
+        z-index: 5;
     }
 }
