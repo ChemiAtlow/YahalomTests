@@ -96,8 +96,9 @@ const DatePicker: React.FC<DatePickerProps> = ({ label, onChange }) => {
         }
     }, [setInputVal, setYearState, setMonthState, setMonthDetails, getDateFromDateString, getMonthDetails]);
     const changeYear = useCallback((offset: number) => {
-        setYearState(yearState + offset);
-        setMonthDetails(getMonthDetails(yearState, monthState));
+        const year = yearState + offset;
+        setYearState(year);
+        setMonthDetails(getMonthDetails(year, monthState));
     }, [yearState, monthState, setYearState, setMonthDetails, getMonthDetails]);
     const changeMonth = useCallback((offset: number) => {
         let year = yearState;
