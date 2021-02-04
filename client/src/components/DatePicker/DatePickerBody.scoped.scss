@@ -8,7 +8,7 @@
         &-name {
             line-height: 30px;
             font-weight: 700;
-            color: #666;
+            color: $deep-blue;
             font-size: 9px;
         }
     }
@@ -19,7 +19,7 @@
         &-day {
             font-size: 12px;
             font-weight: 300;
-            color: #444;
+            color: $primary;
             span {
                 display: inline-block;
                 width: 30px;
@@ -35,16 +35,16 @@
                 }
             }
             &.highlight span {
-                background: #efdbca;
+                background: rgba($secondary, 0.4);
             }
             &.highlight-green span {
-                background: #d4e2cb;
+                background: rgba($primary, 0.6);
             }
             &.disabled {
                 pointer-events: none;
                 span {
-                    color: #ddd;
-                    background: #fff !important;
+                    color: $mid-gray;
+                    background: $light !important;
                 }
             }
         }

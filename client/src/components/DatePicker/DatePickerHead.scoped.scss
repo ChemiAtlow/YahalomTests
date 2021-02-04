@@ -1,8 +1,8 @@
 %arrows {
     width: 6px;
     height: 6px;
-    border-left: 2px solid #888;
-    border-bottom: 2px solid #888;
+    border-left: 2px solid $primary;
+    border-bottom: 2px solid $primary;
     position: absolute;  
     left: 50%;
     top: 50%;
@@ -27,9 +27,6 @@
             &:hover {
                 cursor: pointer;
                 background: $mid-gray;
-                > span {
-                    border-color: #555 !important;
-                }
             }
             &__left-arrow,
             &__left-arrows {
@@ -62,13 +59,13 @@
     &-container {
         &__year {
             font-size: 27px;
-            color: #666;
+            color: $deep-blue;
             font-weight: 500;
         }
         &__month {
             font-size: 13px;
-            color: #666;
-            font-weight: 300;
+            color: $deep-blue;
+            font-weight: 400;
             text-align: center;
         }
     }
