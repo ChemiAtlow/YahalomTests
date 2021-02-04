@@ -1,25 +1,15 @@
-import React from "react";
-import { Accordion, AccordionSection, AppButton, MessageModal } from "../components";
-import { useModal } from "../hooks";
+import React, { useState } from "react";
+import { Container, DatePicker } from "../components";
 
 const Reports: React.FC = () => {
-    const { openModal } = useModal();
-    const showMessage = (title: string, body: string) =>
-        openModal(MessageModal, {
-            title,
-			children: <p>{body}</p>,
-            okText: "SAVE",
-            cancelText: "LATER",
-        }).promise;
+    const [timestamp, setTimestamp] = useState(0);
     return (
-        <div>
+        <Container>
             Reports
-            <AppButton onClick={() => showMessage("Title!", "Example")}>Open provided modal</AppButton>
-            <Accordion>
-                <AccordionSection title="ABC"><p>123</p><p>567</p></AccordionSection>
-                <AccordionSection title="DEF"><p>890</p><p>412</p></AccordionSection>
-            </Accordion>
-        </div>
+            <br />
+            current Date: {timestamp}
+            <DatePicker label="Start date" onChange={setTimestamp} />
+        </Container>
     );
 };
 

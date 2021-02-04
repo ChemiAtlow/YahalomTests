@@ -6,7 +6,7 @@ interface DatePickerBodyProps {
     monthDetails?: DateDetails[];
     today: number;
     selectedDay: number;
-    onDateClick: (day: DateDetails) => void;
+    onDateClick: (day: number) => void;
 }
 
 const DatePickerBody: React.FC<DatePickerBodyProps> = ({
@@ -30,16 +30,16 @@ const DatePickerBody: React.FC<DatePickerBodyProps> = ({
                 ))}
             </div>
             <div className="calendar-container__body">
-                {monthDetails?.map((day, index) => {
+                {monthDetails?.map(({month, date, timestamp}, index) => {
                     return (
                         <div
                             key={index}
                             className={`calendar-container__body-day ${
-                                day.month !== 0 ? ' disabled' : ''
-                            } ${isCurrentDay(day.timestamp) ? ' highlight' : ''} ${
-                                isSelectedDay(day.timestamp) ? ' highlight-green' : ''
+                                month !== 0 ? ' disabled' : ''
+                            } ${isCurrentDay(timestamp) ? ' highlight' : ''} ${
+                                isSelectedDay(timestamp) ? ' highlight-green' : ''
                             }`}>
-                            <span onClick={() => onDateClick(day)}>{day.date}</span>
+                            <span onClick={() => onDateClick(timestamp)}>{date}</span>
                         </div>
                     );
                 })}
