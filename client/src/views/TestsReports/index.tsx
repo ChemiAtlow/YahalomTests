@@ -1,10 +1,11 @@
 import { models } from "@yahalom-tests/common";
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
-import { Autocomplete, Column, Container, DataTable, ErrorModal, Icon, SearchRow, Tooltip } from "../../components";
+import { Autocomplete, Column, Container, DataTable, DatePicker, ErrorModal, Icon, SearchRow, Tooltip } from "../../components";
 import { useAuth, useLoading, useModal } from "../../hooks";
 import { testService } from "../../services";
 import StudentReport from "./TestReport";
+import "./TestReports.scoped.scss";
 
 const TestsReports: React.FC = () => {
     const { openModal } = useModal();
@@ -82,7 +83,10 @@ const TestsReports: React.FC = () => {
                 <Container>
                     <h1>Tests reports</h1>
                     <SearchRow>
-                        <span></span>
+                        <div id="range-selector">
+                            <DatePicker label="Start date" onChange={() => {}} />
+                            <DatePicker label="End date" onChange={() => {}} />
+                        </div>
                         <Autocomplete options={testsAutoComplete} label="Search by test name/id/creator" value={search} onChange={setSearch} />
                     </SearchRow>
                     <DataTable data={tests} columns={columns} searchTerm={search} searchKeys={["id", "title"]} />
