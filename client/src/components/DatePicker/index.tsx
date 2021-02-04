@@ -117,14 +117,14 @@ const DatePicker: React.FC<DatePickerProps> = ({ label, onChange, initialDate })
     }, [yearState, monthState, setYearState, setMonthState, setMonthDetails, getMonthDetails]);
 
     useEffect(() => {
-        
         const date = initialDate || new Date();
         const year = date.getFullYear(), month = date.getMonth();
         setSelectedDay(date.setHours(0, 0, 0, 0))        
         setMonthState(month);
         setYearState(year);
         setMonthDetails(getMonthDetails(year, month));
-    }, [initialDate, setMonthState, setYearState, setMonthDetails, getMonthDetails, setInputVal, getDateStringFromTimestamp]);
+        onChange(date.setHours(0, 0, 0, 0));
+    }, [initialDate, setMonthState, setYearState, setMonthDetails, getMonthDetails, setSelectedDay, onChange]);
     useEffect(() => {
         const dateString = getDateStringFromTimestamp(selectedDay);
         setInputVal(dateString);

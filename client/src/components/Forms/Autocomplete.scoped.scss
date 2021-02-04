@@ -16,7 +16,7 @@
         border-radius: 0 0 0.5rem 0.5rem;
         box-shadow: $blue-shadow;
         overflow: hidden;
-        overflow-y: scroll;
+        overflow-y: auto;
         max-height: 20rem;
         &__item {
             display: block;

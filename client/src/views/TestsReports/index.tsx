@@ -12,6 +12,8 @@ const monthAgo = new Date(Date.now() - constants.TIME.month);
 const TestsReports: React.FC = () => {
     const { openModal } = useModal();
     const [search, setSearch] = useState("");
+    const [startDate, setStartDate] = useState(0);
+    const [endDate, setEndDate] = useState(0);
     const [tests, setTests] = useState<models.interfaces.Test[]>([]);
     const [testsAutoComplete, setTestsAutoComplete] = useState<string[]>([]);
     const { path, url } = useRouteMatch();
@@ -61,7 +63,7 @@ const TestsReports: React.FC = () => {
     ];
 
     const goToTestReports = (id: models.classes.guid) => {
-        push(`${url}/${id}`);
+        push(`${url}/${id}?start=${startDate}&end=${endDate}`);
     };
 
     useEffect(() => {
@@ -86,8 +88,8 @@ const TestsReports: React.FC = () => {
                     <h1>Tests reports</h1>
                     <SearchRow>
                         <div id="range-selector">
-                            <DatePicker label="Start date" initialDate={monthAgo} onChange={() => {}} />
-                            <DatePicker label="End date" onChange={() => {}} />
+                            <DatePicker label="Start date" initialDate={monthAgo} onChange={setStartDate} />
+                            <DatePicker label="End date" onChange={setEndDate} />
                         </div>
                         <Autocomplete options={testsAutoComplete} label="Search by test name/id/creator" value={search} onChange={setSearch} />
                     </SearchRow>
