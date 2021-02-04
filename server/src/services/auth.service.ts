@@ -1,10 +1,10 @@
 import { hash, compare } from "bcryptjs";
 import { randomBytes } from "crypto";
 import { sign } from "jsonwebtoken";
-import { models } from "@yahalom-tests/common";
+import { models, constants } from "@yahalom-tests/common";
 import { userRepository } from "../DAL";
 import { EmailTakenError, AuthError, HttpError } from "../errors";
-import { HTTPStatuses, TIME, general } from "../constants";
+import { HTTPStatuses, general } from "../constants";
 import { emailService, fieldService, organizationService } from ".";
 
 export const signup = async ({ email, password }: models.dtos.UserDto) => {
@@ -48,7 +48,7 @@ export const requestPasswordReset = async ({ email }: models.dtos.RequestPasswor
         const token = randomBytes(32).toString("hex");
         await userRepository.updateItem(userFromDb.id!, {
             resetToken: token,
-            resetTokenExpiration: Date.now() + TIME.month,
+            resetTokenExpiration: Date.now() + constants.TIME.month,
         });
         await emailService.sendPasswordResetEmail(email, token);
     } catch (err) {
