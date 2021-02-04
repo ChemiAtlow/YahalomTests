@@ -1,0 +1,52 @@
+.calendar-container {
+    margin-top: 10px;
+    display: grid;
+    grid-template-rows: 30px 270px;
+    &__head {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        &-name {
+            line-height: 30px;
+            font-weight: 700;
+            color: $deep-blue;
+            font-size: 9px;
+        }
+    }
+    &__body {
+        display: grid;
+        grid-template: repeat(6, 1fr) / repeat(7, 1fr);
+        align-items: center;
+        &-day {
+            font-size: 12px;
+            font-weight: 300;
+            color: $primary;
+            span {
+                display: inline-block;
+                width: 30px;
+                height: 30px;
+                left: 50%;
+                top: 50%;
+                font-weight: 400;
+                border-radius: 50%;
+                line-height: 30px;
+                &:hover {
+                    cursor: pointer;
+                    background: #eee;
+                }
+            }
+            &.highlight span {
+                background: rgba($secondary, 0.4);
+            }
+            &.highlight-green span {
+                background: rgba($primary, 0.6);
+            }
+            &.disabled {
+                pointer-events: none;
+                span {
+                    color: $mid-gray;
+                    background: $light !important;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,72 @@
+%arrows {
+    width: 6px;
+    height: 6px;
+    border-left: 2px solid $primary;
+    border-bottom: 2px solid $primary;
+    position: absolute;  
+    left: 50%;
+    top: 50%;
+}
+
+.date-picker__head {
+    display: grid;
+    grid-template-columns: repeat(2, 45px) 1fr repeat(2, 45px);
+    position: relative;
+    &-button {
+        position: relative;
+        &-inner {
+            height: 35px;
+            width: 35px;
+            background: $gray;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: background-color 300ms linear;
+            &:hover {
+                cursor: pointer;
+                background: $mid-gray;
+            }
+            &__left-arrow,
+            &__left-arrows {
+                @extend %arrows;
+                transform: translate(-50%, -50%) rotate(45deg);
+            }
+            &__right-arrows,
+            &__right-arrow {
+                @extend %arrows;
+                transform: translate(-50%, -50%) rotate(225deg);
+            }
+            &__right-arrows:after,
+            &__left-arrows:after {
+                @extend %arrows;
+                content: '';
+            }
+            &__left-arrows {
+                transform: translate(-100%, -50%) rotate(45deg);
+            }
+            &__right-arrows {
+                transform: translate(25%, -50%) rotate(225deg);
+            }
+            &__right-arrows:after,
+            &__left-arrows:after {
+                left: 1px;
+                top: -5px;
+            }
+        }
+    }
+    &-container {
+        &__year {
+            font-size: 27px;
+            color: $deep-blue;
+            font-weight: 500;
+        }
+        &__month {
+            font-size: 13px;
+            color: $deep-blue;
+            font-weight: 400;
+            text-align: center;
+        }
+    }
+}
