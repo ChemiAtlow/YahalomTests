@@ -13,8 +13,8 @@ export async function getStudentReports(authReqData: AuthRequest, email: string)
         `${reportsRoute}student/${email}`, authRequestToHeaders(authReqData));
 }
 
-export async function getTestReport(authReqData: AuthRequest, id: models.classes.guid) {
+export async function getTestReport(authReqData: AuthRequest, id: models.classes.guid, startDate = 0, endDate = 0) {
     return await http.get<models.interfaces.TestReport>(
-        `${reportsRoute}test/${id}`, authRequestToHeaders(authReqData));
+        `${reportsRoute}test/${id}?start=${startDate}&end=${endDate}`, authRequestToHeaders(authReqData));
 }
 

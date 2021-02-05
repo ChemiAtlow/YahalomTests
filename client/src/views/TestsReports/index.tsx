@@ -63,7 +63,7 @@ const TestsReports: React.FC = () => {
     ];
 
     const goToTestReports = (id: models.classes.guid) => {
-        push(`${url}/${id}?start=${startDate}&end=${endDate}`);
+        push(`${url}/${id}/${startDate}-${endDate}`);
     };
 
     useEffect(() => {
@@ -96,7 +96,7 @@ const TestsReports: React.FC = () => {
                     <DataTable data={tests} columns={columns} searchTerm={search} searchKeys={["id", "title"]} />
                 </Container>
             </Route>
-            <Route path={`${path}/:testId`} component={StudentReport}/>
+            <Route path={`${path}/:testId/:start-:end`} component={StudentReport}/>
         </Switch>
     );
 };

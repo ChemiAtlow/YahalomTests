@@ -7,7 +7,11 @@ import { reportService } from "../../services";
 import { unionArrays } from "../../utils";
 
 interface StudentReportProps {
-    match: match<{ testId: models.classes.guid }>;
+    match: match<{ 
+        testId: models.classes.guid;
+        start: string;
+        end: string;
+     }>;
 };
 interface questionData extends models.interfaces.Question {
     correctAnswersCount: number;
@@ -25,7 +29,7 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
     const [questionsAutoComplete, setQuestionsAutoComplete] = useState<string[]>([]);
     const { setLoadingState } = useLoading();
     const { buildAuthRequestData } = useAuth();
-    const { testId } = match.params;
+    const { testId, start, end } = match.params;
 
     const questionData = useMemo(() => {
         //local variables for calculating
@@ -165,8 +169,10 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
     }, [questions, setQuestionsAutoComplete]);
     useEffect(() => {
         setLoadingState("loading");
+        const startDate = Number(start) || 0;
+        const endDate = Number(end) || 0;
         reportService.getTestReport(
-            buildAuthRequestData(), testId)
+            buildAuthRequestData(), testId, startDate, endDate)
             .then(({ data }) => {
                 setExamResults(data.exams);
                 setTest(data.test);
@@ -177,7 +183,7 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
             .catch(() =>
                 openModal(ErrorModal, { title: "Error", body: "Couldn't fetch student exam results. try later." }))
             .finally(() => setLoadingState("success"));
-    }, [setExamResults, buildAuthRequestData, setLoadingState, openModal, testId]);
+    }, [setExamResults, buildAuthRequestData, setLoadingState, openModal, testId, start, end]);
 
     return (
         <Container>
