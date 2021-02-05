@@ -6,7 +6,7 @@ const { combine, timestamp, printf, json, colorize } = format;
 const logDirectory = join(__dirname, '../../logs');
 
 // app loger config
-export const appLogger = createLogger({
+const appLogger = createLogger({
     silent: process.env.NODE_ENV === 'test',
     transports: [
         new transports.File({
