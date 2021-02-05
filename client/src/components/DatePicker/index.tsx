@@ -9,12 +9,13 @@ import { useClickOutside } from '../../hooks';
 const { TIME } = constants;
 
 interface DatePickerProps {
+    initialDate?: Date;
     label: string;
     onChange: (timestamp: number) => void;
 }
 
 
-const DatePicker: React.FC<DatePickerProps> = ({ label, onChange }) => {
+const DatePicker: React.FC<DatePickerProps> = ({ label, onChange, initialDate }) => {
     const [inputVal, setInputVal] = useState("");
     const todayTimestamp = useMemo(() => Date.now() - (Date.now() % TIME.day) + new Date().getTimezoneOffset() * 1000 * 60, [])
     const [monthDetails, setMonthDetails] = useState<DateDetails[]>();
@@ -82,7 +83,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ label, onChange }) => {
         const dateObject = new Date(timestamp);
         const month = dateObject.getMonth() + 1;
         const date = dateObject.getDate();
-        return `${date < 10 ? '0' + date : date}/${month < 10 ? '0' + month : month}/${dateObject.getFullYear()}`;
+        return `${date.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${dateObject.getFullYear()}`;
     }, []);
     const updateDateFromInput = useCallback((newVal: string) => {
         setInputVal(newVal);
@@ -116,17 +117,14 @@ const DatePicker: React.FC<DatePickerProps> = ({ label, onChange }) => {
     }, [yearState, monthState, setYearState, setMonthState, setMonthDetails, getMonthDetails]);
 
     useEffect(() => {
-        if (showDatePicker) {
-            console.log("SET MONTH AND DATE")
-        }
-    }, [showDatePicker])
-    useEffect(() => {
-        const date = new Date();
+        const date = initialDate || new Date();
         const year = date.getFullYear(), month = date.getMonth();
+        setSelectedDay(date.setHours(0, 0, 0, 0))        
         setMonthState(month);
         setYearState(year);
         setMonthDetails(getMonthDetails(year, month));
-    }, [setMonthState, setYearState, setMonthDetails, getMonthDetails]);
+        onChange(date.setHours(0, 0, 0, 0));
+    }, [initialDate, setMonthState, setYearState, setMonthDetails, getMonthDetails, setSelectedDay, onChange]);
     useEffect(() => {
         const dateString = getDateStringFromTimestamp(selectedDay);
         setInputVal(dateString);
@@ -136,7 +134,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ label, onChange }) => {
     return (
         <div className="date-picker__wrapper" ref={datePickerRef}>
             <div className="date-picker__input" onClick={() => setShowDatePicker(true)}>
-                <FormField label="date" type="text" value={inputVal} onChange={e => updateDateFromInput(e.target.value)} />
+                <FormField label={label} blockErrors type="text" value={inputVal} onChange={e => updateDateFromInput(e.target.value)} />
             </div>
             {showDatePicker && <div className="date-picker__container">
                 <DatePickerHead currentMonth={getMonthStr(monthState)} currentYear={yearState} onChangeMonth={changeMonth} onChangeYear={changeYear} />

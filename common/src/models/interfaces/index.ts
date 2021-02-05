@@ -11,3 +11,4 @@ export * from "./Student";
 export * from "./AnsweredQuestion";
 export * from "./Exam";
 export * from "./ExamResult";
+export * from "./TestReport";

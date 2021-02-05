@@ -29,6 +29,12 @@
                     &::before {
                         opacity: 1;
                     }
+                    .correct & {
+                        border-color: $dark-green;
+                    }
+                    .incorrect & {
+                        border-color: $dark-red;
+                    }
                 }
                 &::before {
                     position: absolute;
@@ -41,7 +47,13 @@
                     border-radius: 50%;
                     transition: opacity 0.4ms ease;
                     background: 100% 100% / cover, $dark-blue $button-bg;
-                    transition: opacity 400ms ease-in-out;
+                    transition: all 400ms ease-in-out;
+                    .correct & {
+                        background: 100% 100% / cover, $dark-green $good-bg;
+                    }
+                    .incorrect & {
+                        background: 100% 100% / cover, $dark-red $warn-bg;
+                    }
                 }
             }
             &[type="checkbox"] {
@@ -55,6 +67,14 @@
                         height: 7px;
                         top: 3.5px;
                         left: 1px;
+                    }
+                    .correct & {
+                        background: 100% 100% / cover, $dark-green $good-bg;
+                        border-color: $dark-green;
+                    }
+                    .incorrect & {
+                        background: 100% 100% / cover, $dark-red $warn-bg;
+                        border-color: $dark-red;
                     }
                 }
                 &::before {
@@ -79,7 +99,7 @@
         white-space: pre-wrap;
         p {
             padding: 0.4rem 0.2rem;
-            &.correct {
+            .correct & {
                 background-color: rgba($color: $light-green, $alpha: 0.4);
                 box-shadow: 0 0 4px 1.5px $dark-green;
                 border-radius: 0.4rem;

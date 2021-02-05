@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import { AppButton, SectionNavigator, Section, ErrorModal, QuestionPeekModal, WarningModal, MessageModal, FixedFooter } from '../../components';
 import { QuestionDetails, QuestionAnswers } from './QuestionForm';
-import { useAuth, useModal } from "../../hooks";
+import { useAuth, useLoading, useModal } from "../../hooks";
 import { questionService } from '../../services';
 import "./EditQuestion.scoped.scss";
 import type { QuestionDetailsErrors, QuestionDetailsKeys } from './QuestionForm/types';
@@ -32,6 +32,7 @@ const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) 
     const [answersError, setAnswersError] = useState("");
     const { activeStudyField, buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
+    const { setLoadingState } = useLoading();
     const { state } = useLocation<{ question?: models.dtos.QuestionDto }>();
     const { params } = useRouteMatch<EditParams>();
     const isInvalid = useMemo(() => Boolean(detailsError.general) || Boolean(answersError), [detailsError, answersError]);
@@ -40,14 +41,16 @@ const EditQuestion: React.FC<EditQuestionProps> = ({ onQuestionAddedOrEdited }) 
         if (params.questionId && state?.question) {
             setQuestion(state.question);
         } else if (params.questionId && !state?.question) {
+            // setLoadingState("loading"); ////// This currently causes re-render. this changes "params", need to figure out why.
             questionService.getQuestion(buildAuthRequestData(), params.questionId)
                 .then(({ data }) => setQuestion(data))
                 .catch(err => openModal(ErrorModal, {
                     title: "Error loading question",
                     body: `An error occoured while loading the question for editing:\n${err?.message || ""}`
                 }))
+                .finally(() => setLoadingState("success"));
         }
-    }, [state, params, setQuestion, buildAuthRequestData, openModal]);
+    }, [state, params, setQuestion, buildAuthRequestData, openModal, setLoadingState]);
 
     useEffect(() => {
         const { answers } = question;

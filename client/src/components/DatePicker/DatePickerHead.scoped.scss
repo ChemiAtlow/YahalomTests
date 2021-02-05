@@ -3,7 +3,7 @@
     height: 6px;
     border-left: 2px solid $primary;
     border-bottom: 2px solid $primary;
-    position: absolute;  
+    position: absolute;
     left: 50%;
     top: 50%;
 }
@@ -13,16 +13,15 @@
     grid-template-columns: repeat(2, 45px) 1fr repeat(2, 45px);
     position: relative;
     &-button {
-        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         &-inner {
             height: 35px;
             width: 35px;
             background: $gray;
             border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: relative;
             transition: background-color 300ms linear;
             &:hover {
                 cursor: pointer;

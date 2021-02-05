@@ -2,7 +2,6 @@ import React from "react";
 import { ModalInstance } from "../../hooks";
 import { AppButton } from "../Forms";
 import { BaseModal } from "./BaseModal";
-import "./ErrorModal.scoped.scss";
 
 export interface MessageModalProps extends ModalInstance<boolean> {
     title?: React.ReactNode;

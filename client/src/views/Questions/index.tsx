@@ -1,6 +1,6 @@
-import { models } from "@yahalom-tests/common";
-import React, { useEffect, useState } from "react";
-import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
+import { models } from '@yahalom-tests/common';
+import React, { useEffect, useState } from 'react';
+import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import {
     Ellipsis,
     AppButton,
@@ -12,77 +12,103 @@ import {
     Container,
     SearchRow,
     Autocomplete,
+    WarningModal,
+    MessageModal,
 } from '../../components';
-import { questionService } from "../../services";
-import { useAuth, useModal } from "../../hooks";
-import EditQuestion from "./EditQuestion";
+import { questionService } from '../../services';
+import { useAuth, useLoading, useModal } from '../../hooks';
+import EditQuestion from './EditQuestion';
 
 const Questions: React.FC = () => {
     const [questions, setQuestions] = useState<models.interfaces.Question[]>([]);
     const [questionsAutoComplete, setQuestionsAutoComplete] = useState<string[]>([]);
-    const [search, setSearch] = useState("");
+    const [search, setSearch] = useState('');
     const { path } = useRouteMatch();
     const { push } = useHistory();
     const { openModal } = useModal();
+    const { setLoadingState } = useLoading();
     const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
     const removeQuestion = async (id: models.classes.guid) => {
+        const shouldDelete = await openModal(WarningModal, {
+            title: 'Are you sure?',
+            body: "Removing questions can't be undone. are you sure you want to procceed?",
+            okText: 'Cancel',
+            cancelText: 'Remove',
+        }).promise;
+        if (!shouldDelete) {
+            return;
+        }
         try {
             const { data } = await questionService.deleteQuestion(buildAuthRequestData(), id);
-            setQuestions(questions.filter(q => q.id !== data.id));
+            setQuestions(questions.filter((q) => q.id !== data.id));
+            openModal(MessageModal, {
+                title: 'Success',
+                children: <p>Question removed successfully</p>,
+                okText: 'OK',
+            });
         } catch (err) {
             openModal(ErrorModal, {
-                title: "Delete failure!",
+                title: 'Delete failure!',
                 body: `Delete has failed: ${err.message}`,
             });
         }
     };
     const goToEditQuestion = (question: models.interfaces.Question) =>
-        push(getOrganizationAndFieldUrl("questions", "edit", question.id!), { question });
+        push(getOrganizationAndFieldUrl('questions', 'edit', question.id!), { question });
     const columns: Column[] = [
         {
-            label: "Title",
-            key: "title",
+            label: 'Title',
+            key: 'title',
             sortable: true,
             largeColumn: true,
             template: ({ data }) => <Ellipsis data={data} maxLength={50} direction="right" />,
         },
         {
-            label: "Type",
-            key: "type",
+            label: 'Type',
+            key: 'type',
             sortable: true,
-            template: ({ data }) => <span>{data === 0 ? "Single choice" : "Multi choice"}</span>,
+            template: ({ data }) => (
+                <span>{data === 0 ? 'Single choice' : 'Multi choice'}</span>
+            ),
         },
         {
-            label: "Last Update",
-            key: "lastUpdate",
+            label: 'Last Update',
+            key: 'lastUpdate',
             sortable: true,
-            template: ({ data }) => <span>{new Date(data).toLocaleString()}</span>,
+            template: ({ data }) => {
+                const date = new Date(data);
+                return (
+                    <Tooltip value={date.toLocaleString()}>
+                        <span>{date.toLocaleDateString()}</span>
+                    </Tooltip>
+                );
+            },
         },
         {
-            label: "Usage count",
-            key: "testCount",
+            label: 'Usage count',
+            key: 'testCount',
             sortable: true,
             template: ({ data }) => <span>{data || 0}</span>,
         },
         {
-            label: "",
-            key: "*",
+            label: '',
+            key: '*',
             sortable: false,
             smallColumn: true,
             template: ({ data }) => (
                 <Tooltip
-                    value={data.active ? "Question is active" : "Remove question."}
+                    value={data.testCount ? 'Question is active' : 'Remove question.'}
                     direction="left">
                     <Icon
-                        icon={data.active ? "active" : "trash"}
-                        onClick={data.active ? undefined : () => removeQuestion(data.id)}
+                        icon={data.testCount ? 'active' : 'trash'}
+                        onClick={data.testCount ? undefined : () => removeQuestion(data.id)}
                     />
                 </Tooltip>
             ),
         },
         {
-            label: "",
-            key: "*",
+            label: '',
+            key: '*',
             sortable: false,
             smallColumn: true,
             template: ({ data }) => (
@@ -93,7 +119,7 @@ const Questions: React.FC = () => {
         },
     ];
     const onQuestionAddedOrEdited = (question: models.interfaces.Question) => {
-        const existingQuestionIndex = questions.findIndex(q => q.id === question.id);
+        const existingQuestionIndex = questions.findIndex((q) => q.id === question.id);
         if (existingQuestionIndex >= 0) {
             questions[existingQuestionIndex] = { ...questions[existingQuestionIndex], ...question };
         } else {
@@ -106,10 +132,14 @@ const Questions: React.FC = () => {
         setQuestionsAutoComplete(titles);
     }, [questions, setQuestionsAutoComplete]);
     useEffect(() => {
+        setLoadingState("loading");
         questionService
             .getAllQuestions(buildAuthRequestData())
-            .then(({ data }) => setQuestions(data));
-    }, [setQuestions, buildAuthRequestData]);
+            .then(({ data }) => setQuestions(data))
+            .catch(() =>
+                openModal(ErrorModal, { title: "Error", body: "Couldn't fetch questions. try again." }))
+            .finally(() => setLoadingState("success"));
+    }, [setQuestions, buildAuthRequestData, openModal, setLoadingState]);
     return (
         <Switch>
             <Route path={path} exact>
