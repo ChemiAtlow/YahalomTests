@@ -1,3 +1,4 @@
+import { constants } from "@yahalom-tests/common";
 import { Request, Response } from "express";
 import { HTTPStatuses } from "../constants";
 import { BadRequestError, HttpError, UnauthorizedError } from "../errors";
@@ -8,7 +9,7 @@ export const getTestReport = async (req: types.RequestWithId<any, any, { start: 
     const { organization } = req.headers as types.AuthenticatedRequestHeaders;
     const { id: testId } = req.params;
     let { end = 0, start = 0 } = req.query;
-    end = isNaN(Number(end)) ? 0 : Number(end);
+    end = isNaN(Number(end)) ? 0 : Number(end +  + constants.TIME.day);
     start = isNaN(Number(start)) ? 0 : Number(start);
     if (end !== 0 && start >= end) {
         throw new BadRequestError("Can't create a report for an invalid date range. start date must be prior to end date.");
