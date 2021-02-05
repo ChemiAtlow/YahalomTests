@@ -97,6 +97,12 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
             sortable: true,
         },
         {
+            label: "Submitted",
+            key: "lastUpdate",
+            sortable: true,
+            template: ({ data }) => <Tooltip value={new Date(data).toLocaleString()} >{new Date(data).toLocaleDateString()}</Tooltip>,
+        },
+        {
             label: "Number of submissions",
             key: "submissionsCount",
             sortable: true
