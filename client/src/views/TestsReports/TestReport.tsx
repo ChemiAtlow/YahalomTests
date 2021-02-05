@@ -139,13 +139,14 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
     const openQuestionOptions = (question: models.interfaces.Question) => {
         openModal(QuestionPeekModal, { question });
     };
-    const passingStudents = useMemo(
-        () => examResults.reduce((prev, { grade, minPassGrade }) => grade < minPassGrade ? prev : prev + 1, 0),
-        [examResults]
-    );
-    const averageGrade = useMemo(() => {
-        const totalGrades = examResults.reduce((prev, { grade }) => prev + grade, 0);
-        return Math.ceil(totalGrades / examResults.length);
+    const [passingStudents, averageGrade, successRate] = useMemo(() => {
+        const [passingStudents, totalGrades] = examResults.reduce(([passing, totalGrades], { grade, minPassGrade }) => {
+            const passed = grade < minPassGrade ? passing : passing + 1;
+            return [passed, totalGrades + grade];
+        }, [0, 0]);
+        const average = Math.ceil(totalGrades / examResults.length);
+        const rate = (passingStudents / examResults.length) * 100;
+        return[passingStudents, average, rate]
     }, [examResults]);
     const medianGrade = useMemo(() => {
         if (examResults.length === 0) {
@@ -155,10 +156,6 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
         const sortedArr = [...examResults].sort(({ grade: a }, { grade: b }) => a - b);
         return examResults.length % 2 !== 0 ? sortedArr[mid].grade : (sortedArr[mid - 1].grade + sortedArr[mid].grade) / 2;
     }, [examResults]);
-    const successRate = useMemo(
-        () => (passingStudents / examResults.length) * 100,
-        [examResults, passingStudents]
-    );
 
     useEffect(() => {
         const suggestions = examResults.flatMap(({ title, id }) => [title, id]);
