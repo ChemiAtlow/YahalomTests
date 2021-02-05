@@ -13,8 +13,11 @@ export const appLogger = createLogger({
         printf((msg) =>
             colorize({
                 colors: {
-                    error: 'bold red',
-                    debug: 'blue',
+                    error: 'bold redBG white',
+                    warn: 'bold yellow',
+                    info: 'blue',
+                    verbose: 'cyan',
+                    debug: 'gray',
                 },
             }).colorize(
                 msg.level,
@@ -24,7 +27,7 @@ export const appLogger = createLogger({
     ),
     transports: [
         new transports.File({
-            level: 'info',
+            level: 'verbose',
             filename: 'info.log',
             dirname: logDirectory,
             handleExceptions: true,
@@ -32,26 +35,21 @@ export const appLogger = createLogger({
             maxsize: 5242880,
             maxFiles: 25,
         }),
-        new transports.Console({
-            level: 'error',
-            handleExceptions: true,
-        }),
-        new transports.Console({
-            level: 'warn',
-            handleExceptions: true,
-        }),
-        new transports.Console({
-            level: 'debug',
-            handleExceptions: true,
-        }),
     ],
     exitOnError: false,
 });
+if (process.env.NODE_ENV !== "production") {
+    appLogger.add( new transports.Console({
+        level: 'debug',
+        handleExceptions: true,
+    }));
+}
 
-export const info = appLogger.info.bind(appLogger);
-export const debug = appLogger.debug.bind(appLogger);
-export const warn = appLogger.warn.bind(appLogger);
-export const error = appLogger.error.bind(appLogger);
+export const debug = appLogger.debug.bind(appLogger); // level 5
+export const verbose =  appLogger.verbose.bind(appLogger); // level 4
+export const info = appLogger.info.bind(appLogger); // level 2
+export const warn = appLogger.warn.bind(appLogger); // level 1
+export const error = appLogger.error.bind(appLogger); // level 0
 
 export class LogStream {
     write(text: string) {
