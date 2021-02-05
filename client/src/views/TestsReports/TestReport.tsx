@@ -1,7 +1,7 @@
 import { models } from "@yahalom-tests/common";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { match } from "react-router-dom";
-import { Accordion, AccordionSection, Autocomplete, Column, Container, DataTable, ErrorModal, ExamReviewModal, Icon, Row, SearchRow, Tooltip } from "../../components";
+import { Accordion, AccordionSection, Autocomplete, Column, Container, DataTable, ErrorModal, ExamReviewModal, Icon, QuestionPeekModal, Row, SearchRow, Tooltip } from "../../components";
 import { useAuth, useLoading, useModal } from "../../hooks";
 import { reportService } from "../../services";
 import { unionArrays } from "../../utils";
@@ -22,7 +22,7 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
     const { openModal } = useModal();
     const [examSearch, setExamSearch] = useState("");
     const [questionSearch, setQuestionSearch] = useState("");
-    const [questions, setQuestions] = useState<models.interfaces.Question[]>([]);
+    const [questionData, setQuestionData] = useState<models.interfaces.Question[]>([]);
     const [examResults, setExamResults] = useState<models.interfaces.ExamResult[]>([]);
     const [test, setTest] = useState<models.interfaces.Test>();
     const [examsAutoComplete, setExamsAutoComplete] = useState<string[]>([]);
@@ -30,42 +30,25 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
     const { setLoadingState } = useLoading();
     const { buildAuthRequestData } = useAuth();
     const { testId, start, end } = match.params;
+    const startDate = useMemo(() => Number(start) || 0, [start]);
+    const endDate = useMemo(() => Number(end) || 0, [end]);
 
-    const questionData = useMemo(() => {
+    const buildQuestionData = useCallback((questions: models.interfaces.Question[], examResults: models.interfaces.ExamResult[]) => {
         //local variables for calculating
-        let count = 0;
-        const questionsDataArray = questions.map((question) => { //Iterates on each question
-            let data: questionData = {
-                correctAnswersCount: 0,
-                submissionsCount: 0,
-                type: models.enums.QuestionType.SingleChoice,
-                title: "",
-                answers: [],
-                label: "",
-                alignment: models.enums.Alignment.Horizontal,
-                lastUpdate: 0,
-                testCount: 0
-
-            };
+        const questionsDataArray = questions.map<questionData>((question) => { //Iterates on each question
             //Iterates each examResult answeredQuestions
-            count = examResults.filter(({ answeredQuestions }) => {
-                let correctAnswerCount = 0;
+            const [submissionsCount, correctAnswersCount] = examResults.reduce<[submissionsCount: number, correctAnswersCount: number]>(([total, correct], {answeredQuestions}) => {
                 //check weather or not the answer in correct and add it to questionData.
-                return answeredQuestions?.reduce((prev, { questionId, answers }) => {
-                    if (answers.filter(a => a.correct === true).length > 0 && questionId === question.id) {
-                        data = { ...data, ...question, correctAnswersCount: correctAnswerCount++ };
-                        return prev + 1;
-                    } else {
-                        data = { ...data, ...question, correctAnswersCount: data.correctAnswersCount + 1 };
-                        return prev;
-                    }
-                }, 0)
-            }).length //return the length of objects filtered
-            data = { ...data, submissionsCount: count } //update submissionsCount
-            return data;
+                const answer = answeredQuestions?.find(aq => aq.questionId === question.id);
+                const isAnswerCorrect = answer?.answers.reduce((prev, { correct }, i) => correct === question.answers[i].correct && prev, true);
+                total = answer ? total + 1 : total;
+                correct = isAnswerCorrect ? correct + 1 : correct;
+                return [total, correct];
+            }, [0,0]);
+            return { ...question, submissionsCount, correctAnswersCount };
         });
-        return questionsDataArray;
-    }, [examResults, questions]);
+        setQuestionData(questionsDataArray);
+    }, [setQuestionData]);
 
     const columns: Column[] = [
         {
@@ -86,7 +69,7 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
         },
         {
             label: "",
-            key: "id",
+            key: "*",
             sortable: false,
             smallColumn: true,
             template: ({ data }) => (
@@ -129,14 +112,32 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
             key: "*",
             sortable: true,
             template: ({ data }) => <span>{
-                data.submissionsCount !== 0 ? ((data.correctAnswersCount / data.submissionsCount) * 100) : 0}%</span>,
+                (data.submissionsCount !== 0 ? ((data.correctAnswersCount / data.submissionsCount) * 100) : 0).toFixed(2)
+            }%</span>,
+        },
+        {
+            label: "",
+            key: "*",
+            sortable: false,
+            smallColumn: true,
+            template: ({ data }) => (
+                <Tooltip
+                    value="View question's available answers"
+                    direction="left">
+                    <Icon
+                        icon="preview"
+                        onClick={() => openQuestionOptions(data)}
+                    />
+                </Tooltip>
+            ),
         },
     ];
 
-    const openStudentExamResult = (id: models.classes.guid) => {
-        const examResult = examResults.find(ex => ex.id === id);
-        if (!examResult) { return; }
+    const openStudentExamResult = (examResult: models.interfaces.ExamResult) => {
         openModal(ExamReviewModal, { examResult });
+    };
+    const openQuestionOptions = (question: models.interfaces.Question) => {
+        openModal(QuestionPeekModal, { question });
     };
     const passingStudents = useMemo(
         () => examResults.reduce((prev, { grade, minPassGrade }) => grade < minPassGrade ? prev : prev + 1, 0),
@@ -164,9 +165,9 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
         setExamsAutoComplete(suggestions);
     }, [examResults, setExamsAutoComplete]);
     useEffect(() => {
-        const suggestions = questions.flatMap(({ title, id, label }) => [title, id!, label]);
+        const suggestions = questionData.flatMap(({ title, id, label }) => [title, id!, label]);
         setQuestionsAutoComplete(suggestions);
-    }, [questions, setQuestionsAutoComplete]);
+    }, [questionData, setQuestionsAutoComplete]);
     useEffect(() => {
         setLoadingState("loading");
         const startDate = Number(start) || 0;
@@ -178,12 +179,12 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
                 setTest(data.test);
                 data.originalQuestions.push(...data.exams.flatMap(({ originalQuestions }) => originalQuestions || []));
                 const unionArray = unionArrays(data.originalQuestions);
-                setQuestions(unionArray);
+                buildQuestionData(unionArray, data.exams);
             })
             .catch(() =>
                 openModal(ErrorModal, { title: "Error", body: "Couldn't fetch student exam results. try later." }))
             .finally(() => setLoadingState("success"));
-    }, [setExamResults, buildAuthRequestData, setLoadingState, openModal, testId, start, end]);
+    }, [setExamResults, buildAuthRequestData, setLoadingState, buildQuestionData, openModal, testId, start, end]);
 
     return (
         <Container>
@@ -195,7 +196,11 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
                         <p><b>Test ID:</b> {test?.id}.</p>
                         <p><b>Amount of questions:</b> {test?.questions.length}.</p>
                         <p><b>Minimal passing grade:</b> {test?.minPassGrade}.</p>
-                        <p><b>Report's date range:</b> Always.</p>
+                        <p><b>Report's date range:</b> {
+                            startDate ? new Date(startDate).toLocaleDateString() : "The big bang"
+                        } - {
+                            endDate ? new Date(endDate).toLocaleDateString() : "End of time"
+                        }.</p>
                         <p><b>Subbmissions:</b> {examResults.length}.</p>
                         <p><b>Students whov'e passed:</b> {passingStudents}.</p>
                         <p><b>Success rate:</b> {successRate.toFixed(2)}%</p>
