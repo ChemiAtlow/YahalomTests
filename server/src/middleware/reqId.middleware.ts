@@ -5,7 +5,7 @@ import { appLoggerService } from '../services';
 export function assignId(req: Request, res: Response, next: NextFunction) {
     req.id = models.classes.Guid.newGuid();
     if (req.method !== "OPTIONS") {
-        appLoggerService.info(`${req.method} - Req ${req.id} has begun to: ${req.path}.`);
+        appLoggerService.verbose(`${req.method} - Req ${req.id} has begun to: ${req.path}.`);
     }
     next();
 }
