@@ -1,5 +1,6 @@
 import express, { Request } from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
 import { json } from 'body-parser';
@@ -18,6 +19,7 @@ patchRouterParamForAsyncHandling();
 const app = express();
 
 app.use(assignId);
+app.use(helmet());
 app.use(cors());
 app.use(
     morgan(':id :method :url :status :response-time ms - :res[content-length]', {
