@@ -11,3 +11,15 @@ export const SwitchCamelCaseToHuman = (val: string) => ({
 
 export const isExamAnExamResult = (exam?: models.interfaces.Exam | models.interfaces.ExamResult): exam is models.interfaces.ExamResult =>
     exam?.hasOwnProperty('questionCount') ?? false;
+
+export const unionArrays = <T extends models.interfaces.HasId>(arr: Array<T>) => {
+    const newArray = new Array<T>();
+    label: for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < newArray.length; j++) {
+            if (newArray[j].id === arr[i].id)
+                continue label;
+        }
+        newArray[newArray.length] = arr[i];
+    }
+    return newArray;
+};
