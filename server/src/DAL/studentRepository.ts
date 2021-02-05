@@ -28,7 +28,7 @@ export class StudentRepository {
 			if (this.data) {
 				return this.data;
 			}
-			appLoggerService.info(`${this.entityName} repo is preparing the data proxy.`);
+			appLoggerService.verbose(`${this.entityName} repo is preparing the data proxy.`);
 			const items = await fsPromises.readFile(this.fileName, "utf8");
 			const data = JSON.parse(items);
 			if (!Array.isArray(data)) {
@@ -52,7 +52,7 @@ export class StudentRepository {
 	}
 
 	async addItem(entity: EntityType) {
-		appLoggerService.info(`${this.entityName} repo is adding a new item.`);
+		appLoggerService.verbose(`${this.entityName} repo is adding a new item.`);
 		this.data = this.data || [];
 		this.data.push(entity);
 		await this.writeToFile();
@@ -60,7 +60,7 @@ export class StudentRepository {
 	}
 
 	async updateItem(email: string, entity: Partial<EntityType>) {
-		appLoggerService.info(`${this.entityName} repo is updating an item with email: ${email}.`);
+		appLoggerService.verbose(`${this.entityName} repo is updating an item with email: ${email}.`);
 		let index = this.findIndexByEmail(email);
 		this.data![index] = { ...this.data![index], ...entity, email };
 		await this.writeToFile();

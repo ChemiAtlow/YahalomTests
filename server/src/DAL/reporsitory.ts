@@ -27,7 +27,7 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 			if (this.data) {
 				return this.data;
 			}
-			appLoggerService.info(`${this.entityName} repo is preparing the data proxy.`);
+			appLoggerService.verbose(`${this.entityName} repo is preparing the data proxy.`);
 			const items = await fsPromises.readFile(this.fileName, "utf8");
 			const data = JSON.parse(items);
 			if (!Array.isArray(data)) {
@@ -52,7 +52,7 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 	}
 
 	async addItem(entity: EntityType) {
-		appLoggerService.info(`${this.entityName} repo is adding a new item.`);
+		appLoggerService.verbose(`${this.entityName} repo is adding a new item.`);
 		entity.id = models.classes.Guid.newGuid(); //set id
 		this.fullData = this.fullData || [];
 		this.fullData.push(entity);
@@ -62,7 +62,7 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 	}
 	
 	async updateItem(id: models.classes.guid, entity: Partial<EntityType>) {
-		appLoggerService.info(`${this.entityName} repo is updating an item with id: ${id}.`);
+		appLoggerService.verbose(`${this.entityName} repo is updating an item with id: ${id}.`);
 		let index = this.findIndexById(id);
 		this.fullData![index] = { ...this.fullData![index], ...entity, id };
 		await this.writeToFile();
@@ -71,7 +71,7 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 	}
 
 	async deleteItem(id: models.classes.guid) {
-		appLoggerService.info(`${this.entityName} repo is archiving an item with id: ${id}.`);
+		appLoggerService.verbose(`${this.entityName} repo is archiving an item with id: ${id}.`);
 		const removed = await this.updateItem(id, { archived: true } as any);
 		return removed;
 	}
