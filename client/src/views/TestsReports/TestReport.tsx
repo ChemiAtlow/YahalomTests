@@ -4,10 +4,15 @@ import { match } from "react-router-dom";
 import { Accordion, AccordionSection, Autocomplete, Column, Container, DataTable, ErrorModal, ExamReviewModal, Icon, Row, SearchRow, Tooltip } from "../../components";
 import { useAuth, useLoading, useModal } from "../../hooks";
 import { reportService } from "../../services";
+import { unionArrays } from "../../utils";
 
 interface StudentReportProps {
     match: match<{ testId: models.classes.guid }>;
-}
+};
+interface questionData extends models.interfaces.Question {
+    correctAnswersCount: number;
+    submissionsCount: number;
+};
 
 const TestReport: React.FC<StudentReportProps> = ({ match }) => {
     const { openModal } = useModal();
@@ -21,33 +26,42 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
     const { setLoadingState } = useLoading();
     const { buildAuthRequestData } = useAuth();
     const { testId } = match.params;
-    let submissionsNumber = useMemo(() => {
-        let count = 0;
-        questions.forEach(({ id: qId }) => {
-            count = examResults.filter(({ answeredQuestions }) =>
-                answeredQuestions?.reduce((prev, { questionId, answers }) => {
-                    if (answers.filter(a => a.correct === true).length > 0 && questionId === qId) {
-                        return prev + 1;
-                    }
-                    return prev;
-                }, 0)
-            ).length
-        });
-        return count;
-    }, [examResults, questions]);
 
-    // const answeredCorrectly = useMemo(() => {
-    //     const correctAnswered = examResults.reduce((prev, { answeredQuestions, originalQuestions }) => {
-    //         if (originalQuestions !== undefined) {
-    //             originalQuestions.forEach(({ answers }, i) => {
-    //                 return answers.filter(({ correct }, j) =>
-    //                     (correct === true && answeredQuestions?.[i].answers[j].correct === correct)).length < 1 ? prev : prev + 1;
-    //             });
-    //         }            
-    //         return prev;
-    //     }, 0);
-    //     return correctAnswered / submissionsNumber;
-    // }, [examResults]);
+    const questionData = useMemo(() => {
+        //local variables for calculating
+        let count = 0;
+        const questionsDataArray = questions.map((question) => { //Iterates on each question
+            let data: questionData = {
+                correctAnswersCount: 0,
+                submissionsCount: 0,
+                type: models.enums.QuestionType.SingleChoice,
+                title: "",
+                answers: [],
+                label: "",
+                alignment: models.enums.Alignment.Horizontal,
+                lastUpdate: 0,
+                testCount: 0
+
+            };
+            //Iterates each examResult answeredQuestions
+            count = examResults.filter(({ answeredQuestions }) => {
+                let correctAnswerCount = 0;
+                //check weather or not the answer in correct and add it to questionData.
+                return answeredQuestions?.reduce((prev, { questionId, answers }) => {
+                    if (answers.filter(a => a.correct === true).length > 0 && questionId === question.id) {
+                        data = { ...data, ...question, correctAnswersCount: correctAnswerCount++ };
+                        return prev + 1;
+                    } else {
+                        data = { ...data, ...question, correctAnswersCount: data.correctAnswersCount + 1 };
+                        return prev;
+                    }
+                }, 0)
+            }).length //return the length of objects filtered
+            data = { ...data, submissionsCount: count } //update submissionsCount
+            return data;
+        });
+        return questionsDataArray;
+    }, [examResults, questions]);
 
     const columns: Column[] = [
         {
@@ -103,16 +117,16 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
         },
         {
             label: "Number of submissions",
+            key: "submissionsCount",
+            sortable: true
+        },
+        {
+            label: "Answered correctly",
             key: "*",
             sortable: true,
-            template: ({ data }) => <span>{submissionsNumber}</span>,
+            template: ({ data }) => <span>{
+                data.submissionsCount !== 0 ? ((data.correctAnswersCount / data.submissionsCount) * 100) : 0}%</span>,
         },
-        // {
-        //     label: "Answered correctly",
-        //     key: "grade",
-        //     sortable: true,
-        //     template: ({ data }) => <span>{answeredCorrectly}</span>,
-        // },
     ];
 
     const openStudentExamResult = (id: models.classes.guid) => {
@@ -156,7 +170,9 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
             .then(({ data }) => {
                 setExamResults(data.exams);
                 setTest(data.test);
-                setQuestions(data.originalQuestions);
+                data.originalQuestions.push(...data.exams.flatMap(({ originalQuestions }) => originalQuestions || []));
+                const unionArray = unionArrays(data.originalQuestions);
+                setQuestions(unionArray);
             })
             .catch(() =>
                 openModal(ErrorModal, { title: "Error", body: "Couldn't fetch student exam results. try later." }))
@@ -193,7 +209,7 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
                         <div />
                         <Autocomplete options={questionsAutoComplete} label="Search by question name/id/label" value={questionSearch} onChange={setQuestionSearch} />
                     </SearchRow>
-                    <DataTable data={questions} columns={QuestionsStatisticColumns} searchTerm={questionSearch} searchKeys={["id", "label", "title"]} />
+                    <DataTable data={questionData} columns={QuestionsStatisticColumns} searchTerm={questionSearch} searchKeys={["id", "label", "title"]} />
                 </AccordionSection>
             </Accordion>
         </Container>
