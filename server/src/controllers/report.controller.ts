@@ -1,17 +1,23 @@
 import { Request, Response } from "express";
 import { HTTPStatuses } from "../constants";
-import { HttpError, UnauthorizedError } from "../errors";
+import { BadRequestError, HttpError, UnauthorizedError } from "../errors";
 import { types } from "../models";
 import { examService, organizationService, questionService, studentService, testService } from "../services";
 
-export const getTestReport = async (req: types.RequestWithId, res: Response) => {
+export const getTestReport = async (req: types.RequestWithId<any, any, { start: number; end: number; }>, res: Response) => {
     const { organization } = req.headers as types.AuthenticatedRequestHeaders;
     const { id: testId } = req.params;
+    let { end = 0, start = 0 } = req.query;
+    end = isNaN(Number(end)) ? 0 : Number(end);
+    start = isNaN(Number(start)) ? 0 : Number(start);
+    if (end !== 0 && start >= end) {
+        throw new BadRequestError("Can't create a report for an invalid date range. start date must be prior to end date.");
+    }
     const { id } = await organizationService.getOrganizationByTestId(testId);
     if (id !== organization) {
         throw new UnauthorizedError(false);
     }
-    const getExams = examService.getAllExamResultsOfTest(testId);
+    const getExams = examService.getAllExamResultsOfTest(testId, start, end);
     const getTest = testService.getTestsById(testId);
     const [exams, test] = await Promise.all([getExams, getTest]);
     const originalQuestions = await Promise.all(test.questions.map(async q => await questionService.getQuestionById(q)));

@@ -65,10 +65,15 @@ export const lockExam = async (examId: models.classes.guid) => {
     return await examRepository.updateItem(examId, { completed: Date.now(), grade, correctAnswersCount });
 };
 
-export const getAllExamResultsOfTest = async (testId: models.classes.guid) => {
+export const getAllExamResultsOfTest = async (testId: models.classes.guid, rangeStart = 0, rangeEnd = Date.now()) => {
+    if (rangeEnd !== 0 && rangeStart >= rangeEnd) {
+        throw new BadRequestError("Can't create a report for an invalid date range. start date must be prior to end date.");
+    }
+    rangeEnd = rangeEnd <= 0 ? Date.now() : rangeEnd;
     const exams = await examRepository.getAll();
     const reducedExams = await exams.reduce(async (prev, current) => {
-        return current.test === testId ? [...await prev, await getExamResult(current)] : prev;
+        const isInRange = current.timeStarted >= (rangeStart) && current.timeStarted <= rangeEnd;
+        return current.test === testId && isInRange ? [...await prev, await getExamResult(current)] : prev;
     }, Promise.resolve(Array<models.interfaces.ExamResult>()));
     return reducedExams;
 };
