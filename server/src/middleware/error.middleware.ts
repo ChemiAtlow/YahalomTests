@@ -1,13 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import { HttpError } from "../errors";
+import { appLoggerService } from "../services";
 
 export function errorMiddleware(
-	err: HttpError,
-	_: Request,
+	error: HttpError,
+	req: Request,
 	res: Response,
 	_1: NextFunction
 ) {
-	const { status = 500, message = "Somthing went wrong" } = err;
+	appLoggerService.warn(`${req.id} has completed with an error`, { error });
+	const { status = 500, message = "Somthing went wrong" } = error;
 	res.status(status).send({
 		status,
 		message,

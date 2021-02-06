@@ -3,6 +3,7 @@ import { resolve as pathResolve } from "path";
 import { models } from "@yahalom-tests/common";
 import { DbError, ItemNotInDbError } from "../errors";
 import { types } from "../models";
+import { appLoggerService } from "../services";
 
 export class Repository<EntityType extends models.interfaces.HasId> {
 	private fileName: string;
@@ -10,9 +11,11 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 	private fullData?: EntityType[];
 
 	constructor(fileName: string, protected entityName: types.EntityTypes) {
+		appLoggerService.debug(`Creating a repo with proxy for ${fileName}`);
 		this.fileName = pathResolve(__dirname, "..", "..", "data", fileName);
 		this.isValidFile().then(isValid => {
 			if (!isValid) {
+				appLoggerService.error(`Couldn't find/read from ${fileName}`, this.fileName);
 				throw new DbError("Illegal file!");
 			}
 			this.getAll();
@@ -24,9 +27,11 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 			if (this.data) {
 				return this.data;
 			}
+			appLoggerService.verbose(`${this.entityName} repo is preparing the data proxy.`);
 			const items = await fsPromises.readFile(this.fileName, "utf8");
 			const data = JSON.parse(items);
 			if (!Array.isArray(data)) {
+				appLoggerService.error(`${this.entityName} repo did not find an array in DB`, data);
 				throw new DbError("Db is corrupt");
 			}
 			this.fullData = data;
@@ -36,6 +41,7 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 			if (err instanceof DbError) {
 				throw err;
 			}
+			appLoggerService.error(`An unhandled issue happened while starting the ${this.entityName} repo.`, err);
 			throw new DbError("Couldn't fetch items");
 		}
 	}
@@ -46,6 +52,7 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 	}
 
 	async addItem(entity: EntityType) {
+		appLoggerService.verbose(`${this.entityName} repo is adding a new item.`);
 		entity.id = models.classes.Guid.newGuid(); //set id
 		this.fullData = this.fullData || [];
 		this.fullData.push(entity);
@@ -53,8 +60,9 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 		await this.writeToFile();
 		return entity;
 	}
-
+	
 	async updateItem(id: models.classes.guid, entity: Partial<EntityType>) {
+		appLoggerService.verbose(`${this.entityName} repo is updating an item with id: ${id}.`);
 		let index = this.findIndexById(id);
 		this.fullData![index] = { ...this.fullData![index], ...entity, id };
 		await this.writeToFile();
@@ -63,6 +71,7 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 	}
 
 	async deleteItem(id: models.classes.guid) {
+		appLoggerService.verbose(`${this.entityName} repo is archiving an item with id: ${id}.`);
 		const removed = await this.updateItem(id, { archived: true } as any);
 		return removed;
 	}
@@ -84,7 +93,7 @@ export class Repository<EntityType extends models.interfaces.HasId> {
 			const data = JSON.stringify(this.fullData || []);
 			await fsPromises.writeFile(this.fileName, data);
 		} catch (err) {
-			console.log("Writing to DB error", err);
+			appLoggerService.error("Writing to DB error", err);
 			throw new DbError("Couldn't write into DB.");
 		}
 	}

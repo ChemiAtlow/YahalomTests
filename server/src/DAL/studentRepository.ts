@@ -3,6 +3,7 @@ import { resolve as pathResolve } from "path";
 import { models } from "@yahalom-tests/common";
 import { DbError, ItemNotInDbError } from "../errors";
 import { types } from "../models";
+import { appLoggerService } from "../services";
 
 type EntityType = models.interfaces.Student;
 
@@ -12,6 +13,7 @@ export class StudentRepository {
 	private data?: EntityType[];
 
 	constructor(fileName: string) {
+		appLoggerService.debug(`Creating a repo with proxy for ${fileName}`);
 		this.fileName = pathResolve(__dirname, "..", "..", "data", fileName);
 		this.isValidFile().then(isValid => {
 			if (!isValid) {
@@ -26,9 +28,11 @@ export class StudentRepository {
 			if (this.data) {
 				return this.data;
 			}
+			appLoggerService.verbose(`${this.entityName} repo is preparing the data proxy.`);
 			const items = await fsPromises.readFile(this.fileName, "utf8");
 			const data = JSON.parse(items);
 			if (!Array.isArray(data)) {
+				appLoggerService.error(`${this.entityName} repo did not find an array in DB`, data);
 				throw new DbError("Db is corrupt");
 			}
 			this.data = data;
@@ -37,6 +41,7 @@ export class StudentRepository {
 			if (err instanceof DbError) {
 				throw err;
 			}
+			appLoggerService.error(`An unhandled issue happened while starting the ${this.entityName} repo.`, err);
 			throw new DbError("Couldn't fetch items");
 		}
 	}
@@ -47,6 +52,7 @@ export class StudentRepository {
 	}
 
 	async addItem(entity: EntityType) {
+		appLoggerService.verbose(`${this.entityName} repo is adding a new item.`);
 		this.data = this.data || [];
 		this.data.push(entity);
 		await this.writeToFile();
@@ -54,6 +60,7 @@ export class StudentRepository {
 	}
 
 	async updateItem(email: string, entity: Partial<EntityType>) {
+		appLoggerService.verbose(`${this.entityName} repo is updating an item with email: ${email}.`);
 		let index = this.findIndexByEmail(email);
 		this.data![index] = { ...this.data![index], ...entity, email };
 		await this.writeToFile();
@@ -73,7 +80,7 @@ export class StudentRepository {
 			const data = JSON.stringify(this.data || []);
 			await fsPromises.writeFile(this.fileName, data);
 		} catch (err) {
-			console.log("Writing to DB error", err);
+			appLoggerService.error("Writing to DB error", err);
 			throw new DbError("Couldn't write into DB.");
 		}
 	}
