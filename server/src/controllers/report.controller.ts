@@ -1,3 +1,4 @@
+import { constants } from "@yahalom-tests/common";
 import { Request, Response } from "express";
 import { HTTPStatuses } from "../constants";
 import { BadRequestError, HttpError, UnauthorizedError } from "../errors";
@@ -9,7 +10,7 @@ export const getTestReport = async (req: types.RequestWithId<any, any, { start: 
     const { id: testId } = req.params;
     appLoggerService.info(`request ${req.id} will fetch test report of test ${testId}.`, { organization, testId });
     let { end = 0, start = 0 } = req.query;
-    end = isNaN(Number(end)) ? 0 : Number(end);
+    end = isNaN(Number(end)) ? 0 : Number(end +  + constants.TIME.day);
     start = isNaN(Number(start)) ? 0 : Number(start);
     if (end !== 0 && start >= end) {
         appLoggerService.info(`request ${req.id} declined - invalid range.`, { start, end, organization, testId });

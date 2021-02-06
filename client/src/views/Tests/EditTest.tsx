@@ -2,7 +2,7 @@ import { models } from '@yahalom-tests/common';
 import React, { useEffect, useMemo, useState } from 'react'
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import { SectionNavigator, Section, AppButton, ErrorModal, MessageModal, FixedFooter } from '../../components'
-import { useAuth, useModal } from '../../hooks';
+import { useAuth, useLoading, useModal } from '../../hooks';
 import { testService } from '../../services';
 import { TestDetails, TestMessages, TestQuestions } from "./TestForm";
 import type { TestDetailsKeys, TestMessagesKeys, TestDetailsError, TestMessagesError  } from './TestForm/types';
@@ -50,6 +50,7 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
     });
     const [questionsError, setQuestionsError] = useState("");
     const { params } = useRouteMatch<EditParams>();
+    const { setLoadingState } = useLoading();
     const { state } = useLocation<{ test?: models.dtos.TestDto }>();
     const isDetailsPageInvalid = useMemo(
         () => !test.title.trim() || !test.intro.trim() || test.minPassGrade < 1 || test.minPassGrade > 100,
@@ -168,14 +169,16 @@ const EditTest: React.FC<EditTestProps> = ({ onTestAddedOrEdited }) => {
         if (params.testId && state?.test) {
             setTest(state.test);
         } else if (params.testId && !state?.test) {
+            //setLoadingState("loading"); ////// This currently causes re-render. this changes "params", need to figure out why.
             testService.getTest(buildAuthRequestData(), params.testId)
                 .then(({ data }) => setTest(data))
                 .catch(err => openModal(ErrorModal, {
                     title: "Error loading test",
                     body: `An error occoured while loading the test for editing:\n${err?.message || ""}`
                 }))
+                .finally(() => setLoadingState("success"));
         }
-    }, [state, params, setTest, buildAuthRequestData, openModal]);
+    }, [state, params, setTest, buildAuthRequestData, openModal, setLoadingState]);
 
     return (
         <FixedFooter>

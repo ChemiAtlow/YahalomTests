@@ -7,12 +7,14 @@
     max-width: 90%;
     max-height: calc(100% - 12rem);
     background: $light;
-    border-radius: $modal-radius;
-    box-shadow: 0 0 0.6rem $primary;
+    border-radius: 0.8rem;
+    box-shadow:  $blue-shadow;
     overflow-y: auto;
+    z-index:9;
     &-header {
         display: flex;
         align-items: center;
+        background: $light-gray;
         height: $modal-section-height;
         border-bottom: 1px solid $dialog-gray;
         padding-left: $modal-padding;
@@ -40,7 +42,7 @@
             border-left: 1px solid $dialog-gray;
             transition: all 350ms ease-in;
             &:hover {
-                background: $gray;
+                background: $grayish-blue;
             }
         }
     }
@@ -54,5 +56,6 @@
         align-items: center;
         justify-content: center;
         border-top: 1px solid $dialog-gray;
+        background: $light-gray;
     }
 }

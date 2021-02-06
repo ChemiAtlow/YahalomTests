@@ -53,6 +53,7 @@ export const TestMessages: React.FC<TestEmailsProps> = ({
 
     return (
         <Container>
+            <br />
             <Accordion>
                 <AccordionSection title="After test messages">
                     <FormField
@@ -87,7 +88,7 @@ export const TestMessages: React.FC<TestEmailsProps> = ({
                     />
                 </AccordionSection>
                 <AccordionSection title="Email messages wildcards">
-                    <DataTable columns={columns} data={emailTemplates} />
+                    <DataTable columns={columns} data={emailTemplates} stickAtTop />
                 </AccordionSection>
             </Accordion>
         </Container>

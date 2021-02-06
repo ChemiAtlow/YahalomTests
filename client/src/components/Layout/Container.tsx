@@ -1,8 +1,12 @@
 import React from "react";
 import "./Container.scoped.scss";
 
-const Container: React.FC = ({ children }) => {
-    return <div className="container">{children}</div>;
+interface ContainerProps {
+    align?: "start" | "center" | "end";
+};
+
+const Container: React.FC<ContainerProps> = ({ children, align }) => {
+    return <div className={`container ${align || ""}`}>{children}</div>;
 };
 
 export default Container;

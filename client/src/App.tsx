@@ -3,7 +3,7 @@ import { ProvideAuth } from "./hooks/auth.hook";
 import { NavBar, ProtectedRoute, NestedRoutes, Loader, ErrorBoundary } from "./components";
 import { LoadingProvider, ModalProvider } from "./hooks";
 import { Suspense } from "react";
-import { Exam, Home, Login, Questions, Reports, Restore, Tests } from "./views";
+import { Exam, Home, Login, Questions, StudentsReports, TestsReports, Restore, Tests } from "./views";
 
 const App: React.FC = () => {
     return (
@@ -23,7 +23,12 @@ const App: React.FC = () => {
                                             <NestedRoutes>
                                                 <ProtectedRoute requiresField path="/questions" component={Questions} />
                                                 <ProtectedRoute requiresField path="/tests" component={Tests} />
-                                                <ProtectedRoute requiresField path="/reports" component={Reports} />
+                                                <ProtectedRoute requiresField path="/reports">
+                                                    <NestedRoutes>
+                                                        <ProtectedRoute requiresField path="/student" component={StudentsReports} />
+                                                        <ProtectedRoute requiresField path="/test" component={TestsReports} />
+                                                    </NestedRoutes>
+                                                </ProtectedRoute>
                                             </NestedRoutes>
                                         </ProtectedRoute>
                                         <ProtectedRoute path="/" component={Home} />

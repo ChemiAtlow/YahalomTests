@@ -29,6 +29,7 @@
                 font-weight: 400;
                 border-radius: 50%;
                 line-height: 30px;
+                transition: background-color 300ms ease-in-out;
                 &:hover {
                     cursor: pointer;
                     background: #eee;
@@ -38,7 +39,7 @@
                 background: rgba($secondary, 0.4);
             }
             &.highlight-green span {
-                background: rgba($primary, 0.6);
+                background: rgba($primary, 0.3);
             }
             &.disabled {
                 pointer-events: none;

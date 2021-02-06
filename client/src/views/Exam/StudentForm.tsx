@@ -7,7 +7,6 @@ import { examService } from '../../services';
 
 interface StudentFormProps {
     match: match<{ testId: models.classes.guid }>;
-    testId: models.classes.guid;
 }
 
 const StudentForm: React.FC<StudentFormProps> = ({ match }) => {

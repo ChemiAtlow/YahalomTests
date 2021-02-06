@@ -16,13 +16,16 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onChange, value, .
     const [activeOption, setActiveOption] = useState(0);
     const onValueChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = target;
-        const filteredOptions = options.filter((opt) =>
-            new RegExp(value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(opt)
-        );
-        setFilteredOptions(filteredOptions);
-        setShowOptions(true);
         onChange(value);
+        openOptions(value);
     };
+    const openOptions = (query: string) => {
+        const filteredOptions = options.filter((opt) =>
+            new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(opt)
+        );
+        setFilteredOptions([...new Set(filteredOptions)]);
+        setShowOptions(true);
+    }
     const clickOption = (selected: React.MouseEvent<HTMLLIElement> | string) => {
         setShowOptions(false);
         setFilteredOptions([]);
@@ -30,6 +33,12 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onChange, value, .
         onChange(typeof selected === 'string' ? selected : selected.currentTarget.innerText);
     };
     const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.code === 'Space' && e.ctrlKey) {
+            openOptions(value);
+        }
+        if (((e.code === 'Delete' || e.code === 'Backspace') && value.length <= 1) || e.code === "Escape") {
+            setShowOptions(false);
+        }
         if (e.code === 'Enter') {
             clickOption(filteredOptions[activeOption]);
         } else if (e.code === 'ArrowUp') {
@@ -53,7 +62,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onChange, value, .
                 search
                 blockErrors
             />
-            {showOptions && value && (
+            {showOptions && (
                 <ul className="autocomplete-options">
                     {filteredOptions.length ? (
                         filteredOptions.map((optionName, index) => {

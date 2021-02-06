@@ -2,8 +2,9 @@
     position: relative;
     &-options {
         position: absolute;
-        right:0;
-        left:0;
+        right: 0;
+        left: 0;
+        top: 3.6rem;
         z-index: 5;
         display: block;
         list-style: none;
@@ -12,27 +13,29 @@
         padding: 0;
         background: $light-gray;
         border: 1px solid $grayish-blue;
-        border-radius: 0.5rem;
-        box-shadow: 0 0 0.3rem 0.07rem $primary;
+        border-radius: 0 0 0.5rem 0.5rem;
+        box-shadow: $blue-shadow;
         overflow: hidden;
+        overflow-y: auto;
+        max-height: 20rem;
         &__item {
             display: block;
             padding: 10px;
             font-size: 1.2rem;
             width: 100%;
             border-radius: 2px;
+            transition: 0.3s all;
             &:not(:last-of-type) {
                 border-bottom: 1px solid $grayish-blue;
             }
             &:hover:not(.empty) {
-                font-weight: bold;
                 color: $deep-blue;
                 cursor: pointer;
-                transition: 0.3s all;
+                background: rgba($c-border, 0.3);
             }
             &.active {
                 font-weight: bold;
-                background: whitesmoke;
+                background: $gray;
                 font-size: 1.2rem;
                 color: $deep-blue;
             }
