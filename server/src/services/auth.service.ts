@@ -10,7 +10,7 @@ import { appLoggerService, emailService, fieldService, organizationService } fro
 export const signup = async ({ email, password }: models.dtos.UserDto) => {
     appLoggerService.verbose("Attempt to sign up new user", { email });
     if (await getUserByEmail(email)) {
-        appLoggerService.info("attempt to sign up user failed - email taken", { email })
+        appLoggerService.info("attempt to sign up user failed - email taken", { email });
         throw new EmailTakenError(email);
     }
     const hashedPassword = await hash(password, 12);
@@ -135,4 +135,4 @@ const getUserWithResetToken = async (token: string) => {
 const createUserJWT = (user: models.interfaces.User) => {
     appLoggerService.verbose("generate a JWT token for user", { user });
     return sign(user, general.jwtSecret, { expiresIn: "30d" });
-}
+};
