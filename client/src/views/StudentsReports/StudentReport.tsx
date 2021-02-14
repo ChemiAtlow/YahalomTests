@@ -1,8 +1,8 @@
 import { models } from "@yahalom-tests/common";
 import React, { useEffect, useMemo, useState } from "react";
 import { match } from "react-router-dom";
-import { Autocomplete, Column, Container, DataTable, ErrorModal, ExamReviewModal, Icon, SearchRow, Tooltip } from "../../components";
-import { useAuth, useLoading, useModal } from "../../hooks";
+import { Autocomplete, Column, Container, DataTable, ExamReviewModal, Icon, SearchRow, Tooltip } from "../../components";
+import { useAuth, useModal } from "../../hooks";
 import { reportService } from "../../services";
 
 interface StudentReportProps {
@@ -10,13 +10,12 @@ interface StudentReportProps {
 }
 
 const StudentReport: React.FC<StudentReportProps> = ({ match }) => {
-    const { openModal } = useModal();
-    const [search, setSearch] = useState("");
-    const [examResults, setExamResults] = useState<models.interfaces.ExamResult[]>([]);
-    const [examsAutoComplete, setExamsAutoComplete] = useState<string[]>([]);
-    const { setLoadingState } = useLoading();
     const { buildAuthRequestData } = useAuth();
     const { studentEmail } = match.params;
+    const examResults = reportService.getStudentReports.read(buildAuthRequestData(), studentEmail) || [];
+    const { openModal } = useModal();
+    const [search, setSearch] = useState("");
+    const [examsAutoComplete, setExamsAutoComplete] = useState<string[]>([]);
 
     const columns: Column[] = [
         {
@@ -68,15 +67,6 @@ const StudentReport: React.FC<StudentReportProps> = ({ match }) => {
         const suggestions = examResults.flatMap(({ title,id }) => [title,id]);
         setExamsAutoComplete(suggestions);
     }, [examResults, setExamsAutoComplete]);
-    useEffect(() => {
-        setLoadingState("loading");
-        reportService.getStudentReports(
-            buildAuthRequestData(), studentEmail)
-            .then(({ data }) => setExamResults(data))
-            .catch(() =>
-                openModal(ErrorModal, { title: "Error", body: "Couldn't fetch student exam results. try later." }))
-            .finally(() => setLoadingState("success"));
-    }, [setExamResults, buildAuthRequestData, setLoadingState, openModal, studentEmail]);
 
     return (
         <Container>
