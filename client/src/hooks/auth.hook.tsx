@@ -1,5 +1,5 @@
 import { models } from "@yahalom-tests/common";
-import React, { useState, useContext, createContext, useEffect } from "react";
+import React, { useState, useContext, createContext, useEffect, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { AuthRequest } from "../models";
 import { authService } from "../services";
@@ -83,12 +83,12 @@ function useProvideAuth(): providerFn {
 		setOrganizationBaseInfo(undefined);
 	};
 
-	const getOrganizationAndFieldUrl = (...params: string[]) => {
+	const getOrganizationAndFieldUrl = useCallback((...params: string[]) => {
 		return `/${activeOrganization?.id}/${activeStudyField?.id}/${params.join("/")}`;
-	};
-	const buildAuthRequestData = () => {
+	}, [activeOrganization, activeStudyField]);
+	const buildAuthRequestData = useCallback(() => {
 		return { jwt: jwt ?? "", organizationId: activeOrganization?.id ?? "", studyFieldId: activeStudyField?.id ?? "" }
-	}
+	}, [jwt, activeOrganization, activeStudyField])
 	useEffect(() => {
 		const authData = localStorage.getItem('authData');
 		const data = JSON.parse(authData || "{}");

@@ -59,7 +59,7 @@ export const editQuestion = async (
         ...updatedQuestion,
         lastUpdate: Date.now(),
     });
-}
+};
 
 export const isQuestionActive = async (questionId: models.classes.guid) => {
     appLoggerService.verbose("Attempt to check if question is active", { questionId });
@@ -68,10 +68,10 @@ export const isQuestionActive = async (questionId: models.classes.guid) => {
     return testCount > 0;
 };
 
-export const deleteQuestion = async (id: models.classes.guid) =>{
+export const deleteQuestion = async (id: models.classes.guid) => {
     appLoggerService.verbose("Attempt to archive question.");
     return await questionRepository.deleteItem(id);
-}
+};
 
 export const updateQuestionUsage = async (
     questionIds: models.classes.guid[],

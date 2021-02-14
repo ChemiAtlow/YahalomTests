@@ -1,20 +1,17 @@
-import { models } from "@yahalom-tests/common";
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
-import { Autocomplete, Column, Container, DataTable, ErrorModal, Icon, SearchRow, Tooltip } from "../../components";
-import { useAuth, useLoading, useModal } from "../../hooks";
+import { Autocomplete, Column, Container, DataTable, Icon, SearchRow, Tooltip } from "../../components";
+import { useAuth } from "../../hooks";
 import { reportService } from "../../services";
 import StudentReport from "./StudentReport";
 
 const StudentsReports: React.FC = () => {
-    const { openModal } = useModal();
+    const { buildAuthRequestData } = useAuth();
+    const students = reportService.getAllStudents.read(buildAuthRequestData()) || [];
     const [search, setSearch] = useState("");
-    const [students, setStudents] = useState<models.interfaces.Student[]>([]);
     const [studentsAutoComplete, setStudentsAutoComplete] = useState<string[]>([]);
     const { path, url } = useRouteMatch();
     const { push } = useHistory();
-    const { setLoadingState } = useLoading();
-    const { buildAuthRequestData } = useAuth();
 
     const columns: Column[] = [
         {
@@ -64,15 +61,6 @@ const StudentsReports: React.FC = () => {
         const suggestions = students.flatMap(({ firstName, lastName, email }) => [firstName, lastName, email]);
         setStudentsAutoComplete(suggestions);
     }, [students, setStudentsAutoComplete]);
-    useEffect(() => {
-        setLoadingState("loading");
-        reportService
-            .getAllStudents(buildAuthRequestData())
-            .then(({ data }) => setStudents(data))
-            .catch(() =>
-                openModal(ErrorModal, { title: "Error", body: "Couldn't fetch students. try later." }))
-            .finally(() => setLoadingState("success"));
-    }, [setStudents, buildAuthRequestData, setLoadingState, openModal]);
 
     return (
         <Switch>

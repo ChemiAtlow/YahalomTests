@@ -1,8 +1,8 @@
 import { constants, models } from "@yahalom-tests/common";
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
-import { Autocomplete, Column, Container, DataTable, DatePicker, ErrorModal, Icon, SearchRow, Tooltip } from "../../components";
-import { useAuth, useLoading, useModal } from "../../hooks";
+import { Autocomplete, Column, Container, DataTable, DatePicker, Icon, SearchRow, Tooltip } from "../../components";
+import { useAuth } from "../../hooks";
 import { testService } from "../../services";
 import StudentReport from "./TestReport";
 import "./TestReports.scoped.scss";
@@ -10,16 +10,14 @@ import "./TestReports.scoped.scss";
 const monthAgo = new Date(Date.now() - constants.TIME.month);
 
 const TestsReports: React.FC = () => {
-    const { openModal } = useModal();
+    const { buildAuthRequestData } = useAuth();
+    const tests = testService.getAllTests.read(buildAuthRequestData()) || [];
     const [search, setSearch] = useState("");
     const [startDate, setStartDate] = useState(0);
     const [endDate, setEndDate] = useState(0);
-    const [tests, setTests] = useState<models.interfaces.Test[]>([]);
     const [testsAutoComplete, setTestsAutoComplete] = useState<string[]>([]);
     const { path, url } = useRouteMatch();
     const { push } = useHistory();
-    const { setLoadingState } = useLoading();
-    const { buildAuthRequestData } = useAuth();
 
     const columns: Column[] = [
         {
@@ -70,15 +68,6 @@ const TestsReports: React.FC = () => {
         const suggestions = tests.flatMap(({ title, id, teacherEmail }) => [title, id ?? "", teacherEmail]);
         setTestsAutoComplete(suggestions);
     }, [tests, setTestsAutoComplete]);
-    useEffect(() => {
-        setLoadingState("loading");
-        testService
-            .getAllTests(buildAuthRequestData())
-            .then(({ data }) => setTests(data))
-            .catch(() =>
-                openModal(ErrorModal, { title: "Error", body: "Couldn't fetch tests. try later." }))
-            .finally(() => setLoadingState("success"));
-    }, [setTests, buildAuthRequestData, setLoadingState, openModal]);
 
     return (
         //need to add search by date

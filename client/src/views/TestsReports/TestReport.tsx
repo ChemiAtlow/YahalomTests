@@ -19,6 +19,29 @@ interface questionData extends models.interfaces.Question {
 };
 
 const TestReport: React.FC<StudentReportProps> = ({ match }) => {
+    const { buildAuthRequestData } = useAuth();
+    const { testId, start, end } = match.params;
+    const startDate = useMemo(() => Number(start) || 0, [start]);
+    const endDate = useMemo(() => Number(end) || 0, [end]);
+    const testReport: models.interfaces.TestReport = reportService.getTestReport.read(buildAuthRequestData(), testId, startDate, endDate) ||
+    {
+        exams: [],
+        originalQuestions: [],
+        test: {
+            title: "",
+            intro: "",
+            questions: [],
+            teacherEmail: "",
+            successMessage: "",
+            failureMessage: "",
+            failureEmail: { body: "", subject: "" },
+            successEmail: { body: "", subject: "" },
+            minPassGrade: 55,
+            lastUpdate: 0,
+            isReviewEnabled: true,
+            language: models.enums.Language.Hebrew
+        }
+    };
     const { openModal } = useModal();
     const [examSearch, setExamSearch] = useState("");
     const [questionSearch, setQuestionSearch] = useState("");
@@ -28,10 +51,6 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
     const [examsAutoComplete, setExamsAutoComplete] = useState<string[]>([]);
     const [questionsAutoComplete, setQuestionsAutoComplete] = useState<string[]>([]);
     const { setLoadingState } = useLoading();
-    const { buildAuthRequestData } = useAuth();
-    const { testId, start, end } = match.params;
-    const startDate = useMemo(() => Number(start) || 0, [start]);
-    const endDate = useMemo(() => Number(end) || 0, [end]);
 
     const buildQuestionData = useCallback((questions: models.interfaces.Question[], examResults: models.interfaces.ExamResult[]) => {
         //local variables for calculating
@@ -166,23 +185,14 @@ const TestReport: React.FC<StudentReportProps> = ({ match }) => {
         setQuestionsAutoComplete(suggestions);
     }, [questionData, setQuestionsAutoComplete]);
     useEffect(() => {
-        setLoadingState("loading");
-        const startDate = Number(start) || 0;
-        const endDate = Number(end) || 0;
-        reportService.getTestReport(
-            buildAuthRequestData(), testId, startDate, endDate)
-            .then(({ data }) => {
-                setExamResults(data.exams);
-                setTest(data.test);
-                data.originalQuestions.push(...data.exams.flatMap(({ originalQuestions }) => originalQuestions || []));
-                const unionArray = unionArrays(data.originalQuestions);
-                buildQuestionData(unionArray, data.exams);
-            })
-            .catch(() =>
-                openModal(ErrorModal, { title: "Error", body: "Couldn't fetch student exam results. try later." }))
-            .finally(() => setLoadingState("success"));
-    }, [setExamResults, buildAuthRequestData, setLoadingState, buildQuestionData, openModal, testId, start, end]);
-
+        const { exams, originalQuestions, test } = testReport;
+        setExamResults(exams);
+        setTest(test);
+        originalQuestions.push(...exams.flatMap(({ originalQuestions }) => originalQuestions || []));
+        const unionArray = unionArrays(originalQuestions);
+        buildQuestionData(unionArray, exams);
+    }, [testReport])
+   
     return (
         <Container>
             <h1>Test report</h1>

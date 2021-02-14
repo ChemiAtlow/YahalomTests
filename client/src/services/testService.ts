@@ -1,12 +1,32 @@
+import {
+    createResource,
+    strategies,
+    plugins,
+    StorageRequest,
+} from "@lxsmnsyc/react-suspense-cache";
 import { models } from "@yahalom-tests/common";
 import { AuthRequest } from "../models";
 import http, { authRequestToHeaders } from "./httpService";
 
 const testsRoute = "/tests/";
 
-export async function getAllTests(authReqData: AuthRequest) {
-    return await http.get<models.interfaces.Test[]>(testsRoute, authRequestToHeaders(authReqData));
-}
+
+export const getAllTests = createResource<models.interfaces.Test[], StorageRequest>({
+    keyFactory() {
+        return `allTests`;
+    },
+    async fetcher(authReqData: AuthRequest) {
+        const { data } = await http.get<models.interfaces.Test[]>(
+            testsRoute,
+            authRequestToHeaders(authReqData)
+        );
+        return data;
+    },
+    strategy: new strategies.StaleWhileRevalidate({
+        plugins: [new plugins.ExpirationPlugin(10)],
+    }),
+    revalidateOnVisibility: true,
+});
 
 export async function getTest(authReqData: AuthRequest, id: models.classes.guid) {
     return await http.get<models.interfaces.Test>(

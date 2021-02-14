@@ -8,9 +8,9 @@ import { appLoggerService, examService, organizationService, questionService, st
 export const getTestReport = async (req: types.RequestWithId<any, any, { start: number; end: number; }>, res: Response) => {
     const { organization } = req.headers as types.AuthenticatedRequestHeaders;
     const { id: testId } = req.params;
-    appLoggerService.info(`request ${req.id} will fetch test report of test ${testId}.`, { organization, testId });
     let { end = 0, start = 0 } = req.query;
-    end = isNaN(Number(end)) ? 0 : Number(end +  + constants.TIME.day);
+    appLoggerService.info(`request ${req.id} will fetch test report of test ${testId}.`, { organization, testId, end, start });
+    end = isNaN(Number(end)) || Number(end) === 0 ? Date.now() : Number(end +  + constants.TIME.day);
     start = isNaN(Number(start)) ? 0 : Number(start);
     if (end !== 0 && start >= end) {
         appLoggerService.info(`request ${req.id} declined - invalid range.`, { start, end, organization, testId });
@@ -26,7 +26,7 @@ export const getTestReport = async (req: types.RequestWithId<any, any, { start: 
         const getTest = testService.getTestsById(testId);
         const [exams, test] = await Promise.all([getExams, getTest]);
         const originalQuestions = await Promise.all(test.questions.map(async q => await questionService.getQuestionById(q)));
-        appLoggerService.info(`request ${req.id} fetched test report of test ${test} from organization ${organization}`);
+        appLoggerService.info(`request ${req.id} fetched test report of test ${test.id} from organization ${organization}`);
         res.send({ exams, test, originalQuestions });
     } catch (err) {
         if (err instanceof HttpError) {
