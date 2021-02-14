@@ -16,18 +16,17 @@ import {
     MessageModal,
 } from '../../components';
 import { questionService } from '../../services';
-import { useAuth, useLoading, useModal } from '../../hooks';
+import { useAuth, useModal } from '../../hooks';
 import EditQuestion from './EditQuestion';
 
 const Questions: React.FC = () => {
-    const [questions, setQuestions] = useState<models.interfaces.Question[]>([]);
     const [questionsAutoComplete, setQuestionsAutoComplete] = useState<string[]>([]);
     const [search, setSearch] = useState('');
     const { path } = useRouteMatch();
     const { push } = useHistory();
     const { openModal } = useModal();
-    const { setLoadingState } = useLoading();
     const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
+    const questions = questionService.getAllQuestions.read(buildAuthRequestData()) || [];
     const removeQuestion = async (id: models.classes.guid) => {
         const shouldDelete = await openModal(WarningModal, {
             title: 'Are you sure?',
@@ -39,8 +38,8 @@ const Questions: React.FC = () => {
             return;
         }
         try {
-            const { data } = await questionService.deleteQuestion(buildAuthRequestData(), id);
-            setQuestions(questions.filter((q) => q.id !== data.id));
+            await questionService.deleteQuestion(buildAuthRequestData(), id);
+            questionService.getAllQuestions.trigger(buildAuthRequestData());
             openModal(MessageModal, {
                 title: 'Success',
                 children: <p>Question removed successfully</p>,
@@ -118,28 +117,12 @@ const Questions: React.FC = () => {
             ),
         },
     ];
-    const onQuestionAddedOrEdited = (question: models.interfaces.Question) => {
-        const existingQuestionIndex = questions.findIndex((q) => q.id === question.id);
-        if (existingQuestionIndex >= 0) {
-            questions[existingQuestionIndex] = { ...questions[existingQuestionIndex], ...question };
-        } else {
-            questions.push(question);
-        }
-        setQuestions(questions);
-    };
+    const onQuestionAddedOrEdited = () => 
+        questionService.getAllQuestions.trigger(buildAuthRequestData());
     useEffect(() => {
         const titles = questions.map(({ title }) => title);
         setQuestionsAutoComplete(titles);
     }, [questions, setQuestionsAutoComplete]);
-    useEffect(() => {
-        setLoadingState("loading");
-        questionService
-            .getAllQuestions(buildAuthRequestData())
-            .then(({ data }) => setQuestions(data))
-            .catch(() =>
-                openModal(ErrorModal, { title: "Error", body: "Couldn't fetch questions. try again." }))
-            .finally(() => setLoadingState("success"));
-    }, [setQuestions, buildAuthRequestData, openModal, setLoadingState]);
     return (
         <Switch>
             <Route path={path} exact>

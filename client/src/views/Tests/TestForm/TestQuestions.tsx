@@ -13,8 +13,8 @@ interface TestQuestionsProps {
 export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange }) => {
     //set test prop as component state.
     const { buildAuthRequestData } = useAuth();
+    const questions = questionService.getAllQuestions.read(buildAuthRequestData()) || [];
     const { openModal } = useModal();
-    const [questions, setQuestions] = useState<models.interfaces.Question[]>([]);
     const [questionsAutoComplete, setQuestionsAutoComplete] = useState<string[]>([]);
     const [search, setSearch] = useState('');
     const filteredQuestions = useRef<models.interfaces.Question[]>([]);
@@ -55,12 +55,6 @@ export const TestQuestions: React.FC<TestQuestionsProps> = ({ test, onChange }) 
         },
     ];
 
-    //get field questions.
-    useEffect(() => {
-        questionService
-            .getAllQuestions(buildAuthRequestData())
-            .then(({ data }) => setQuestions(data));
-    }, [setQuestions, buildAuthRequestData]);
     useEffect(() => {
         const labels = questions.flatMap(({ label }) => label.split(/[ ,]+/));
         const uniqueLabels = [...new Set(labels)];
