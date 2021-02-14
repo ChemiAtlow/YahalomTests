@@ -1,15 +1,15 @@
 import axios, { AxiosRequestConfig } from "axios";
-import{constants} from "@yahalom-tests/common";
+import { constants } from "@yahalom-tests/common";
 import { AuthRequest } from "../models";
-const {serverDomain,serverPort} = constants.URLS;
+const { serverDomain, serverPort } = constants.URLS;
 
 const axiosCreate = axios.create({ baseURL: `${serverDomain}:${serverPort}` });
 
 const methods = {
-	get: axiosCreate.get,
-	post: axiosCreate.post,
-	put: axiosCreate.put,
-	delete: axiosCreate.delete,
+    get: axiosCreate.get,
+    post: axiosCreate.post,
+    put: axiosCreate.put,
+    delete: axiosCreate.delete,
 };
 
 export const authRequestToHeaders: (authReqData: AuthRequest) => AxiosRequestConfig = ({
