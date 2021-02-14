@@ -8,30 +8,28 @@ import {
     Container,
     DataTable,
     Ellipsis,
-    ErrorModal,
     Icon,
     SearchRow,
     TestLinkModal,
     Tooltip,
 } from '../../components';
-import { useAuth, useLoading, useModal } from '../../hooks';
+import { useAuth, useModal } from '../../hooks';
 import { testService } from '../../services';
 import EditTest from './EditTest';
 
 const Tests: React.FC = () => {
+    const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
+    const tests = testService.getAllTests.read(buildAuthRequestData()) || [];
     const { path } = useRouteMatch();
     const { push } = useHistory();
-    const [tests, setTests] = useState<models.interfaces.Test[]>([]);
     const [testsAutoComplete, setTestsAutoComplete] = useState<string[]>([]);
     const [search, setSearch] = useState('');
-    const { getOrganizationAndFieldUrl, buildAuthRequestData } = useAuth();
     const { openModal } = useModal();
-    const { setLoadingState } = useLoading();
 
     const goToEditTest = (test: models.interfaces.Test) =>
         push(getOrganizationAndFieldUrl('tests', 'edit', test.id!), { test });
     const goToTestStatitistics = (test: models.interfaces.Test) =>
-        push(getOrganizationAndFieldUrl('reports', 'test', test.id!), { test });
+        push(getOrganizationAndFieldUrl('reports', 'test', test.id!, "0-0"), { test });
     const showLinkToTest = ({ title, id }: models.interfaces.Test) => {
         openModal(TestLinkModal, {
             title,
@@ -100,28 +98,13 @@ const Tests: React.FC = () => {
             ),
         },
     ];
-    const onTestChanged = (test: models.interfaces.Test) => {
-        const existingTestIndex = tests.findIndex(t => t.id === test.id);
-        if (existingTestIndex >= 0) {
-            tests[existingTestIndex] = { ...tests[existingTestIndex], ...test };
-        } else {
-            tests.push(test);
-        }
-        setTests(tests);
-        console.log(test);
-    };
+    const onTestChanged = () => 
+        testService.getAllTests.trigger(buildAuthRequestData());
 
     useEffect(() => {
         const titles = tests.map(({ title }) => title);
         setTestsAutoComplete(titles);
     }, [tests, setTestsAutoComplete]);
-    useEffect(() => {
-        setLoadingState("loading");
-        testService.getAllTests(buildAuthRequestData())
-            .then(({ data }) => setTests(data))
-            .catch(() => openModal(ErrorModal, { title: "Error", body: "Couldn't fetch tests. try again." }))
-            .finally(() => setLoadingState("success"));
-    }, [setTests, buildAuthRequestData, openModal, setLoadingState]);
 
     return (
         <Switch>
