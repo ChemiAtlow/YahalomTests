@@ -1,0 +1,14 @@
+node_modules
+coverage
+docker
+tools
+dist
+Dockerfile*
+README.md
+LICENSE
+tsconfig.json
+.vscode
+.dockerignore
+.git
+.github
+.gitignore

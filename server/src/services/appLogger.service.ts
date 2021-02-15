@@ -18,32 +18,30 @@ const appLogger = createLogger({
             maxsize: 5242880,
             maxFiles: 25,
         }),
+        new transports.Console({
+            level: process.env.NODE_ENV !== "production" ? 'debug' : 'warn',
+            handleExceptions: true,
+            format: combine(
+                timestamp(),
+                printf((msg) =>
+                    colorize({
+                        colors: {
+                            error: 'bold redBG white',
+                            warn: 'bold yellow',
+                            info: 'blue',
+                            verbose: 'cyan',
+                            debug: 'gray',
+                        },
+                    }).colorize(
+                        msg.level,
+                        `${msg.timestamp} - [${msg.level.toUpperCase()}]: ${msg.message}`
+                    )
+                )
+            ),
+        })
     ],
     exitOnError: false,
 });
-if (process.env.NODE_ENV !== "production") {
-    appLogger.add( new transports.Console({
-        level: 'debug',
-        handleExceptions: true,
-        format: combine(
-            timestamp(),
-            printf((msg) =>
-                colorize({
-                    colors: {
-                        error: 'bold redBG white',
-                        warn: 'bold yellow',
-                        info: 'blue',
-                        verbose: 'cyan',
-                        debug: 'gray',
-                    },
-                }).colorize(
-                    msg.level,
-                    `${msg.timestamp} - [${msg.level.toUpperCase()}]: ${msg.message}`
-                )
-            )
-        ),
-    }));
-}
 
 export const debug = appLogger.debug.bind(appLogger); // level 5
 export const verbose =  appLogger.verbose.bind(appLogger); // level 4

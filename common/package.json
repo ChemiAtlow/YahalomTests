@@ -8,6 +8,7 @@
 		"dist"
 	],
 	"scripts": {
+		"build-linux": "rm -rf ./dist && npm run compile",
 		"build": "npm run clean && npm run compile",
 		"clean": "del -rf \"./dist\"",
 		"compile": "tsc -b tsconfig.build.json"
@@ -16,6 +17,7 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"class-transformer": "^0.3.2",
 		"class-validator": "^0.13.1",
 		"reflect-metadata": "^0.1.13"
 	},

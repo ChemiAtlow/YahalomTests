@@ -1,0 +1,51 @@
+FROM node:15.8.0-alpine as build
+
+WORKDIR /app
+
+COPY package.json .
+COPY package-lock.json .
+COPY tsconfig.build.json .
+
+COPY scripts/ ./scripts/
+COPY common/ ./common/
+COPY server/ ./server/
+
+RUN npm ci
+
+WORKDIR /app/common
+RUN npm run build-linux
+
+WORKDIR /app/server
+RUN npm run compile
+
+
+
+FROM node:15.8.0-alpine
+
+WORKDIR /app
+
+COPY package.json .
+COPY package-lock.json .
+
+COPY --from=build /app/common/package.json ./common/package.json
+COPY --from=build /app/common/dist ./common/dist
+COPY --from=build /app/server/package.json ./server/package.json
+COPY --from=build /app/server/dist ./server/dist
+COPY --from=build /app/server/data ./server/data
+COPY --from=build /app/server/assets ./server/assets
+
+COPY --from=build /app/scripts /app/scripts
+
+ENV NODE_ENV production
+
+RUN npm ci --production
+
+WORKDIR /app/server
+
+ARG DEFAULT_PORT=4000
+
+ENV PORT ${DEFAULT_PORT}
+
+EXPOSE ${PORT}
+
+CMD [ "node", "./dist/app" ]
